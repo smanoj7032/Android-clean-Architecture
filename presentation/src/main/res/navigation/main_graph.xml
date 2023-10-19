@@ -27,6 +27,14 @@
             app:destination="@id/movieDetailsActivity" />
     </fragment>
 
+    <fragment
+        android:id="@+id/popularMoviesFragment"
+        android:name="com.manoj.clean.ui.popularmovies.PopularMoviesFragment"
+        android:label="Popular"
+        tools:layout="@layout/fragment_popular_movies">
+
+    </fragment>
+
     <activity
         android:id="@+id/movieDetailsActivity"
         android:name="com.manoj.clean.ui.moviedetails.MovieDetailsActivity"
