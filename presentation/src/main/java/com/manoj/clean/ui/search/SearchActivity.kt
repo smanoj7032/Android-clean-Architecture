@@ -96,20 +96,17 @@ class SearchActivity : BaseActivity<ActivitySearchBinding>() {
     private fun setupRecyclerView() = with(binding.recyclerView) {
         val diffCallback =
             RVAdapterWithPaging.createDiffCallback<MovieEntity> { oldItem, newItem ->
-                return@createDiffCallback oldItem == newItem
+                return@createDiffCallback oldItem.id == newItem.id
             }
         movieAdapter = object : RVAdapterWithPaging<MovieEntity, ItemMovieBinding>(
-            diffCallback, R.layout.item_movie, 1
-        ) {
-            override fun onBind(
-                binding: ItemMovieBinding, item: MovieEntity, position: Int
-            ) {
-                super.onBind(binding, item, position)
-                binding.image.loadImage(item.image)
-                binding.tvId.text = item.id.toString()
+            diffCallback, R.layout.item_movie, { binding, item, position ->
+                binding.image.loadImage(
+                    item.image,
+                    binding.imgPb
+                )
                 binding.root.setOnClickListener { viewModel.onMovieClicked(item.id) }
             }
-        }
+        ) {}
         val layoutManager = GridLayoutManager(this@SearchActivity, 3)
         val footerAdapter = LoadMoreAdapter { movieAdapter.retry() }
         val headerAdapter = LoadMoreAdapter { movieAdapter.retry() }

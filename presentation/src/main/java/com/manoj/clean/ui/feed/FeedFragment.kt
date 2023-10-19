@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -23,6 +22,7 @@ import com.manoj.clean.ui.feed.FeedViewModel.NavigationState.MovieDetails
 import com.manoj.clean.util.NetworkMonitor
 import com.manoj.clean.util.launchAndRepeatWithViewLifecycle
 import com.manoj.clean.util.loadImage
+import com.manoj.clean.util.showSnackBar
 import com.manoj.domain.entities.MovieEntity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -65,22 +65,16 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
     private fun setupRecyclerView() = with(binding.recyclerView) {
         val diffCallback = createDiffCallback<MovieEntity> { oldItem, newItem ->
             return@createDiffCallback oldItem.id == newItem.id
-
-
         }
         moviesAdapter = object : RVAdapterWithPaging<MovieEntity, ItemMovieBinding>(
-            diffCallback, R.layout.item_movie, 1
-        ) {
-            override fun onBind(
-                binding: ItemMovieBinding, item: MovieEntity, position: Int
-            ) {
-
-                super.onBind(binding, item, position)
-                binding.image.loadImage(item.image)
-                binding.tvId.text = item.id.toString()
+            diffCallback, R.layout.item_movie, { binding, item, position ->
+                binding.image.loadImage(
+                    item.image,
+                    binding.imgPb
+                )
                 binding.root.setOnClickListener { viewModel.onMovieClicked(item.id) }
             }
-        }
+        ) {}
 
         val layoutManager = GridLayoutManager(requireActivity().applicationContext, 3)
         val footerAdapter = LoadMoreAdapter { moviesAdapter.retry() }
@@ -109,15 +103,18 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
     }
 
     private fun handleNetworkState(state: NetworkMonitor.NetworkState) {
+        if (state.isAvailable()) binding.root.showSnackBar(
+            "Internet connection available",
+            false
+        ) else binding.root.showSnackBar("No internet connection", true)
         Log.d("XXX", "FeedFragment: handleNetworkState() called with: NetworkState = $state")
         if (state.isAvailable() && viewModel.uiState.value.errorMessage != null) moviesAdapter.retry()
     }
 
     private fun handleFeedUiState(it: FeedViewModel.FeedUiState) {
         binding.progressBar.isVisible = it.showLoading
-        if (it.errorMessage != null) Toast.makeText(
-            requireActivity().applicationContext, it.errorMessage, Toast.LENGTH_LONG
-        ).show()
+        if (it.errorMessage != null)
+            binding.root.showSnackBar(it.errorMessage, true)
     }
 
     private fun handleNavigationState(state: FeedViewModel.NavigationState) = when (state) {

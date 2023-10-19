@@ -3,7 +3,9 @@ package com.manoj.clean.util
 import android.graphics.drawable.Drawable
 import android.view.View
 import android.widget.ImageView
+import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -14,6 +16,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
+import com.google.android.material.snackbar.Snackbar
 import com.manoj.clean.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -68,8 +71,8 @@ inline fun Fragment.launchAndRepeatWithViewLifecycle(
     }
 }
 
-fun ImageView.loadImage(imageUrl: String?) {
-
+fun ImageView.loadImage(imageUrl: String?, progressBar: ProgressBar) {
+    progressBar.show()
     Glide.with(this).load(imageUrl).placeholder(R.drawable.bg_image)
         .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
         .listener(object : RequestListener<Drawable?> {
@@ -80,6 +83,7 @@ fun ImageView.loadImage(imageUrl: String?) {
                 isFirstResource: Boolean
             ): Boolean {
                 setImageResource(R.drawable.bg_image)
+                progressBar.hide()
                 return false
             }
 
@@ -91,7 +95,35 @@ fun ImageView.loadImage(imageUrl: String?) {
                 isFirstResource: Boolean
             ): Boolean {
                 setImageDrawable(resource)
+                progressBar.hide()
                 return false
             }
         }).into(this)
+}
+
+
+fun View.showSnackBar(
+    message: String,
+    negativeSnackBar: Boolean,
+    duration: Int = Snackbar.LENGTH_SHORT,
+    actionText: String? = null,
+    actionListener: (() -> Unit)? = null
+) {
+    val snackBar = Snackbar.make(this, message, duration)
+
+    actionText?.let {
+        snackBar.setAction(actionText) {
+            actionListener?.invoke()
+        }
+    }
+
+    if (negativeSnackBar) snackBar.setBackgroundTint(
+        ContextCompat.getColor(
+            this.context,
+            R.color.red
+        )
+    )
+    else snackBar.setBackgroundTint(ContextCompat.getColor(this.context, R.color.green))
+
+    snackBar.show()
 }
