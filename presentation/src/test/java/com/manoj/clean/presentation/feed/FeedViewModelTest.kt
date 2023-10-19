@@ -5,7 +5,7 @@ import androidx.paging.LoadState
 import androidx.paging.LoadStates
 import androidx.paging.PagingData
 import app.cash.turbine.test
-import com.manoj.clean.entities.MovieListItem
+import com.manoj.clean.entities.Movie
 import com.manoj.clean.presentation.base.BaseViewModelTest
 import com.manoj.clean.ui.feed.FeedViewModel
 import com.manoj.clean.ui.feed.usecase.GetMoviesWithSeparators
@@ -31,9 +31,9 @@ class FeedViewModelTest : BaseViewModelTest() {
 
     private lateinit var viewModel: FeedViewModel
 
-    private val movies = listOf(MovieListItem.Movie(1, "", ""))
+    private val movies = listOf(Movie.Movie(1, "", ""))
 
-    private val pagingData: Flow<PagingData<MovieListItem>> = flowOf(PagingData.from(movies))
+    private val pagingData: Flow<PagingData<Movie>> = flowOf(PagingData.from(movies))
 
     @Before
     fun setUp() {

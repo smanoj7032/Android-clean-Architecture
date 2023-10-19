@@ -2,17 +2,26 @@ package com.manoj.clean.ui.search
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import androidx.paging.*
-import com.manoj.clean.entities.MovieListItem
-import com.manoj.clean.mapper.toPresentation
+import androidx.paging.CombinedLoadStates
+import androidx.paging.LoadState
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.manoj.clean.ui.base.BaseViewModel
 import com.manoj.clean.util.singleSharedFlow
 import com.manoj.data.util.DispatchersProvider
+import com.manoj.domain.entities.MovieEntity
 import com.manoj.domain.usecase.SearchMovies
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @HiltViewModel
@@ -33,17 +42,18 @@ class SearchViewModel @Inject constructor(
         data class MovieDetails(val movieId: Int) : NavigationState()
     }
 
-    @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
-    var movies: Flow<PagingData<MovieListItem>> = savedStateHandle.getStateFlow(KEY_SEARCH_QUERY, "")
+
+    var movies: Flow<PagingData<MovieEntity>> = savedStateHandle.getStateFlow(KEY_SEARCH_QUERY, "")
         .onEach { query ->
-            _uiState.value = if (query.isNotEmpty()) SearchUiState(showDefaultState = false, showLoading = true) else SearchUiState()
+            _uiState.value = if (query.isNotEmpty()) SearchUiState(
+                showDefaultState = false,
+                showLoading = true
+            ) else SearchUiState()
         }
         .debounce(500)
         .filter { it.isNotEmpty() }
         .flatMapLatest { query ->
-            searchMovies(query, 30).map { pagingData ->
-                pagingData.map { movieEntity -> movieEntity.toPresentation() as MovieListItem }
-            }
+            searchMovies(query, 30)
         }.cachedIn(viewModelScope)
 
     private val _uiState: MutableStateFlow<SearchUiState> = MutableStateFlow(SearchUiState())

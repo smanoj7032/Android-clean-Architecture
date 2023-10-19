@@ -20,11 +20,11 @@ class App : Application(), Configuration.Provider {
 
     override fun onCreate() {
         super.onCreate()
-        workManager.enqueueUniqueWork(
+        /*workManager.enqueueUniqueWork(
             SyncWork::class.java.simpleName,
             ExistingWorkPolicy.KEEP,
             SyncWork.getOneTimeWorkRequest()
-        )
+        )*/
     }
 
     override fun getWorkManagerConfiguration(): Configuration =

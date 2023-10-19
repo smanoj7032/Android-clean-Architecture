@@ -1,18 +1,23 @@
 package com.manoj.clean.util
 
-import android.content.Context
+import android.graphics.drawable.Drawable
 import android.view.View
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.manoj.clean.ui.adapter.movie.MovieAdapterSpanSize
-import com.manoj.clean.ui.adapter.movie.MoviePagingAdapter
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
+import com.manoj.clean.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import javax.annotation.Nullable
 
 
 /**
@@ -63,15 +68,30 @@ inline fun Fragment.launchAndRepeatWithViewLifecycle(
     }
 }
 
-fun createMovieGridLayoutManager(
-    context: Context,
-    adapter: MoviePagingAdapter,
-    config: MovieAdapterSpanSize.Config = MovieAdapterSpanSize.Config(3)
-): GridLayoutManager = GridLayoutManager(
-    context,
-    config.gridSpanSize,
-    RecyclerView.VERTICAL,
-    false
-).apply {
-    spanSizeLookup = MovieAdapterSpanSize.Lookup(config, adapter)
+fun ImageView.loadImage(imageUrl: String?) {
+
+    Glide.with(this).load(imageUrl).placeholder(R.drawable.bg_image)
+        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+        .listener(object : RequestListener<Drawable?> {
+            override fun onLoadFailed(
+                @Nullable e: GlideException?,
+                model: Any?,
+                target: Target<Drawable?>?,
+                isFirstResource: Boolean
+            ): Boolean {
+                setImageResource(R.drawable.bg_image)
+                return false
+            }
+
+            override fun onResourceReady(
+                resource: Drawable?,
+                model: Any?,
+                target: Target<Drawable?>?,
+                dataSource: DataSource?,
+                isFirstResource: Boolean
+            ): Boolean {
+                setImageDrawable(resource)
+                return false
+            }
+        }).into(this)
 }

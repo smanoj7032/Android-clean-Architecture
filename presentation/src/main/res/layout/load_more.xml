@@ -6,19 +6,21 @@
 
     <ProgressBar
         android:id="@+id/prgBarLoadMore"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
         android:layout_marginTop="5dp"
+        android:indeterminateTint="#FF0000"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tvLoadMore"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-light"
         android:text="Oppps! please try again!"
-        android:textColor="@color/black"
+        android:textColor="@color/colorPrimary"
         android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -28,12 +30,12 @@
         android:id="@+id/btnLoadMoreRetry"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:drawableTint="@color/white"
         android:fontFamily="sans-serif-light"
         android:text="Retry"
         android:textAllCaps="false"
         android:textSize="14sp"
         app:cornerRadius="10dp"
+        app:drawableTint="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvLoadMore" />

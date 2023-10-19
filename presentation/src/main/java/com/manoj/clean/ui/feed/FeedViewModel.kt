@@ -5,13 +5,18 @@ import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.manoj.clean.entities.MovieListItem
 import com.manoj.clean.ui.base.BaseViewModel
 import com.manoj.clean.ui.feed.usecase.GetMoviesWithSeparators
 import com.manoj.clean.util.singleSharedFlow
 import com.manoj.data.util.DispatchersProvider
+import com.manoj.domain.entities.MovieEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @HiltViewModel
@@ -29,8 +34,8 @@ class FeedViewModel @Inject constructor(
         data class MovieDetails(val movieId: Int) : NavigationState()
     }
 
-    val movies: Flow<PagingData<MovieListItem>> = getMoviesWithSeparators.movies(
-        pageSize = 20
+    val movies: Flow<PagingData<MovieEntity>> = getMoviesWithSeparators.movies(
+        pageSize = 30
     ).cachedIn(viewModelScope)
 
     private val _uiState: MutableStateFlow<FeedUiState> = MutableStateFlow(FeedUiState())

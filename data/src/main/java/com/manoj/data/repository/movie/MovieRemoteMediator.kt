@@ -17,16 +17,23 @@ class MovieRemoteMediator(
     private val remote: MovieDataSource.Remote
 ) : RemoteMediator<Int, MovieDbData>() {
 
-    override suspend fun load(loadType: LoadType, state: PagingState<Int, MovieDbData>): MediatorResult {
+    override suspend fun load(
+        loadType: LoadType,
+        state: PagingState<Int, MovieDbData>
+    ): MediatorResult {
         val page = when (loadType) {
             LoadType.REFRESH -> MOVIE_STARTING_PAGE_INDEX
             LoadType.PREPEND -> return MediatorResult.Success(endOfPaginationReached = true)
-            LoadType.APPEND -> local.getLastRemoteKey()?.nextPage ?: return MediatorResult.Success(endOfPaginationReached = true)
+            LoadType.APPEND -> local.getLastRemoteKey()?.nextPage ?: return MediatorResult.Success(
+                endOfPaginationReached = true
+            )
         }
 
-        Log.d("XXX", "MovieRemoteMediator: load() called with: loadType = $loadType, page: $page, stateLastItem = ${state.isEmpty()}")
+        Log.d(
+            "XXX",
+            "MovieRemoteMediator: load() called with: loadType = $loadType, page: $page, stateLastItem = ${state.isEmpty()}"
+        )
 
-        // There was a lag in loading the first page; as a result, it jumps to the end of the pagination.
         if (state.isEmpty() && page == 2) return MediatorResult.Success(endOfPaginationReached = false)
 
         remote.getMovies(page, state.config.pageSize).getResult({ successResult ->

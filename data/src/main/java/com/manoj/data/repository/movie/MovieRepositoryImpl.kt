@@ -29,7 +29,7 @@ class MovieRepositoryImpl constructor(
     override fun movies(pageSize: Int): Flow<PagingData<MovieEntity>> = Pager(
         config = PagingConfig(
             pageSize = pageSize,
-            enablePlaceholders = false
+            enablePlaceholders = true
         ),
         remoteMediator = remoteMediator,
         pagingSourceFactory = { local.movies() }
