@@ -7,3 +7,4 @@ data class MovieEntity(
     val image: String,
     val category: String
 )
+

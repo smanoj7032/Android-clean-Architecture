@@ -80,4 +80,8 @@ abstract class RVAdapterWithPaging<M : Any, B : ViewDataBinding>(
         }
     }
 
+    override fun getItemViewType(position: Int): Int {
+        return position
+    }
+
 }

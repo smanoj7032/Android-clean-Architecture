@@ -1,6 +1,6 @@
 package com.manoj.clean.di.core.module
 
-import com.manoj.data.api.MovieApi
+import com.manoj.data.api.BaseApi
 import com.manoj.data.db.favoritemovies.FavoriteMovieDao
 import com.manoj.data.db.movies.MovieDao
 import com.manoj.data.db.movies.MovieRemoteKeyDao
@@ -8,7 +8,7 @@ import com.manoj.data.repository.movie.*
 import com.manoj.data.repository.movie.favorite.FavoriteMoviesDataSource
 import com.manoj.data.repository.movie.favorite.FavoriteMoviesLocalDataSource
 import com.manoj.data.util.DiskExecutor
-import com.manoj.domain.repository.MovieRepository
+import com.manoj.domain.repository.BaseRepository
 import com.manoj.domain.usecase.*
 import dagger.Module
 import dagger.Provides
@@ -27,8 +27,8 @@ class DataModule {
         movieLocal: MovieDataSource.Local,
         movieRemoteMediator: MovieRemoteMediator,
         favoriteLocal: FavoriteMoviesDataSource.Local,
-    ): MovieRepository {
-        return MovieRepositoryImpl(movieRemote, movieLocal, movieRemoteMediator, favoriteLocal)
+    ): BaseRepository {
+        return BaseRepositoryImpl(movieRemote, movieLocal, movieRemoteMediator, favoriteLocal)
     }
 
     @Provides
@@ -61,37 +61,40 @@ class DataModule {
 
     @Provides
     @Singleton
-    fun provideMovieRemoveDataSource(movieApi: MovieApi): MovieDataSource.Remote {
-        return MovieRemoteDataSource(movieApi)
+    fun provideMovieRemoveDataSource(baseApi: BaseApi): MovieDataSource.Remote {
+        return MovieRemoteDataSource(baseApi)
     }
 
     @Provides
-    fun provideSearchMoviesUseCase(movieRepository: MovieRepository): SearchMovies {
-        return SearchMovies(movieRepository)
+    fun provideSearchMoviesUseCase(baseRepository: BaseRepository): SearchMovies {
+        return SearchMovies(baseRepository)
     }
 
     @Provides
-    fun provideGetMovieDetailsUseCase(movieRepository: MovieRepository): GetMovieDetails {
-        return GetMovieDetails(movieRepository)
+    fun provideGetMovieDetailsUseCase(baseRepository: BaseRepository): GetMovieDetails {
+        return GetMovieDetails(baseRepository)
     }
 
     @Provides
-    fun provideGetFavoriteMoviesUseCase(movieRepository: MovieRepository): GetFavoriteMovies {
-        return GetFavoriteMovies(movieRepository)
+    fun provideGetFavoriteMoviesUseCase(baseRepository: BaseRepository): GetFavoriteMovies {
+        return GetFavoriteMovies(baseRepository)
+    }
+    @Provides
+    fun provideGetMovies(baseRepository: BaseRepository):GetMoviesWithSeparators {
+        return GetMoviesWithSeparators(baseRepository)
+    }
+    @Provides
+    fun provideCheckFavoriteStatusUseCase(baseRepository: BaseRepository): CheckFavoriteStatus {
+        return CheckFavoriteStatus(baseRepository)
     }
 
     @Provides
-    fun provideCheckFavoriteStatusUseCase(movieRepository: MovieRepository): CheckFavoriteStatus {
-        return CheckFavoriteStatus(movieRepository)
+    fun provideAddMovieToFavoriteUseCase(baseRepository: BaseRepository): AddMovieToFavorite {
+        return AddMovieToFavorite(baseRepository)
     }
 
     @Provides
-    fun provideAddMovieToFavoriteUseCase(movieRepository: MovieRepository): AddMovieToFavorite {
-        return AddMovieToFavorite(movieRepository)
-    }
-
-    @Provides
-    fun provideRemoveMovieFromFavoriteUseCase(movieRepository: MovieRepository): RemoveMovieFromFavorite {
-        return RemoveMovieFromFavorite(movieRepository)
+    fun provideRemoveMovieFromFavoriteUseCase(baseRepository: BaseRepository): RemoveMovieFromFavorite {
+        return RemoveMovieFromFavorite(baseRepository)
     }
 }

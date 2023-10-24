@@ -21,9 +21,11 @@ class NetworkMonitor(
         Available, Lost;
 
         fun isAvailable() = this == Available
+        fun isLost() = this == Lost
     }
 
-    private val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    private val connectivityManager =
+        context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
     val networkState: Flow<NetworkState> = callbackFlow {
 
@@ -51,5 +53,6 @@ class NetworkMonitor(
         }
     }.distinctUntilChanged()
 
-    private fun getInitialState(): NetworkState = if (connectivityManager.activeNetwork != null) Available else Lost
+    private fun getInitialState(): NetworkState =
+        if (connectivityManager.activeNetwork != null) Available else Lost
 }

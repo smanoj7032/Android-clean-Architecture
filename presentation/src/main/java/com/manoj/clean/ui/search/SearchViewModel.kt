@@ -53,7 +53,7 @@ class SearchViewModel @Inject constructor(
         .debounce(500)
         .filter { it.isNotEmpty() }
         .flatMapLatest { query ->
-            searchMovies(query, 30)
+            searchMovies(query, 10)
         }.cachedIn(viewModelScope)
 
     private val _uiState: MutableStateFlow<SearchUiState> = MutableStateFlow(SearchUiState())

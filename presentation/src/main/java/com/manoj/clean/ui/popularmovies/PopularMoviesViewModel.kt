@@ -3,8 +3,7 @@ package com.manoj.clean.ui.popularmovies
 import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import com.manoj.clean.ui.base.BaseViewModel
-import com.manoj.clean.ui.feed.FeedViewModel
-import com.manoj.clean.ui.feed.usecase.GetMoviesWithSeparators
+import com.manoj.domain.usecase.GetMoviesWithSeparators
 import com.manoj.data.util.DispatchersProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,8 +19,8 @@ class PopularMoviesViewModel @Inject constructor(
         val showLoading: Boolean = true, val errorMessage: String? = null
     )
 
-    private val _uiState: MutableStateFlow<FeedViewModel.FeedUiState> = MutableStateFlow(
-        FeedViewModel.FeedUiState()
+    private val _uiState: MutableStateFlow<FeedUiState> = MutableStateFlow(
+        FeedUiState()
     )
     val uiState = _uiState.asStateFlow()
     fun onLoadStateUpdate(loadState: CombinedLoadStates) {

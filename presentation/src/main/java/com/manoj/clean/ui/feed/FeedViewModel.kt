@@ -6,10 +6,10 @@ import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.manoj.clean.ui.base.BaseViewModel
-import com.manoj.clean.ui.feed.usecase.GetMoviesWithSeparators
 import com.manoj.clean.util.singleSharedFlow
 import com.manoj.data.util.DispatchersProvider
 import com.manoj.domain.entities.MovieEntity
+import com.manoj.domain.usecase.GetMoviesWithSeparators
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow

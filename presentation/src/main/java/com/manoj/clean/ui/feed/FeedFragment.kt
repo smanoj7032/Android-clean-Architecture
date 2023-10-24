@@ -7,8 +7,10 @@ import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.CombinedLoadStates
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.GridLayoutManager
 import com.manoj.clean.MovieDetailsGraphDirections
 import com.manoj.clean.R
@@ -20,11 +22,14 @@ import com.manoj.clean.ui.adapter.commonadapter.RVAdapterWithPaging.Companion.cr
 import com.manoj.clean.ui.base.BaseFragment
 import com.manoj.clean.ui.feed.FeedViewModel.NavigationState.MovieDetails
 import com.manoj.clean.util.NetworkMonitor
+import com.manoj.clean.util.customCollector
 import com.manoj.clean.util.launchAndRepeatWithViewLifecycle
 import com.manoj.clean.util.loadImage
 import com.manoj.clean.util.showSnackBar
 import com.manoj.domain.entities.MovieEntity
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.distinctUntilChangedBy
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -55,30 +60,29 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
     }
 
     private fun setupViews() {
-        setupRecyclerView()
+        initRecyclerView()
     }
 
     private fun setupListeners() {
         moviesAdapter.addLoadStateListener(loadStateListener)
     }
 
-    private fun setupRecyclerView() = with(binding.recyclerView) {
+    private fun initRecyclerView() {
         val diffCallback = createDiffCallback<MovieEntity> { oldItem, newItem ->
             return@createDiffCallback oldItem.id == newItem.id
         }
+
         moviesAdapter = object : RVAdapterWithPaging<MovieEntity, ItemMovieBinding>(
             diffCallback, R.layout.item_movie, { binding, item, position ->
-                binding.image.loadImage(
-                    item.image,
-                    binding.imgPb
-                )
+                binding.image.loadImage(item.image, binding.imgPb)
                 binding.root.setOnClickListener { viewModel.onMovieClicked(item.id) }
             }
         ) {}
 
-        val layoutManager = GridLayoutManager(requireActivity().applicationContext, 3)
         val footerAdapter = LoadMoreAdapter { moviesAdapter.retry() }
         val headerAdapter = LoadMoreAdapter { moviesAdapter.retry() }
+
+        val layoutManager = GridLayoutManager(requireActivity().applicationContext, 3)
         layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {
                 return if ((position == moviesAdapter.itemCount) && footerAdapter.itemCount > 0) 3
@@ -86,12 +90,23 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
                 else 1
             }
         }
-        this.layoutManager = layoutManager
-        adapter = moviesAdapter
-        adapter = moviesAdapter.withLoadStateHeaderAndFooter(headerAdapter, footerAdapter)
-        setHasFixedSize(true)
-        setItemViewCacheSize(0)
+
+        binding.recyclerView.apply {
+            this.layoutManager = layoutManager
+            adapter = moviesAdapter.withLoadStateHeaderAndFooter(headerAdapter, footerAdapter)
+            setHasFixedSize(true)
+            setItemViewCacheSize(0)
+        }
+
+        // Observe the load state and scroll to the top on refresh completion
+        lifecycleScope.launchWhenCreated {
+            moviesAdapter.loadStateFlow
+                .distinctUntilChangedBy { it.refresh }
+                .filter { it.refresh is LoadState.NotLoading }
+                .collect { binding.recyclerView.scrollToPosition(0) }
+        }
     }
+
 
     private fun observeViewModel() = with(viewModel) {
         launchAndRepeatWithViewLifecycle {

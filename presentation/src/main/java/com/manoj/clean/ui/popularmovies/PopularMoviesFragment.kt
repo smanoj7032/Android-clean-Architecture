@@ -40,9 +40,7 @@ class PopularMoviesFragment : BaseFragment<FragmentPopularMoviesBinding>() {
     }
 
     private fun handleNetworkState(state: NetworkMonitor.NetworkState) {
-        /*if (state.isAvailable()) binding.root.showSnackBar(
-            "Internet connection available", false
-        ) else binding.root.showSnackBar("No internet connection", true)*/
+        if (state.isLost()) binding.root.showSnackBar("No internet connection", true)
         Log.d("XXX", "FeedFragment: handleNetworkState() called with: NetworkState = $state")
     }
 }

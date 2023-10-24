@@ -1,9 +1,9 @@
 package com.manoj.domain.usecase
 
-import com.manoj.domain.repository.MovieRepository
+import com.manoj.domain.repository.BaseRepository
 
 class AddMovieToFavorite(
-    private val movieRepository: MovieRepository
+    private val baseRepository: BaseRepository
 ) {
-    suspend operator fun invoke(movieId: Int) = movieRepository.addMovieToFavorite(movieId)
+    suspend operator fun invoke(movieId: Int) = baseRepository.addMovieToFavorite(movieId)
 }

@@ -9,7 +9,7 @@ import com.manoj.data.entities.toDomain
 import com.manoj.data.exception.DataNotAvailableException
 import com.manoj.data.repository.movie.favorite.FavoriteMoviesDataSource
 import com.manoj.domain.entities.MovieEntity
-import com.manoj.domain.repository.MovieRepository
+import com.manoj.domain.repository.BaseRepository
 import com.manoj.domain.util.Result
 import com.manoj.domain.util.getResult
 import com.manoj.domain.util.onError
@@ -18,18 +18,17 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.util.*
 
-class MovieRepositoryImpl constructor(
+class BaseRepositoryImpl constructor(
     private val remote: MovieDataSource.Remote,
     private val local: MovieDataSource.Local,
     private val remoteMediator: MovieRemoteMediator,
     private val localFavorite: FavoriteMoviesDataSource.Local
-) : MovieRepository {
+) : BaseRepository {
 
     @OptIn(ExperimentalPagingApi::class)
     override fun movies(pageSize: Int): Flow<PagingData<MovieEntity>> = Pager(
         config = PagingConfig(
-            pageSize = pageSize,
-            enablePlaceholders = true
+            pageSize = pageSize, enablePlaceholders = true
         ),
         remoteMediator = remoteMediator,
         pagingSourceFactory = { local.movies() }

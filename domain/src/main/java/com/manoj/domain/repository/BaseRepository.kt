@@ -5,7 +5,7 @@ import com.manoj.domain.entities.MovieEntity
 import com.manoj.domain.util.Result
 import kotlinx.coroutines.flow.Flow
 
-interface MovieRepository {
+interface BaseRepository {
     fun movies(pageSize: Int): Flow<PagingData<MovieEntity>>
     fun favoriteMovies(pageSize: Int): Flow<PagingData<MovieEntity>>
     fun search(query: String, pageSize: Int): Flow<PagingData<MovieEntity>>

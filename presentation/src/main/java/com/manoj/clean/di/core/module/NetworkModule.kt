@@ -1,7 +1,7 @@
 package com.manoj.clean.di.core.module
 
 import com.manoj.data.BuildConfig
-import com.manoj.data.api.MovieApi
+import com.manoj.data.api.BaseApi
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import dagger.Module
 import dagger.Provides
@@ -36,7 +36,7 @@ class NetworkModule {
 
     @Singleton
     @Provides
-    fun provideMovieApi(retrofit: Retrofit): MovieApi {
-        return retrofit.create(MovieApi::class.java)
+    fun provideMovieApi(retrofit: Retrofit): BaseApi {
+        return retrofit.create(BaseApi::class.java)
     }
 }

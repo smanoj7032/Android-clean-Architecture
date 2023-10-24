@@ -1,7 +1,7 @@
 package com.manoj.data.entities
 
-import com.manoj.domain.entities.MovieEntity
 import com.google.gson.annotations.SerializedName
+import com.manoj.domain.entities.MovieEntity
 
 data class MovieData(
     @SerializedName("id") val id: Int,

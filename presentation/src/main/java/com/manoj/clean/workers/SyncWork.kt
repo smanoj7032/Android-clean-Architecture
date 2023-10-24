@@ -5,7 +5,7 @@ import android.util.Log
 import androidx.hilt.work.HiltWorker
 import androidx.work.*
 import com.manoj.data.util.DispatchersProvider
-import com.manoj.domain.repository.MovieRepository
+import com.manoj.domain.repository.BaseRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.withContext
@@ -16,12 +16,12 @@ const val SYNC_WORK_MAX_ATTEMPTS = 3
 class SyncWork @AssistedInject constructor(
     @Assisted appContext: Context,
     @Assisted params: WorkerParameters,
-    val movieRepository: MovieRepository,
+    val baseRepository: BaseRepository,
     val dispatchers: DispatchersProvider,
 ) : CoroutineWorker(appContext, params) {
 
     override suspend fun doWork(): Result = withContext(dispatchers.getIO()) {
-        return@withContext if (movieRepository.sync()) {
+        return@withContext if (baseRepository.sync()) {
             Log.d("XXX", "SyncWork: doWork() called -> success")
             Result.success()
         } else {

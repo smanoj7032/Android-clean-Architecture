@@ -5,8 +5,8 @@ import com.manoj.domain.entities.MovieEntity
 import com.manoj.domain.repository.BaseRepository
 import kotlinx.coroutines.flow.Flow
 
-class SearchMovies(
-    private val baseRepository: BaseRepository
+class GetMoviesWithSeparators(
+    private val baseRepository: BaseRepository,
 ) {
-    operator fun invoke(query: String, pageSize: Int): Flow<PagingData<MovieEntity>> = baseRepository.search(query, pageSize)
+    fun movies(pageSize: Int): Flow<PagingData<MovieEntity>> = baseRepository.movies(pageSize)
 }

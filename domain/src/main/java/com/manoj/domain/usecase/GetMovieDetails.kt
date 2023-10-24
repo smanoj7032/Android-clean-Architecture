@@ -1,11 +1,11 @@
 package com.manoj.domain.usecase
 
 import com.manoj.domain.entities.MovieEntity
-import com.manoj.domain.repository.MovieRepository
+import com.manoj.domain.repository.BaseRepository
 import com.manoj.domain.util.Result
 
 class GetMovieDetails(
-    private val movieRepository: MovieRepository
+    private val baseRepository: BaseRepository
 ) {
-    suspend operator fun invoke(movieId: Int): Result<MovieEntity> = movieRepository.getMovie(movieId)
+    suspend operator fun invoke(movieId: Int): Result<MovieEntity> = baseRepository.getMovie(movieId)
 }

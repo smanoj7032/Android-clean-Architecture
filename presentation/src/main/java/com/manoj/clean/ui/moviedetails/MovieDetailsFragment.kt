@@ -7,11 +7,12 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
+import com.bumptech.glide.Glide
 import com.manoj.clean.R
 import com.manoj.clean.databinding.FragmentMovieDetailsBinding
 import com.manoj.clean.ui.base.BaseFragment
+import com.manoj.clean.util.customCollector
 import com.manoj.clean.util.launchAndRepeatWithViewLifecycle
-import com.bumptech.glide.Glide
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -44,7 +45,12 @@ class MovieDetailsFragment : BaseFragment<FragmentMovieDetailsBinding>() {
 
     private fun observeViewModel() = with(viewModel) {
         launchAndRepeatWithViewLifecycle {
-            uiState.collect { handleMovieDetailsUiState(it) }
+            movieDetail.customCollector(
+                this@MovieDetailsFragment,
+                onLoading = ::onLoading,
+                onError = ::onError,
+                onSuccess = { handleMovieDetailsUiState(it) }
+            )
         }
     }
 
@@ -66,5 +72,6 @@ class MovieDetailsFragment : BaseFragment<FragmentMovieDetailsBinding>() {
     }
 
     private fun loadImage(url: String) =
-        Glide.with(this).load(url).placeholder(R.color.light_gray).error(R.drawable.bg_image).into(binding.image)
+        Glide.with(this).load(url).placeholder(R.color.light_gray).error(R.drawable.bg_image)
+            .into(binding.image)
 }
