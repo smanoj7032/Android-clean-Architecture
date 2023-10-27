@@ -122,14 +122,13 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
     }
 
     private fun handleNavigationState(state: FeedViewModel.NavigationState) = when (state) {
-        is MovieDetails -> showOrNavigateToMovieDetails(state.movieId!!)
+        is MovieDetails -> showOrNavigateToMovieDetails(state.movieId)
     }
 
-    private fun showOrNavigateToMovieDetails(movieId: Int?) = if (binding.root.isSlideable) {
-        navigateToMovieDetails(movieId!!)
-    } else {
-        showMovieDetails(movieId!!)
-    }
+    private fun showOrNavigateToMovieDetails(movieId: Int?) =
+        if (binding.root.isSlideable) movieId?.let { navigateToMovieDetails(it) }
+        else showMovieDetails(movieId!!)
+
 
     private fun navigateToMovieDetails(movieId: Int) = findNavController().navigate(
         FeedFragmentDirections.toMovieDetailsActivity(movieId)
@@ -144,32 +143,4 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
         moviesAdapter.removeLoadStateListener(loadStateListener)
     }
 
-    private fun getImageFixedSize(): Int =
-        requireContext().applicationContext.resources.displayMetrics.widthPixels / 3
-
 }
-
-
-/*val movies: Flow<PagingData<MovieEntity>> = getMoviesWithSeparators.movies(
-    pageSize = 10
-).cachedIn(viewModelScope)
-
-launch {
-    combine(
-        movies,
-        movies.map { it.loadState.refresh }
-    ) { pagingData, refreshState ->
-        when (refreshState) {
-            is LoadState.Loading -> {
-                // Handle loading state here
-                // You can update UI or take any other action
-            }
-            else -> {
-                // Handle non-loading states here
-                // For example, update the UI with movies data
-                moviesAdapter.submitData(pagingData)
-            }
-        }
-    }.collect()
-}
-*/

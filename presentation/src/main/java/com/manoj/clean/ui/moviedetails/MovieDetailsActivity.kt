@@ -15,9 +15,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MovieDetailsActivity : BaseActivity<ActivityMovieDetailsBinding>() {
-
     private val args: MovieDetailsActivityArgs by navArgs()
-
     private val detailsNavController by lazy {
         (supportFragmentManager.findFragmentById(R.id.container) as NavHostFragment).navController
     }

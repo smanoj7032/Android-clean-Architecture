@@ -10,30 +10,25 @@ import androidx.navigation.fragment.navArgs
 import com.manoj.clean.R
 import com.manoj.clean.databinding.FragmentMovieDetailsBinding
 import com.manoj.clean.ui.base.BaseFragment
+import com.manoj.clean.ui.moviedetails.MovieDetailsViewModel.Companion.movieDetail
 import com.manoj.clean.ui.popularmovies.PopularMoviesFragment.Companion.POSTER_BASE_URL
 import com.manoj.clean.util.customCollector
 import com.manoj.clean.util.launchAndRepeatWithViewLifecycle
 import com.manoj.clean.util.loadImageWithGlide
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 
 @AndroidEntryPoint
 class MovieDetailsFragment : BaseFragment<FragmentMovieDetailsBinding>() {
-
     private val args: MovieDetailsFragmentArgs by navArgs()
+    private val viewModel: MovieDetailsViewModel by viewModels()
 
-    @Inject
-    lateinit var factory: MovieDetailsViewModel.Factory
-
-    private val viewModel: MovieDetailsViewModel by viewModels {
-        MovieDetailsViewModel.provideFactory(factory, args.movieId)
-    }
 
     override fun inflateViewBinding(inflater: LayoutInflater): FragmentMovieDetailsBinding =
         FragmentMovieDetailsBinding.inflate(inflater)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        viewModel.onInitialState(args.movieId)
         setupListeners()
         observeViewModel()
     }
@@ -46,18 +41,17 @@ class MovieDetailsFragment : BaseFragment<FragmentMovieDetailsBinding>() {
 
     private fun observeViewModel() = with(viewModel) {
         launchAndRepeatWithViewLifecycle {
-            movieDetail.customCollector(
-                this@MovieDetailsFragment,
+            movieDetail.customCollector(this@MovieDetailsFragment,
                 onLoading = ::onLoading,
                 onError = ::onError,
-                onSuccess = {  binding.movieTitle.text = it.title
+                onSuccess = {
+                    binding.movieTitle.text = it.title
                     binding.description.text = it.overview
                     binding.image.loadImageWithGlide(
-                        POSTER_BASE_URL + it.poster_path,
-                        binding.imgPb
+                        POSTER_BASE_URL + it.poster_path, binding.imgPb
                     )
-                    updateFavoriteDrawable(getFavoriteDrawable(true)) }
-            )
+                    updateFavoriteDrawable(getFavoriteDrawable(true))
+                })
         }
     }
 
@@ -70,4 +64,6 @@ class MovieDetailsFragment : BaseFragment<FragmentMovieDetailsBinding>() {
     private fun updateFavoriteDrawable(drawable: Drawable?) = with(binding.favorite) {
         setImageDrawable(drawable)
     }
+
+
 }

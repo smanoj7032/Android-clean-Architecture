@@ -5,11 +5,14 @@ import android.util.Log
 import androidx.hilt.work.HiltWorker
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
+import androidx.work.Data
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkerParameters
+import com.manoj.clean.ui.moviedetails.MovieDetailsViewModel.Companion.movieDetail
 import com.manoj.data.util.DispatchersProvider
 import com.manoj.domain.repository.BaseRepository
+import com.manoj.domain.util.State
 import com.manoj.domain.util.Status
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -26,16 +29,19 @@ class SyncWork @AssistedInject constructor(
 ) : CoroutineWorker(appContext, params) {
 
     override suspend fun doWork(): Result = withContext(dispatchers.getIO()) {
-        val state = baseRepository.getMovie(238)
+        movieDetail.value = State.loading()
+        val id = inputData.getInt("movieId", 0)
+        val state = baseRepository.getMovie(id)
         when (state.status) {
             Status.SUCCESS -> {
-                Log.e("XXX", "doWork: ${state.data}")
+                movieDetail.value = State.success(state.data)
                 Result.success()
             }
 
             else -> {
                 val lastAttempt = runAttemptCount >= SYNC_WORK_MAX_ATTEMPTS
                 if (lastAttempt) {
+                    movieDetail.value = State.error(state.message, true)
                     Log.d("XXX", "SyncWork: doWork() called -> failure")
                     Result.failure()
                 } else {
@@ -44,14 +50,13 @@ class SyncWork @AssistedInject constructor(
                 }
             }
         }
-
-
     }
 
     companion object {
-        fun getOneTimeWorkRequest() = OneTimeWorkRequestBuilder<SyncWork>().setConstraints(
-            Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
-        ).build()
+        fun getOneTimeWorkRequest(inputData: Data) =
+            OneTimeWorkRequestBuilder<SyncWork>().setConstraints(
+                Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
+            ).setInputData(inputData).build()
     }
 }
 
