@@ -1,21 +1,17 @@
 package com.manoj.data.entities
 
-import com.google.gson.annotations.SerializedName
-import com.manoj.domain.entities.MovieEntity
-import com.manoj.domain.entities.MoviesEntity
 import com.manoj.domain.entities.PopularMovieEntity
 import com.manoj.domain.entities.PopularMoviesEntity
 
-
-data class MoviesData(
+data class PopularMoviesData(
     val page: Int? = null,
-    val results: List<MovieData>? = null,
+    val results: List<PopularMovieData>? = null,
     val total_pages: Int? = null,
     val total_results: Int? = null
 )
 
 
-data class MovieData(
+data class PopularMovieData(
     val adult: Boolean? = null,
     val backdrop_path: String? = null,
     val genre_ids: List<Int>? = null,
@@ -32,7 +28,7 @@ data class MovieData(
     val vote_count: Int? = null
 )
 
-fun MovieData.toDomain() = MovieEntity(
+fun PopularMovieData.toDomain() = PopularMovieEntity(
     adult = adult,
     backdrop_path = backdrop_path,
     genre_ids = genre_ids,
@@ -49,7 +45,7 @@ fun MovieData.toDomain() = MovieEntity(
     vote_count = vote_count
 )
 
-fun MoviesData.toDomain() = MoviesEntity(
+fun PopularMoviesData.toDomain() = PopularMoviesEntity(
     page = page,
     results = results?.map { it.toDomain() },
     total_pages = total_pages,

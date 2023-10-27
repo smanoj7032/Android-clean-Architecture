@@ -7,10 +7,8 @@ import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.CombinedLoadStates
-import androidx.paging.LoadState
 import androidx.recyclerview.widget.GridLayoutManager
 import com.manoj.clean.MovieDetailsGraphDirections
 import com.manoj.clean.R
@@ -21,15 +19,13 @@ import com.manoj.clean.ui.adapter.commonadapter.RVAdapterWithPaging
 import com.manoj.clean.ui.adapter.commonadapter.RVAdapterWithPaging.Companion.createDiffCallback
 import com.manoj.clean.ui.base.BaseFragment
 import com.manoj.clean.ui.feed.FeedViewModel.NavigationState.MovieDetails
+import com.manoj.clean.ui.popularmovies.PopularMoviesFragment.Companion.POSTER_BASE_URL
 import com.manoj.clean.util.NetworkMonitor
-import com.manoj.clean.util.customCollector
 import com.manoj.clean.util.launchAndRepeatWithViewLifecycle
-import com.manoj.clean.util.loadImage
+import com.manoj.clean.util.loadImageWithGlide
 import com.manoj.clean.util.showSnackBar
 import com.manoj.domain.entities.MovieEntity
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.distinctUntilChangedBy
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -74,7 +70,11 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
 
         moviesAdapter = object : RVAdapterWithPaging<MovieEntity, ItemMovieBinding>(
             diffCallback, R.layout.item_movie, { binding, item, position ->
-                binding.image.loadImage(item.image, binding.imgPb)
+
+                binding.image.loadImageWithGlide(
+                    POSTER_BASE_URL + item.poster_path, binding.imgPb
+                )
+                binding.tvId.text = item.id.toString()
                 binding.root.setOnClickListener { viewModel.onMovieClicked(item.id) }
             }
         ) {}
@@ -92,18 +92,10 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
         }
 
         binding.recyclerView.apply {
+            itemAnimator = null
             this.layoutManager = layoutManager
             adapter = moviesAdapter.withLoadStateHeaderAndFooter(headerAdapter, footerAdapter)
             setHasFixedSize(true)
-            setItemViewCacheSize(0)
-        }
-
-        // Observe the load state and scroll to the top on refresh completion
-        lifecycleScope.launchWhenCreated {
-            moviesAdapter.loadStateFlow
-                .distinctUntilChangedBy { it.refresh }
-                .filter { it.refresh is LoadState.NotLoading }
-                .collect { binding.recyclerView.scrollToPosition(0) }
         }
     }
 
@@ -118,10 +110,7 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
     }
 
     private fun handleNetworkState(state: NetworkMonitor.NetworkState) {
-        if (state.isAvailable()) binding.root.showSnackBar(
-            "Internet connection available",
-            false
-        ) else binding.root.showSnackBar("No internet connection", true)
+        if (state.isLost()) binding.root.showSnackBar("No internet connection", true)
         Log.d("XXX", "FeedFragment: handleNetworkState() called with: NetworkState = $state")
         if (state.isAvailable() && viewModel.uiState.value.errorMessage != null) moviesAdapter.retry()
     }
@@ -133,13 +122,13 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
     }
 
     private fun handleNavigationState(state: FeedViewModel.NavigationState) = when (state) {
-        is MovieDetails -> showOrNavigateToMovieDetails(state.movieId)
+        is MovieDetails -> showOrNavigateToMovieDetails(state.movieId!!)
     }
 
-    private fun showOrNavigateToMovieDetails(movieId: Int) = if (binding.root.isSlideable) {
-        navigateToMovieDetails(movieId)
+    private fun showOrNavigateToMovieDetails(movieId: Int?) = if (binding.root.isSlideable) {
+        navigateToMovieDetails(movieId!!)
     } else {
-        showMovieDetails(movieId)
+        showMovieDetails(movieId!!)
     }
 
     private fun navigateToMovieDetails(movieId: Int) = findNavController().navigate(
@@ -159,3 +148,28 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
         requireContext().applicationContext.resources.displayMetrics.widthPixels / 3
 
 }
+
+
+/*val movies: Flow<PagingData<MovieEntity>> = getMoviesWithSeparators.movies(
+    pageSize = 10
+).cachedIn(viewModelScope)
+
+launch {
+    combine(
+        movies,
+        movies.map { it.loadState.refresh }
+    ) { pagingData, refreshState ->
+        when (refreshState) {
+            is LoadState.Loading -> {
+                // Handle loading state here
+                // You can update UI or take any other action
+            }
+            else -> {
+                // Handle non-loading states here
+                // For example, update the UI with movies data
+                moviesAdapter.submitData(pagingData)
+            }
+        }
+    }.collect()
+}
+*/

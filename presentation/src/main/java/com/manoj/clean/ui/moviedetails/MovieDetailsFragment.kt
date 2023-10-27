@@ -7,12 +7,13 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
-import com.bumptech.glide.Glide
 import com.manoj.clean.R
 import com.manoj.clean.databinding.FragmentMovieDetailsBinding
 import com.manoj.clean.ui.base.BaseFragment
+import com.manoj.clean.ui.popularmovies.PopularMoviesFragment.Companion.POSTER_BASE_URL
 import com.manoj.clean.util.customCollector
 import com.manoj.clean.util.launchAndRepeatWithViewLifecycle
+import com.manoj.clean.util.loadImageWithGlide
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -39,7 +40,7 @@ class MovieDetailsFragment : BaseFragment<FragmentMovieDetailsBinding>() {
 
     private fun setupListeners() = with(binding) {
         favorite.setOnClickListener {
-            viewModel.onFavoriteClicked()
+
         }
     }
 
@@ -57,8 +58,11 @@ class MovieDetailsFragment : BaseFragment<FragmentMovieDetailsBinding>() {
     private fun handleMovieDetailsUiState(movieState: MovieDetailsViewModel.MovieDetailsUiState) {
         binding.movieTitle.text = movieState.title
         binding.description.text = movieState.description
-        loadImage(movieState.imageUrl)
-        updateFavoriteDrawable(getFavoriteDrawable(movieState.isFavorite))
+        binding.image.loadImageWithGlide(
+            POSTER_BASE_URL + movieState.imageUrl,
+            binding.imgPb
+        )
+        updateFavoriteDrawable(getFavoriteDrawable(true))
     }
 
     private fun getFavoriteDrawable(favorite: Boolean): Drawable? = if (favorite) {
@@ -70,8 +74,4 @@ class MovieDetailsFragment : BaseFragment<FragmentMovieDetailsBinding>() {
     private fun updateFavoriteDrawable(drawable: Drawable?) = with(binding.favorite) {
         setImageDrawable(drawable)
     }
-
-    private fun loadImage(url: String) =
-        Glide.with(this).load(url).placeholder(R.color.light_gray).error(R.drawable.bg_image)
-            .into(binding.image)
 }

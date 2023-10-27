@@ -33,6 +33,13 @@
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"
             tools:node="remove" />
+        <meta-data
+            android:name="com.bumptech.glide.integration.okhttp3.OkHttpLibraryGlideModule"
+            android:value="ProgressAppGlideModule" />
+        <meta-data
+            android:name="com.bumptech.glide.integration.okhttp3.OkHttpGlideModule"
+            android:value="ProgressAppGlideModule" />
+
 
     </application>
 

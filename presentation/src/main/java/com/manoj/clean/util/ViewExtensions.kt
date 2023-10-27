@@ -1,6 +1,6 @@
 package com.manoj.clean.util
 
-import android.graphics.drawable.Drawable
+import GlideImageLoader
 import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
@@ -10,17 +10,10 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
 import com.google.android.material.snackbar.Snackbar
 import com.manoj.clean.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import javax.annotation.Nullable
 
 
 /**
@@ -71,36 +64,6 @@ inline fun Fragment.launchAndRepeatWithViewLifecycle(
     }
 }
 
-fun ImageView.loadImage(imageUrl: String?, progressBar: ProgressBar) {
-    progressBar.show()
-    Glide.with(this).load(imageUrl).placeholder(R.drawable.bg_image)
-        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-        .listener(object : RequestListener<Drawable?> {
-            override fun onLoadFailed(
-                @Nullable e: GlideException?,
-                model: Any?,
-                target: Target<Drawable?>?,
-                isFirstResource: Boolean
-            ): Boolean {
-                setImageResource(R.drawable.bg_image)
-                progressBar.hide()
-                return false
-            }
-
-            override fun onResourceReady(
-                resource: Drawable?,
-                model: Any?,
-                target: Target<Drawable?>?,
-                dataSource: DataSource?,
-                isFirstResource: Boolean
-            ): Boolean {
-                setImageDrawable(resource)
-                progressBar.hide()
-                return false
-            }
-        }).into(this)
-}
-
 
 fun View.showSnackBar(
     message: String,
@@ -126,4 +89,8 @@ fun View.showSnackBar(
     else snackBar.setBackgroundTint(ContextCompat.getColor(this.context, R.color.green))
 
     snackBar.show()
+}
+
+fun ImageView.loadImageWithGlide(url: String?, progressBar: ProgressBar) {
+    GlideImageLoader(this, progressBar).load(url)
 }

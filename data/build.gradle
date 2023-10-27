@@ -9,7 +9,8 @@ android {
         minSdk 19
         targetSdk 34
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        buildConfigField "String", "BASE_URL", "\"https://movies-mock-server.vercel.app/\""
+        buildConfigField "String", "BASE_URL", "\"https://api.themoviedb.org/3/\""
+        buildConfigField "String", "API_KEY", "\"e7722897acc88f516aa8f815ce8e9ea8\""
     }
 
     buildTypes {

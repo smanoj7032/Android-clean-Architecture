@@ -18,6 +18,21 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:background="@drawable/bg_movie_cover" />
 
+    <ProgressBar
+        android:id="@+id/img_pb"
+        android:layout_width="50dp"
+        android:padding="5dp"
+        android:layout_height="50dp"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:visibility="gone"
+        android:progress="10"
+        android:max="100"
+        android:progressDrawable="@drawable/circular_progress"
+        app:layout_constraintBottom_toTopOf="@+id/movie_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/movie_title"
         android:layout_width="0dp"
@@ -58,5 +73,26 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         tools:ignore="ContentDescription" />
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.manoj.clean.ui.base.compooundviews.ErrorView
+        android:id="@+id/error_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

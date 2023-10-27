@@ -17,9 +17,10 @@ import com.manoj.clean.ui.base.BaseFragment
 import com.manoj.clean.ui.favorites.FavoritesViewModel.FavoriteUiState
 import com.manoj.clean.ui.favorites.FavoritesViewModel.NavigationState
 import com.manoj.clean.ui.favorites.FavoritesViewModel.NavigationState.MovieDetails
+import com.manoj.clean.ui.popularmovies.PopularMoviesFragment.Companion.POSTER_BASE_URL
 import com.manoj.clean.util.hide
 import com.manoj.clean.util.launchAndRepeatWithViewLifecycle
-import com.manoj.clean.util.loadImage
+import com.manoj.clean.util.loadImageWithGlide
 import com.manoj.domain.entities.MovieEntity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -59,11 +60,10 @@ class FavoritesFragment : BaseFragment<FragmentFavoritesBinding>() {
             }
         movieAdapter = object : RVAdapterWithPaging<MovieEntity, ItemMovieBinding>(
             diffCallback, R.layout.item_movie, { binding, item, position ->
-                binding.image.loadImage(
-                    item.image,
-                    binding.imgPb
+
+                binding.image.loadImageWithGlide(
+                    POSTER_BASE_URL + item.poster_path, binding.imgPb
                 )
-                binding.root.setOnClickListener { viewModel.onMovieClicked(item.id) }
             }
         ) {}
         val layoutManager = GridLayoutManager(requireActivity().applicationContext, 3)
@@ -85,7 +85,6 @@ class FavoritesFragment : BaseFragment<FragmentFavoritesBinding>() {
 
     private fun setupObservers() = with(viewModel) {
         launchAndRepeatWithViewLifecycle {
-            launch { movies.collect { movieAdapter.submitData(it) } }
             launch { uiState.collect { handleFavoriteUiState(it) } }
             launch { navigationState.collect { handleNavigationState(it) } }
         }

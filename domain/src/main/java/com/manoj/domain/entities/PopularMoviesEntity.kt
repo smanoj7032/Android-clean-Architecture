@@ -1,15 +1,14 @@
 package com.manoj.domain.entities
 
-
-data class MoviesEntity(
+data class PopularMoviesEntity(
     val page: Int? = null,
-    val results: List<MovieEntity>? = null,
+    val results: List<PopularMovieEntity>? = null,
     val total_pages: Int? = null,
     val total_results: Int? = null
 )
 
 
-data class MovieEntity(
+data class PopularMovieEntity(
     val adult: Boolean? = null,
     val backdrop_path: String? = null,
     val genre_ids: List<Int>? = null,

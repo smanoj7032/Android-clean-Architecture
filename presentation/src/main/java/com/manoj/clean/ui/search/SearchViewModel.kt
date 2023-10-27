@@ -9,7 +9,7 @@ import androidx.paging.cachedIn
 import com.manoj.clean.ui.base.BaseViewModel
 import com.manoj.clean.util.singleSharedFlow
 import com.manoj.data.util.DispatchersProvider
-import com.manoj.domain.entities.MovieEntity
+import com.manoj.domain.entities.PopularMovieEntity
 import com.manoj.domain.usecase.SearchMovies
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -43,18 +43,19 @@ class SearchViewModel @Inject constructor(
     }
 
 
-    var movies: Flow<PagingData<MovieEntity>> = savedStateHandle.getStateFlow(KEY_SEARCH_QUERY, "")
-        .onEach { query ->
-            _uiState.value = if (query.isNotEmpty()) SearchUiState(
-                showDefaultState = false,
-                showLoading = true
-            ) else SearchUiState()
-        }
-        .debounce(500)
-        .filter { it.isNotEmpty() }
-        .flatMapLatest { query ->
-            searchMovies(query, 10)
-        }.cachedIn(viewModelScope)
+    var movies: Flow<PagingData<PopularMovieEntity>> =
+        savedStateHandle.getStateFlow(KEY_SEARCH_QUERY, "")
+            .onEach { query ->
+                _uiState.value = if (query.isNotEmpty()) SearchUiState(
+                    showDefaultState = false,
+                    showLoading = true
+                ) else SearchUiState()
+            }
+            .debounce(500)
+            .filter { it.isNotEmpty() }
+            .flatMapLatest { query ->
+                searchMovies(query, 10)
+            }.cachedIn(viewModelScope)
 
     private val _uiState: MutableStateFlow<SearchUiState> = MutableStateFlow(SearchUiState())
     val uiState = _uiState.asStateFlow()

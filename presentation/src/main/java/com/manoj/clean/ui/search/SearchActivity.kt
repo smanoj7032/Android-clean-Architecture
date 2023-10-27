@@ -11,6 +11,8 @@ import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.paging.CombinedLoadStates
 import androidx.recyclerview.widget.GridLayoutManager
+import com.bumptech.glide.Priority
+import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.snackbar.Snackbar
 import com.manoj.clean.R
 import com.manoj.clean.databinding.ActivitySearchBinding
@@ -19,11 +21,12 @@ import com.manoj.clean.ui.adapter.commonadapter.LoadMoreAdapter
 import com.manoj.clean.ui.adapter.commonadapter.RVAdapterWithPaging
 import com.manoj.clean.ui.base.BaseActivity
 import com.manoj.clean.ui.moviedetails.MovieDetailsActivity
+import com.manoj.clean.ui.popularmovies.PopularMoviesFragment.Companion.POSTER_BASE_URL
 import com.manoj.clean.ui.search.SearchViewModel.NavigationState
 import com.manoj.clean.util.hide
 import com.manoj.clean.util.launchAndRepeatWithViewLifecycle
-import com.manoj.clean.util.loadImage
-import com.manoj.domain.entities.MovieEntity
+import com.manoj.clean.util.loadImageWithGlide
+import com.manoj.domain.entities.PopularMovieEntity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -33,7 +36,7 @@ class SearchActivity : BaseActivity<ActivitySearchBinding>() {
 
     private val viewModel: SearchViewModel by viewModels()
 
-    private lateinit var movieAdapter: RVAdapterWithPaging<MovieEntity, ItemMovieBinding>
+    private lateinit var movieAdapter: RVAdapterWithPaging<PopularMovieEntity, ItemMovieBinding>
 
 
     private val loadStateListener: (CombinedLoadStates) -> Unit = {
@@ -78,9 +81,7 @@ class SearchActivity : BaseActivity<ActivitySearchBinding>() {
             noMoviesFoundView.isVisible = state.showNoMoviesFound
         }
         if (state.errorMessage != null) Snackbar.make(
-            binding.root,
-            state.errorMessage,
-            Snackbar.LENGTH_SHORT
+            binding.root, state.errorMessage, Snackbar.LENGTH_SHORT
         ).show()
     }
 
@@ -95,18 +96,21 @@ class SearchActivity : BaseActivity<ActivitySearchBinding>() {
 
     private fun setupRecyclerView() = with(binding.recyclerView) {
         val diffCallback =
-            RVAdapterWithPaging.createDiffCallback<MovieEntity> { oldItem, newItem ->
+            RVAdapterWithPaging.createDiffCallback<PopularMovieEntity> { oldItem, newItem ->
                 return@createDiffCallback oldItem.id == newItem.id
             }
-        movieAdapter = object : RVAdapterWithPaging<MovieEntity, ItemMovieBinding>(
-            diffCallback, R.layout.item_movie, { binding, item, position ->
-                binding.image.loadImage(
-                    item.image,
-                    binding.imgPb
+        movieAdapter = object : RVAdapterWithPaging<PopularMovieEntity, ItemMovieBinding>(
+            diffCallback,
+            R.layout.item_movie,
+            { binding, item, position ->
+                val options = RequestOptions().centerCrop().placeholder(R.drawable.bg_image)
+                    .error(R.drawable.bg_image).priority(Priority.HIGH)
+
+                binding.image.loadImageWithGlide(
+                    POSTER_BASE_URL + item.poster_path, binding.imgPb
                 )
-                binding.root.setOnClickListener { viewModel.onMovieClicked(item.id) }
-            }
-        ) {}
+                binding.root.setOnClickListener { item.id?.let { it1 -> viewModel.onMovieClicked(it1) } }
+            }) {}
         val layoutManager = GridLayoutManager(this@SearchActivity, 3)
         val footerAdapter = LoadMoreAdapter { movieAdapter.retry() }
         val headerAdapter = LoadMoreAdapter { movieAdapter.retry() }
