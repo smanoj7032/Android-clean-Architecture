@@ -1,8 +1,10 @@
 package com.manoj.clean.util
 
 import android.util.Log
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
@@ -54,13 +56,13 @@ fun <T> Flow<State<T>>.emitter(
 }
 
 
-fun <T> StateFlow<State<T>>.customCollector(
+suspend fun <T> StateFlow<State<T>>.customCollector(
     lifecycleOwner: LifecycleOwner,
     onLoading: (Boolean) -> Unit,
     onSuccess: ((data: T) -> Unit)?,
     onError: ((throwable: Throwable, showError: Boolean) -> Unit)?,
 ) {
-    lifecycleOwner.lifecycleScope.launch {
+    lifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
         collect { state ->
             when (state.status) {
                 Status.LOADING -> {

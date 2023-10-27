@@ -1,28 +1,6 @@
 package com.manoj.domain.util
 
-import com.manoj.domain.util.Result.Error
-import com.manoj.domain.util.Result.Success
 import retrofit2.Response
-
-sealed class Result<T> {
-    data class Success<T>(val data: T) : Result<T>()
-    data class Error<T>(val error: Throwable) : Result<T>()
-}
-
-inline fun <T, R> Result<T>.getResult(
-    success: (Success<T>) -> R, error: (Error<T>) -> R
-): R = when (this) {
-    is Success -> success(this)
-    is Error -> error(this)
-}
-
-inline fun <T> Result<T>.onSuccess(
-    block: (T) -> Unit
-): Result<T> = if (this is Success) also { block(data) } else this
-
-inline fun <T> Result<T>.onError(
-    block: (Throwable) -> Unit
-): Result<T> = if (this is Error) also { block(error) } else this
 
 
 class State<out T>(
@@ -49,27 +27,27 @@ class ApiException(val code: Int, message: String) : Exception("HTTP $code: $mes
 
 suspend fun <T, R> performApiCall(
     apiCall: suspend () -> Response<T & Any>, transformer: (T) -> R
-): Result<R> = try {
+): State<R> = try {
 
     val result = apiCall()
     if (result.isSuccessful) {
         if (result.code() == 200) {
             val responseBody = result.body()
             if (responseBody != null) {
-                Success(transformer(responseBody))
+                State.success(transformer(responseBody))
             } else {
-                Error(NullPointerException("Response body is null"))
+                State.error("Response body is null", true)
             }
         } else {
-            Error(Throwable("Unknown error"))
+            State.error("Unknown error", true)
         }
     } else {
         val errorBody = result.errorBody()
         val errorMessage = errorBody?.string() ?: "Unknown error"
-        Error(ApiException(result.code(), errorMessage))
+        State.error(ApiException(result.code(), errorMessage).message, true)
     }
 } catch (e: Exception) {
-    Error(e)
+    State.error(e.message, true)
 }
 
 

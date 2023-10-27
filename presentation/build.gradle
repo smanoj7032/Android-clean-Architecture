@@ -78,9 +78,7 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.5.1'
     kapt 'com.github.bumptech.glide:compiler:4.13.2'
 
-    //Room
-    implementation 'androidx.room:room-runtime:2.5.0'
-    kapt 'androidx.room:room-compiler:2.5.0'
+
 
     //Hilt
     implementation "com.google.dagger:hilt-android:2.44.2"

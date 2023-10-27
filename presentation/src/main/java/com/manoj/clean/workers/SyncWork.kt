@@ -10,7 +10,7 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkerParameters
 import com.manoj.data.util.DispatchersProvider
 import com.manoj.domain.repository.BaseRepository
-import com.manoj.domain.util.getResult
+import com.manoj.domain.util.Status
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.withContext
@@ -26,19 +26,26 @@ class SyncWork @AssistedInject constructor(
 ) : CoroutineWorker(appContext, params) {
 
     override suspend fun doWork(): Result = withContext(dispatchers.getIO()) {
-        baseRepository.getMovie(1).getResult({
-            Log.e("XXX", "doWork: ${it.data}")
-            Result.success()
-        }, {
-            val lastAttempt = runAttemptCount >= SYNC_WORK_MAX_ATTEMPTS
-            if (lastAttempt) {
-                Log.d("XXX", "SyncWork: doWork() called -> failure")
-                Result.failure()
-            } else {
-                Log.d("XXX", "SyncWork: doWork() called -> retry")
-                Result.retry()
+        val state = baseRepository.getMovie(238)
+        when (state.status) {
+            Status.SUCCESS -> {
+                Log.e("XXX", "doWork: ${state.data}")
+                Result.success()
             }
-        })
+
+            else -> {
+                val lastAttempt = runAttemptCount >= SYNC_WORK_MAX_ATTEMPTS
+                if (lastAttempt) {
+                    Log.d("XXX", "SyncWork: doWork() called -> failure")
+                    Result.failure()
+                } else {
+                    Log.d("XXX", "SyncWork: doWork() called -> retry")
+                    Result.retry()
+                }
+            }
+        }
+
+
     }
 
     companion object {
@@ -47,3 +54,4 @@ class SyncWork @AssistedInject constructor(
         ).build()
     }
 }
+

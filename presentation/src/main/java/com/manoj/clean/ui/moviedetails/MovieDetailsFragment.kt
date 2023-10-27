@@ -50,19 +50,15 @@ class MovieDetailsFragment : BaseFragment<FragmentMovieDetailsBinding>() {
                 this@MovieDetailsFragment,
                 onLoading = ::onLoading,
                 onError = ::onError,
-                onSuccess = { handleMovieDetailsUiState(it) }
+                onSuccess = {  binding.movieTitle.text = it.title
+                    binding.description.text = it.overview
+                    binding.image.loadImageWithGlide(
+                        POSTER_BASE_URL + it.poster_path,
+                        binding.imgPb
+                    )
+                    updateFavoriteDrawable(getFavoriteDrawable(true)) }
             )
         }
-    }
-
-    private fun handleMovieDetailsUiState(movieState: MovieDetailsViewModel.MovieDetailsUiState) {
-        binding.movieTitle.text = movieState.title
-        binding.description.text = movieState.description
-        binding.image.loadImageWithGlide(
-            POSTER_BASE_URL + movieState.imageUrl,
-            binding.imgPb
-        )
-        updateFavoriteDrawable(getFavoriteDrawable(true))
     }
 
     private fun getFavoriteDrawable(favorite: Boolean): Drawable? = if (favorite) {

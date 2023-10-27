@@ -6,11 +6,8 @@ import com.manoj.clean.ui.base.BaseViewModel
 import com.manoj.data.util.DispatchersProvider
 import com.manoj.domain.entities.MovieEntity
 import com.manoj.domain.usecase.GetMovieDetails
-import com.manoj.domain.util.Result
 import com.manoj.domain.util.State
 import com.manoj.domain.util.Status
-import com.manoj.domain.util.onError
-import com.manoj.domain.util.onSuccess
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -22,34 +19,20 @@ class MovieDetailsViewModel @AssistedInject constructor(
     dispatchers: DispatchersProvider
 ) : BaseViewModel(dispatchers) {
 
-    data class MovieDetailsUiState(
-        val title: String = "",
-        val description: String = "",
-        val imageUrl: String = "",
-    )
-
-    val movieDetail = MutableStateFlow(State(Status.LOADING, MovieDetailsUiState(), null, false))
+    val movieDetail = MutableStateFlow(State(Status.LOADING, MovieEntity(), null, false))
 
     init {
         onInitialState()
     }
 
     private fun onInitialState() = launchOnMainImmediate {
-        getMovieById(movieId).onSuccess {
-            movieDetail.value = State.success(
-                MovieDetailsUiState(
-                    title = it.title!!,
-                    description = it.overview!!,
-                    imageUrl = it.poster_path!!
-                )
-            )
-        }.onError {
-            movieDetail.value = State.error(it.message, true)
+        val result = getMovieDetails(movieId)
+        when (result.status) {
+            Status.LOADING -> movieDetail.value = State.loading()
+            Status.ERROR -> movieDetail.value = State.error(result.message, true)
+            else -> movieDetail.value = State.success(result.data)
         }
     }
-
-
-    private suspend fun getMovieById(movieId: Int): Result<MovieEntity> = getMovieDetails(movieId)
 
 
     @AssistedFactory

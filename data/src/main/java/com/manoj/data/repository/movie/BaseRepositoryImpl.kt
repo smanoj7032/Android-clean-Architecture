@@ -6,7 +6,7 @@ import androidx.paging.PagingData
 import com.manoj.domain.entities.MovieEntity
 import com.manoj.domain.entities.PopularMovieEntity
 import com.manoj.domain.repository.BaseRepository
-import com.manoj.domain.util.Result
+import com.manoj.domain.util.State
 import kotlinx.coroutines.flow.Flow
 
 class BaseRepositoryImpl constructor(
@@ -15,9 +15,9 @@ class BaseRepositoryImpl constructor(
 
     override fun movies(pageSize: Int): Flow<PagingData<MovieEntity>> = Pager(config = PagingConfig(
         pageSize = pageSize,
-        enablePlaceholders = false,),
+        enablePlaceholders = false,
+    ),
         pagingSourceFactory = { MoviesPagingSource(movieDataSource) }).flow
-
 
 
     override fun search(query: String, pageSize: Int): Flow<PagingData<PopularMovieEntity>> =
@@ -29,5 +29,6 @@ class BaseRepositoryImpl constructor(
         config = PagingConfig(pageSize),
         pagingSourceFactory = { PopularMoviesPagingSource(movieDataSource) }).flow
 
-    override suspend fun getMovie(movieId: Int): Result<MovieEntity> = movieDataSource.getMovie(movieId)
+    override suspend fun getMovie(movieId: Int): State<MovieEntity> =
+        movieDataSource.getMovie(movieId)
 }
