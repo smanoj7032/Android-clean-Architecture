@@ -47,15 +47,50 @@ abstract class BaseViewModel(
      * **/
     private val mainImmediate = dispatchers.getMainImmediate()
 
-    protected fun launchOnIO(block: suspend CoroutineScope.() -> Unit): Job = viewModelScope.launchOnIO(block)
-    protected fun launchOnMain(block: suspend CoroutineScope.() -> Unit): Job = viewModelScope.launchOnMain(block)
-    protected fun launchOnMainImmediate(block: suspend CoroutineScope.() -> Unit): Job = viewModelScope.launchOnMainImmediate(block)
+    /**These functions are extension functions for a ViewModel that helps you launch
+    coroutines on specific dispatchers using the viewModelScope.
+    They delegate the work to the corresponding CoroutineScope functions.
+     */
+    /** Launch a coroutine on the IO dispatcher using the viewModelScope.*/
+    protected fun launchOnIO(block: suspend CoroutineScope.() -> Unit): Job =
+        viewModelScope.launchOnIO(block)
 
-    protected fun CoroutineScope.launchOnIO(block: suspend CoroutineScope.() -> Unit): Job = launch(io, block = block)
-    protected fun CoroutineScope.launchOnMain(block: suspend CoroutineScope.() -> Unit): Job = launch(main, block = block)
-    protected fun CoroutineScope.launchOnMainImmediate(block: suspend CoroutineScope.() -> Unit): Job = launch(mainImmediate, block = block)
+    /** Launch a coroutine on the Main dispatcher using the viewModelScope.*/
+    protected fun launchOnMain(block: suspend CoroutineScope.() -> Unit): Job =
+        viewModelScope.launchOnMain(block)
 
-    protected suspend fun <T> withContextIO(block: suspend CoroutineScope.() -> T): T = withContext(io, block)
-    protected suspend fun <T> withContextMain(block: suspend CoroutineScope.() -> T): T = withContext(main, block)
-    protected suspend fun <T> withContextMainImmediate(block: suspend CoroutineScope.() -> T): T = withContext(mainImmediate, block)
+    /**Launch a coroutine on the Main Immediate dispatcher using the viewModelScope.*/
+    protected fun launchOnMainImmediate(block: suspend CoroutineScope.() -> Unit): Job =
+        viewModelScope.launchOnMainImmediate(block)
+
+    /** These functions are extension functions for CoroutineScope that allow you to launch
+    coroutines on specific dispatchers.*/
+
+    /** Launch a coroutine on the IO dispatcher.*/
+    protected fun CoroutineScope.launchOnIO(block: suspend CoroutineScope.() -> Unit): Job =
+        launch(io, block = block)
+
+    /**Launch a coroutine on the Main dispatcher.*/
+    protected fun CoroutineScope.launchOnMain(block: suspend CoroutineScope.() -> Unit): Job =
+        launch(main, block = block)
+
+    /** Launch a coroutine on the Main Immediate dispatcher.*/
+    protected fun CoroutineScope.launchOnMainImmediate(block: suspend CoroutineScope.() -> Unit): Job =
+        launch(mainImmediate, block = block)
+
+    /**These functions are for suspending functions that switch the coroutine context
+    to specific dispatchers and execute the provided block.*/
+
+    /**Switch the coroutine context to the IO dispatcher and execute the provided block.*/
+    protected suspend fun <T> withContextIO(block: suspend CoroutineScope.() -> T): T =
+        withContext(io, block)
+
+    /**Switch the coroutine context to the Main dispatcher and execute the provided block.*/
+    protected suspend fun <T> withContextMain(block: suspend CoroutineScope.() -> T): T =
+        withContext(main, block)
+
+    /**Switch the coroutine context to the Main Immediate dispatcher and execute the provided block.*/
+    protected suspend fun <T> withContextMainImmediate(block: suspend CoroutineScope.() -> T): T =
+        withContext(mainImmediate, block)
+
 }
