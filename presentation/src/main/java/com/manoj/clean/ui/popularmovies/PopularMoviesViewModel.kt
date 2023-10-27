@@ -8,7 +8,9 @@ import androidx.paging.cachedIn
 import com.manoj.clean.ui.base.BaseViewModel
 import com.manoj.clean.util.singleSharedFlow
 import com.manoj.data.util.DispatchersProvider
+import com.manoj.domain.entities.MovieDetails
 import com.manoj.domain.entities.PopularMovieEntity
+import com.manoj.domain.entities.UiState
 import com.manoj.domain.usecase.PopularMovies
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -24,21 +26,16 @@ class PopularMoviesViewModel @Inject constructor(
     popularMovies: PopularMovies,
     dispatchers: DispatchersProvider
 ) : BaseViewModel(dispatchers) {
-    data class FeedUiState(
-        val showLoading: Boolean = true, val errorMessage: String? = null
-    )
-
-    sealed class NavigationState { data class MovieDetails(val movieId: Int?) : NavigationState() }
 
     fun onMovieClicked(movieId: Int?) =
-        _navigationState.tryEmit(NavigationState.MovieDetails(movieId))
+        movieId?.let { MovieDetails(it) }?.let { _navigationState.tryEmit(it) }
 
-    private val _uiState: MutableStateFlow<FeedUiState> = MutableStateFlow(
-        FeedUiState()
+    private val _uiState: MutableStateFlow<UiState> = MutableStateFlow(
+        UiState()
     )
     val uiState = _uiState.asStateFlow()
     var movies: Flow<PagingData<PopularMovieEntity>> = popularMovies(10).cachedIn(viewModelScope)
-    private val _navigationState: MutableSharedFlow<NavigationState> =
+    private val _navigationState: MutableSharedFlow<MovieDetails> =
         singleSharedFlow()
     val navigationState = _navigationState.asSharedFlow()
     fun onLoadStateUpdate(loadState: CombinedLoadStates) {

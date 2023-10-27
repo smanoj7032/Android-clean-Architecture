@@ -22,7 +22,9 @@ import com.manoj.clean.util.NetworkMonitor
 import com.manoj.clean.util.launchAndRepeatWithViewLifecycle
 import com.manoj.clean.util.loadImageWithGlide
 import com.manoj.clean.util.showSnackBar
+import com.manoj.domain.entities.MovieDetails
 import com.manoj.domain.entities.PopularMovieEntity
+import com.manoj.domain.entities.UiState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -110,19 +112,16 @@ class PopularMoviesFragment : BaseFragment<FragmentPopularMoviesBinding>() {
         MovieDetailsGraphDirections.toMovieDetails(movieId)
     )
 
-    private fun handleFeedUiState(it: PopularMoviesViewModel.FeedUiState) {
+    private fun handleFeedUiState(it: UiState) {
         binding.progressBar.isVisible = it.showLoading
         if (it.errorMessage != null) {
-            binding.root.showSnackBar(it.errorMessage, true)
+            binding.root.showSnackBar(it.errorMessage!!, true)
         }
     }
 
-    private fun handleNavigationState(state: PopularMoviesViewModel.NavigationState) =
-        when (state) {
-            is PopularMoviesViewModel.NavigationState.MovieDetails -> showOrNavigateToMovieDetails(
-                state.movieId!!
-            )
-        }
+    private fun handleNavigationState(state: MovieDetails) =
+        showOrNavigateToMovieDetails(state.movieId)
+
 
     private fun showOrNavigateToMovieDetails(movieId: Int?) = if (binding.root.isSlideable) {
         navigateToMovieDetails(movieId!!)

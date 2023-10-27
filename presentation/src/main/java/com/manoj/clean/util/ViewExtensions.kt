@@ -1,6 +1,5 @@
 package com.manoj.clean.util
 
-import GlideImageLoader
 import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
@@ -12,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.snackbar.Snackbar
 import com.manoj.clean.R
+import com.manoj.clean.util.glide.GlideImageLoader
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -87,7 +87,6 @@ fun View.showSnackBar(
         )
     )
     else snackBar.setBackgroundTint(ContextCompat.getColor(this.context, R.color.green))
-
     snackBar.show()
 }
 

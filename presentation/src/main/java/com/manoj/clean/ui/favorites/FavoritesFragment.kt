@@ -14,14 +14,13 @@ import com.manoj.clean.databinding.ItemMovieBinding
 import com.manoj.clean.ui.adapter.commonadapter.LoadMoreAdapter
 import com.manoj.clean.ui.adapter.commonadapter.RVAdapterWithPaging
 import com.manoj.clean.ui.base.BaseFragment
-import com.manoj.clean.ui.favorites.FavoritesViewModel.FavoriteUiState
-import com.manoj.clean.ui.favorites.FavoritesViewModel.NavigationState
-import com.manoj.clean.ui.favorites.FavoritesViewModel.NavigationState.MovieDetails
 import com.manoj.clean.ui.popularmovies.PopularMoviesFragment.Companion.POSTER_BASE_URL
 import com.manoj.clean.util.hide
 import com.manoj.clean.util.launchAndRepeatWithViewLifecycle
 import com.manoj.clean.util.loadImageWithGlide
+import com.manoj.domain.entities.MovieDetails
 import com.manoj.domain.entities.MovieEntity
+import com.manoj.domain.entities.UiState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -90,18 +89,18 @@ class FavoritesFragment : BaseFragment<FragmentFavoritesBinding>() {
         }
     }
 
-    private fun handleFavoriteUiState(favoriteUiState: FavoriteUiState) = with(favoriteUiState) {
-        binding.progressBar.isVisible = isLoading
-        if (isLoading) {
+    private fun handleFavoriteUiState(favoriteUiState: UiState) = with(favoriteUiState) {
+        binding.progressBar.isVisible = showLoading
+        if (showLoading) {
             if (binding.noDataView.isVisible) binding.noDataView.hide()
         } else {
-            binding.noDataView.isVisible = noDataAvailable
+            binding.noDataView.isVisible = true
         }
     }
 
-    private fun handleNavigationState(navigationState: NavigationState) = when (navigationState) {
-        is MovieDetails -> navigateToMovieDetails(navigationState.movieId)
-    }
+    private fun handleNavigationState(navigationState: MovieDetails) =
+        navigateToMovieDetails(navigationState.movieId)
+
 
     private fun navigateToMovieDetails(movieId: Int) = findNavController().navigate(
         FavoritesFragmentDirections.toMovieDetailsActivity(movieId)

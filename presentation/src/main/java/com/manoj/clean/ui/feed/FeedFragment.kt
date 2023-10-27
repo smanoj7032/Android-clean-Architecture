@@ -18,13 +18,14 @@ import com.manoj.clean.ui.adapter.commonadapter.LoadMoreAdapter
 import com.manoj.clean.ui.adapter.commonadapter.RVAdapterWithPaging
 import com.manoj.clean.ui.adapter.commonadapter.RVAdapterWithPaging.Companion.createDiffCallback
 import com.manoj.clean.ui.base.BaseFragment
-import com.manoj.clean.ui.feed.FeedViewModel.NavigationState.MovieDetails
 import com.manoj.clean.ui.popularmovies.PopularMoviesFragment.Companion.POSTER_BASE_URL
 import com.manoj.clean.util.NetworkMonitor
 import com.manoj.clean.util.launchAndRepeatWithViewLifecycle
 import com.manoj.clean.util.loadImageWithGlide
 import com.manoj.clean.util.showSnackBar
+import com.manoj.domain.entities.MovieDetails
 import com.manoj.domain.entities.MovieEntity
+import com.manoj.domain.entities.UiState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -115,15 +116,15 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
         if (state.isAvailable() && viewModel.uiState.value.errorMessage != null) moviesAdapter.retry()
     }
 
-    private fun handleFeedUiState(it: FeedViewModel.FeedUiState) {
+    private fun handleFeedUiState(it: UiState) {
         binding.progressBar.isVisible = it.showLoading
         if (it.errorMessage != null)
-            binding.root.showSnackBar(it.errorMessage, true)
+            binding.root.showSnackBar(it.errorMessage!!, true)
     }
 
-    private fun handleNavigationState(state: FeedViewModel.NavigationState) = when (state) {
-        is MovieDetails -> showOrNavigateToMovieDetails(state.movieId)
-    }
+    private fun handleNavigationState(state: MovieDetails) =
+        showOrNavigateToMovieDetails(state.movieId)
+
 
     private fun showOrNavigateToMovieDetails(movieId: Int?) =
         if (binding.root.isSlideable) movieId?.let { navigateToMovieDetails(it) }

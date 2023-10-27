@@ -8,7 +8,9 @@ import androidx.paging.cachedIn
 import com.manoj.clean.ui.base.BaseViewModel
 import com.manoj.clean.util.singleSharedFlow
 import com.manoj.data.util.DispatchersProvider
+import com.manoj.domain.entities.MovieDetails
 import com.manoj.domain.entities.MovieEntity
+import com.manoj.domain.entities.UiState
 import com.manoj.domain.usecase.GetMoviesWithSeparators
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -25,26 +27,19 @@ class FeedViewModel @Inject constructor(
     dispatchers: DispatchersProvider
 ) : BaseViewModel(dispatchers) {
 
-    data class FeedUiState(
-        val showLoading: Boolean = true,
-        val errorMessage: String? = null
-    )
-
-    sealed class NavigationState {
-        data class MovieDetails(val movieId: Int?) : NavigationState()
-    }
 
     val movies: Flow<PagingData<MovieEntity>> = getMoviesWithSeparators.movies(
         pageSize = 10
     ).cachedIn(viewModelScope)
 
-    private val _uiState: MutableStateFlow<FeedUiState> = MutableStateFlow(FeedUiState())
+    private val _uiState: MutableStateFlow<UiState> = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()
 
-    private val _navigationState: MutableSharedFlow<NavigationState> = singleSharedFlow()
+    private val _navigationState: MutableSharedFlow<MovieDetails> = singleSharedFlow()
     val navigationState = _navigationState.asSharedFlow()
 
-    fun onMovieClicked(movieId: Int?) = _navigationState.tryEmit(NavigationState.MovieDetails(movieId))
+    fun onMovieClicked(movieId: Int?) = movieId?.let { MovieDetails(it) }
+        ?.let { _navigationState.tryEmit(it) }
 
     fun onLoadStateUpdate(loadState: CombinedLoadStates) {
         val showLoading = loadState.refresh is LoadState.Loading
@@ -54,6 +49,6 @@ class FeedViewModel @Inject constructor(
             else -> null
         }
 
-        _uiState.update { it.copy(showLoading = showLoading, errorMessage = error) }
+        _uiState.update { it.copy(showLoading = showLoading, errorMessage  = error) }
     }
 }

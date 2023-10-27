@@ -5,6 +5,8 @@ import androidx.paging.LoadState
 import com.manoj.clean.ui.base.BaseViewModel
 import com.manoj.clean.util.singleSharedFlow
 import com.manoj.data.util.DispatchersProvider
+import com.manoj.domain.entities.MovieDetails
+import com.manoj.domain.entities.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,19 +20,11 @@ class FavoritesViewModel @Inject constructor(
     dispatchers: DispatchersProvider
 ) : BaseViewModel(dispatchers) {
 
-    data class FavoriteUiState(
-        val isLoading: Boolean = true,
-        val noDataAvailable: Boolean = false
-    )
 
-    sealed class NavigationState {
-        data class MovieDetails(val movieId: Int) : NavigationState()
-    }
-
-    private val _uiState: MutableStateFlow<FavoriteUiState> = MutableStateFlow(FavoriteUiState())
+    private val _uiState: MutableStateFlow<UiState> = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()
 
-    private val _navigationState: MutableSharedFlow<NavigationState> = singleSharedFlow()
+    private val _navigationState: MutableSharedFlow<MovieDetails> = singleSharedFlow()
     val navigationState = _navigationState.asSharedFlow()
 
     fun onLoadStateUpdate(loadState: CombinedLoadStates, itemCount: Int) {
@@ -39,8 +33,7 @@ class FavoritesViewModel @Inject constructor(
 
         _uiState.update {
             it.copy(
-                isLoading = showLoading,
-                noDataAvailable = showNoData
+                showLoading = showLoading, errorMessage = showNoData.toString()
             )
         }
     }

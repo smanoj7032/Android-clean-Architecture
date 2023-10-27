@@ -22,7 +22,6 @@ import com.manoj.clean.ui.adapter.commonadapter.RVAdapterWithPaging
 import com.manoj.clean.ui.base.BaseActivity
 import com.manoj.clean.ui.moviedetails.MovieDetailsActivity
 import com.manoj.clean.ui.popularmovies.PopularMoviesFragment.Companion.POSTER_BASE_URL
-import com.manoj.clean.ui.search.SearchViewModel.NavigationState
 import com.manoj.clean.util.hide
 import com.manoj.clean.util.launchAndRepeatWithViewLifecycle
 import com.manoj.clean.util.loadImageWithGlide
@@ -85,9 +84,9 @@ class SearchActivity : BaseActivity<ActivitySearchBinding>() {
         ).show()
     }
 
-    private fun handleNavigationState(state: NavigationState) = when (state) {
-        is NavigationState.MovieDetails -> MovieDetailsActivity.start(this, state.movieId)
-    }
+    private fun handleNavigationState(state: SearchViewModel.MovieDetails) =
+        MovieDetailsActivity.start(this, state.movieId)
+
 
     private fun setupActionBar() {
         supportActionBar?.title = ""

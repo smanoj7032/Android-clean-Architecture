@@ -38,9 +38,7 @@ class SearchViewModel @Inject constructor(
         val errorMessage: String? = null
     )
 
-    sealed class NavigationState {
-        data class MovieDetails(val movieId: Int) : NavigationState()
-    }
+    data class MovieDetails(val movieId: Int)
 
 
     var movies: Flow<PagingData<PopularMovieEntity>> =
@@ -60,7 +58,7 @@ class SearchViewModel @Inject constructor(
     private val _uiState: MutableStateFlow<SearchUiState> = MutableStateFlow(SearchUiState())
     val uiState = _uiState.asStateFlow()
 
-    private val _navigationState: MutableSharedFlow<NavigationState> = singleSharedFlow()
+    private val _navigationState: MutableSharedFlow<MovieDetails> = singleSharedFlow()
     val navigationState = _navigationState.asSharedFlow()
 
     fun onSearch(query: String) {
@@ -68,7 +66,7 @@ class SearchViewModel @Inject constructor(
     }
 
     fun onMovieClicked(movieId: Int) =
-        _navigationState.tryEmit(NavigationState.MovieDetails(movieId))
+        _navigationState.tryEmit(MovieDetails(movieId))
 
     fun getSearchQuery(): CharSequence? = savedStateHandle.get<String>(KEY_SEARCH_QUERY)
 
