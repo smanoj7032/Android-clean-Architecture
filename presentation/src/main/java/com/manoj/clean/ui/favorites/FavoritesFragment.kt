@@ -8,6 +8,8 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.paging.CombinedLoadStates
 import androidx.recyclerview.widget.GridLayoutManager
+import com.bumptech.glide.Priority
+import com.bumptech.glide.request.RequestOptions
 import com.manoj.clean.R
 import com.manoj.clean.databinding.FragmentFavoritesBinding
 import com.manoj.clean.databinding.ItemMovieBinding
@@ -17,7 +19,7 @@ import com.manoj.clean.ui.base.BaseFragment
 import com.manoj.clean.ui.popularmovies.PopularMoviesFragment.Companion.POSTER_BASE_URL
 import com.manoj.clean.util.hide
 import com.manoj.clean.util.launchAndRepeatWithViewLifecycle
-import com.manoj.clean.util.loadImageWithGlide
+import com.manoj.clean.util.loadImageWithProgress
 import com.manoj.domain.entities.MovieDetails
 import com.manoj.domain.entities.MovieEntity
 import com.manoj.domain.entities.UiState
@@ -59,9 +61,14 @@ class FavoritesFragment : BaseFragment<FragmentFavoritesBinding>() {
             }
         movieAdapter = object : RVAdapterWithPaging<MovieEntity, ItemMovieBinding>(
             diffCallback, R.layout.item_movie, { binding, item, position ->
-
-                binding.image.loadImageWithGlide(
-                    POSTER_BASE_URL + item.poster_path, binding.imgPb
+                val options: RequestOptions = RequestOptions()
+                    .centerCrop()
+                    .placeholder(R.drawable.bg_image)
+                    .error(R.drawable.bg_image)
+                    .priority(Priority.HIGH)
+                binding.image.loadImageWithProgress(
+                    POSTER_BASE_URL + item.poster_path, binding.imgPb,
+                    options
                 )
             }
         ) {}

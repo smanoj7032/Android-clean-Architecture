@@ -23,7 +23,7 @@ class MovieDetailsViewModel @Inject constructor(
 
 
     fun onInitialState(movieId: Int) = launchOnMainImmediate {
-        val inputData = Data.Builder().putInt("movieId", movieId).build()
+       val inputData = Data.Builder().putInt("movieId", movieId).build()
         workManager.enqueueUniqueWork(
             SyncWork::class.java.simpleName,
             ExistingWorkPolicy.KEEP,

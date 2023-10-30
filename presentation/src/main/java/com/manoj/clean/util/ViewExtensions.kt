@@ -1,5 +1,6 @@
 package com.manoj.clean.util
 
+import android.graphics.drawable.Drawable
 import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
@@ -9,11 +10,19 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.Target
 import com.google.android.material.snackbar.Snackbar
 import com.manoj.clean.R
 import com.manoj.clean.util.glide.GlideImageLoader
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import javax.annotation.Nullable
 
 
 /**
@@ -90,6 +99,40 @@ fun View.showSnackBar(
     snackBar.show()
 }
 
-fun ImageView.loadImageWithGlide(url: String?, progressBar: ProgressBar) {
-    GlideImageLoader(this, progressBar).load(url)
+fun ImageView.loadImageWithProgress(
+    url: String?,
+    progressBar: ProgressBar,
+    options: RequestOptions
+) {
+    GlideImageLoader(this, progressBar).load(url, options)
+}
+
+fun ImageView.loadImage(imageUrl: String?, loader: ProgressBar) {
+    loader.visibility = View.VISIBLE
+    Glide.with(this).load(imageUrl).placeholder(R.drawable.bg_image)
+        .skipMemoryCache(true)
+        .diskCacheStrategy(DiskCacheStrategy.NONE)
+        .listener(object : RequestListener<Drawable?> {
+            override fun onLoadFailed(
+                @Nullable e: GlideException?,
+                model: Any?,
+                target: Target<Drawable?>?,
+                isFirstResource: Boolean
+            ): Boolean {
+                setImageResource(R.drawable.bg_image)
+                return false
+            }
+
+            override fun onResourceReady(
+                resource: Drawable?,
+                model: Any?,
+                target: Target<Drawable?>?,
+                dataSource: DataSource?,
+                isFirstResource: Boolean
+            ): Boolean {
+                setImageDrawable(resource)
+                loader.visibility = View.GONE
+                return false
+            }
+        }).into(this)
 }

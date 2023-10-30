@@ -35,11 +35,6 @@ class FeedViewModel @Inject constructor(
     private val _uiState: MutableStateFlow<UiState> = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()
 
-    private val _navigationState: MutableSharedFlow<MovieDetails> = singleSharedFlow()
-    val navigationState = _navigationState.asSharedFlow()
-
-    fun onMovieClicked(movieId: Int?) = movieId?.let { MovieDetails(it) }
-        ?.let { _navigationState.tryEmit(it) }
 
     fun onLoadStateUpdate(loadState: CombinedLoadStates) {
         val showLoading = loadState.refresh is LoadState.Loading

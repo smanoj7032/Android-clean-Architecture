@@ -6,19 +6,17 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.manoj.clean.R
-import com.manoj.clean.util.glide.ProgressAppGlideModule
 
 class GlideImageLoader(
     private val mImageView: ImageView, private val mProgressBar: ProgressBar?
 ) {
 
-    fun load(url: String?) {
+    fun load(url: String?, options: RequestOptions) {
         if (url == null) return;
         onConnecting()
         // Set Listener & start
@@ -35,11 +33,8 @@ class GlideImageLoader(
         })
 
         // Get Image
-        Glide.with(mImageView.context).load(url)
-            .diskCacheStrategy(DiskCacheStrategy.NONE) // Skip caching
-            .skipMemoryCache(true) // Skip caching in memory as well
-            .transition(withCrossFade()).placeholder(R.drawable.bg_image)
-            .listener(object : RequestListener<Drawable> {
+        Glide.with(mImageView.context).load(url).apply(options.skipMemoryCache(true))
+            .placeholder(R.drawable.bg_image).listener(object : RequestListener<Drawable> {
                 override fun onLoadFailed(
                     e: GlideException?,
                     model: Any?,

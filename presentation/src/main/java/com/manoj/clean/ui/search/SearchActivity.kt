@@ -24,7 +24,7 @@ import com.manoj.clean.ui.moviedetails.MovieDetailsActivity
 import com.manoj.clean.ui.popularmovies.PopularMoviesFragment.Companion.POSTER_BASE_URL
 import com.manoj.clean.util.hide
 import com.manoj.clean.util.launchAndRepeatWithViewLifecycle
-import com.manoj.clean.util.loadImageWithGlide
+import com.manoj.clean.util.loadImageWithProgress
 import com.manoj.domain.entities.PopularMovieEntity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -102,11 +102,14 @@ class SearchActivity : BaseActivity<ActivitySearchBinding>() {
             diffCallback,
             R.layout.item_movie,
             { binding, item, position ->
-                val options = RequestOptions().centerCrop().placeholder(R.drawable.bg_image)
-                    .error(R.drawable.bg_image).priority(Priority.HIGH)
+                val options: RequestOptions = RequestOptions()
+                    .centerCrop()
+                    .placeholder(R.drawable.bg_image)
+                    .error(R.drawable.bg_image)
+                    .priority(Priority.HIGH)
 
-                binding.image.loadImageWithGlide(
-                    POSTER_BASE_URL + item.poster_path, binding.imgPb
+                binding.image.loadImageWithProgress(
+                    POSTER_BASE_URL + item.poster_path, binding.imgPb, options
                 )
                 binding.root.setOnClickListener { item.id?.let { it1 -> viewModel.onMovieClicked(it1) } }
             }) {}

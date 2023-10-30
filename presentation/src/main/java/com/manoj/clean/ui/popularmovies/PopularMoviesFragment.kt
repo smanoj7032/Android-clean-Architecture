@@ -5,12 +5,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.paging.CombinedLoadStates
 import androidx.recyclerview.widget.GridLayoutManager
-import com.manoj.clean.MovieDetailsGraphDirections
+import com.bumptech.glide.Priority
+import com.bumptech.glide.request.RequestOptions
 import com.manoj.clean.R
 import com.manoj.clean.databinding.FragmentPopularMoviesBinding
 import com.manoj.clean.databinding.ItemMovieBinding
@@ -20,9 +20,8 @@ import com.manoj.clean.ui.base.BaseFragment
 import com.manoj.clean.ui.feed.FeedFragmentDirections
 import com.manoj.clean.util.NetworkMonitor
 import com.manoj.clean.util.launchAndRepeatWithViewLifecycle
-import com.manoj.clean.util.loadImageWithGlide
+import com.manoj.clean.util.loadImageWithProgress
 import com.manoj.clean.util.showSnackBar
-import com.manoj.domain.entities.MovieDetails
 import com.manoj.domain.entities.PopularMovieEntity
 import com.manoj.domain.entities.UiState
 import dagger.hilt.android.AndroidEntryPoint
@@ -36,9 +35,6 @@ class PopularMoviesFragment : BaseFragment<FragmentPopularMoviesBinding>() {
     private lateinit var adapter: RVAdapterWithPaging<PopularMovieEntity, ItemMovieBinding>
     private val loadStateListener: (CombinedLoadStates) -> Unit = {
         viewModel.onLoadStateUpdate(it)
-    }
-    private val detailsNavController by lazy {
-        binding.container.getFragment<Fragment>().findNavController()
     }
 
     companion object {
@@ -73,8 +69,13 @@ class PopularMoviesFragment : BaseFragment<FragmentPopularMoviesBinding>() {
             diffCallback,
             R.layout.item_movie,
             { binding, item, position ->
-                binding.image.loadImageWithGlide(
-                    POSTER_BASE_URL + item.poster_path, binding.imgPb
+                val options: RequestOptions = RequestOptions()
+                    .centerCrop()
+                    .placeholder(R.drawable.bg_image)
+                    .error(R.drawable.bg_image)
+                    .priority(Priority.HIGH)
+                binding.image.loadImageWithProgress(
+                    POSTER_BASE_URL + item.poster_path, binding.imgPb, options
                 )
                 binding.tvId.text = item.id.toString()
                 binding.root.setOnClickListener { viewModel.onMovieClicked(item.id) }
@@ -104,29 +105,16 @@ class PopularMoviesFragment : BaseFragment<FragmentPopularMoviesBinding>() {
             launch { networkMonitor.networkState.collect { handleNetworkState(it) } }
             launch { movies.collect { adapter.submitData(it) } }
             launch { uiState.collect { handleFeedUiState(it) } }
-            launch { navigationState.collect { handleNavigationState(it) } }
+            launch { navigationState.collect { navigateToMovieDetails(it.movieId) } }
         }
     }
 
-    private fun showMovieDetails(movieId: Int) = detailsNavController.navigate(
-        MovieDetailsGraphDirections.toMovieDetails(movieId)
-    )
 
     private fun handleFeedUiState(it: UiState) {
         binding.progressBar.isVisible = it.showLoading
         if (it.errorMessage != null) {
             binding.root.showSnackBar(it.errorMessage!!, true)
         }
-    }
-
-    private fun handleNavigationState(state: MovieDetails) =
-        showOrNavigateToMovieDetails(state.movieId)
-
-
-    private fun showOrNavigateToMovieDetails(movieId: Int?) = if (binding.root.isSlideable) {
-        navigateToMovieDetails(movieId!!)
-    } else {
-        showMovieDetails(movieId!!)
     }
 
     private fun navigateToMovieDetails(movieId: Int) = findNavController().navigate(

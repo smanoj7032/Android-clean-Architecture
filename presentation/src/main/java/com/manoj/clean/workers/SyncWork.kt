@@ -34,6 +34,7 @@ class SyncWork @AssistedInject constructor(
         val state = baseRepository.getMovie(id)
         when (state.status) {
             Status.SUCCESS -> {
+                Log.e("MovieDetail---->>", "doWork: ${state.data}")
                 movieDetail.value = State.success(state.data)
                 Result.success()
             }

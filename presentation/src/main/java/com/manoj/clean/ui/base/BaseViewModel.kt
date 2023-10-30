@@ -47,50 +47,64 @@ abstract class BaseViewModel(
      * **/
     private val mainImmediate = dispatchers.getMainImmediate()
 
-    /**These functions are extension functions for a ViewModel that helps you launch
-    coroutines on specific dispatchers using the viewModelScope.
-    They delegate the work to the corresponding CoroutineScope functions.
-     */
-    /** Launch a coroutine on the IO dispatcher using the viewModelScope.*/
-    protected fun launchOnIO(block: suspend CoroutineScope.() -> Unit): Job =
-        viewModelScope.launchOnIO(block)
+    protected fun launchOnIO(block: suspend CoroutineScope.() -> Unit): Job {
+        /** This function launches a background task using a coroutine on the IO (Input/Output) dispatcher.
+        It's useful for tasks like network requests or disk I/O operations.
+        It returns a Job, which allows you to control and monitor the task.*/
+        return viewModelScope.launchOnIO(block)
+    }
 
-    /** Launch a coroutine on the Main dispatcher using the viewModelScope.*/
-    protected fun launchOnMain(block: suspend CoroutineScope.() -> Unit): Job =
-        viewModelScope.launchOnMain(block)
+    protected fun launchOnMain(block: suspend CoroutineScope.() -> Unit): Job {
+        /** This function launches a UI-related task using a coroutine on the Main dispatcher.
+        It's for operations that directly affect the user interface, such as updating views.
+        It returns a Job to manage and track the execution of the task.*/
+        return viewModelScope.launchOnMain(block)
+    }
 
-    /**Launch a coroutine on the Main Immediate dispatcher using the viewModelScope.*/
-    protected fun launchOnMainImmediate(block: suspend CoroutineScope.() -> Unit): Job =
-        viewModelScope.launchOnMainImmediate(block)
+    protected fun launchOnMainImmediate(block: suspend CoroutineScope.() -> Unit): Job {
+        /** Similar to launchOnMain but with immediate (eager) execution.
+        Use this when you need the task to run right away on the Main dispatcher.
+        Returns a Job for task control and monitoring.*/
+        return viewModelScope.launchOnMainImmediate(block)
+    }
 
-    /** These functions are extension functions for CoroutineScope that allow you to launch
-    coroutines on specific dispatchers.*/
+    protected fun CoroutineScope.launchOnIO(block: suspend CoroutineScope.() -> Unit): Job {
+        /**This function launches a background task using a coroutine on the IO dispatcher.
+        It's helpful when you're working outside of a ViewModel and need to specify the dispatcher.
+        Returns a Job to manage the task.*/
+        return launch(io, block = block)
+    }
 
-    /** Launch a coroutine on the IO dispatcher.*/
-    protected fun CoroutineScope.launchOnIO(block: suspend CoroutineScope.() -> Unit): Job =
-        launch(io, block = block)
+    protected fun CoroutineScope.launchOnMain(block: suspend CoroutineScope.() -> Unit): Job {
+        /**This function launches a UI-related task using a coroutine on the Main dispatcher.
+        Useful for UI operations when you're not inside a ViewModel.
+        Returns a Job for task control and monitoring.*/
+        return launch(main, block = block)
+    }
 
-    /**Launch a coroutine on the Main dispatcher.*/
-    protected fun CoroutineScope.launchOnMain(block: suspend CoroutineScope.() -> Unit): Job =
-        launch(main, block = block)
+    protected fun CoroutineScope.launchOnMainImmediate(block: suspend CoroutineScope.() -> Unit): Job {
+        /**Similar to launchOnMain but with immediate (eager) execution.
+        Use this when you need the task to run immediately on the Main dispatcher.
+        Returns a Job for controlling and monitoring the task.*/
+        return launch(mainImmediate, block = block)
+    }
 
-    /** Launch a coroutine on the Main Immediate dispatcher.*/
-    protected fun CoroutineScope.launchOnMainImmediate(block: suspend CoroutineScope.() -> Unit): Job =
-        launch(mainImmediate, block = block)
+    protected suspend fun <T> withContextIO(block: suspend CoroutineScope.() -> T): T {
+        /**This function executes a block of code on the IO dispatcher and returns a result of type T.
+        Useful for performing background operations within a coroutine context.*/
+        return withContext(io, block)
+    }
 
-    /**These functions are for suspending functions that switch the coroutine context
-    to specific dispatchers and execute the provided block.*/
+    protected suspend fun <T> withContextMain(block: suspend CoroutineScope.() -> T): T {
+         /**This function executes a block of code on the Main dispatcher and returns a result of type T.
+         Suitable for running UI-related code within a coroutine context.*/
+        return withContext(main, block)
+    }
 
-    /**Switch the coroutine context to the IO dispatcher and execute the provided block.*/
-    protected suspend fun <T> withContextIO(block: suspend CoroutineScope.() -> T): T =
-        withContext(io, block)
-
-    /**Switch the coroutine context to the Main dispatcher and execute the provided block.*/
-    protected suspend fun <T> withContextMain(block: suspend CoroutineScope.() -> T): T =
-        withContext(main, block)
-
-    /**Switch the coroutine context to the Main Immediate dispatcher and execute the provided block.*/
-    protected suspend fun <T> withContextMainImmediate(block: suspend CoroutineScope.() -> T): T =
-        withContext(mainImmediate, block)
-
+    protected suspend fun <T> withContextMainImmediate(block: suspend CoroutineScope.() -> T): T {
+         /**Similar to withContextMain but with immediate (eager) execution.
+         Use this when you need the code to run immediately on the Main dispatcher.
+         Returns a result of type T within a coroutine context.*/
+        return withContext(mainImmediate, block)
+    }
 }

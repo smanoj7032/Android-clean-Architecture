@@ -6,7 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.navArgs
+import com.bumptech.glide.Priority
+import com.bumptech.glide.request.RequestOptions
 import com.manoj.clean.R
 import com.manoj.clean.databinding.FragmentMovieDetailsBinding
 import com.manoj.clean.ui.base.BaseFragment
@@ -14,21 +15,34 @@ import com.manoj.clean.ui.moviedetails.MovieDetailsViewModel.Companion.movieDeta
 import com.manoj.clean.ui.popularmovies.PopularMoviesFragment.Companion.POSTER_BASE_URL
 import com.manoj.clean.util.customCollector
 import com.manoj.clean.util.launchAndRepeatWithViewLifecycle
-import com.manoj.clean.util.loadImageWithGlide
+import com.manoj.clean.util.loadImage
+import com.manoj.clean.util.loadImageWithProgress
 import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
 class MovieDetailsFragment : BaseFragment<FragmentMovieDetailsBinding>() {
-    private val args: MovieDetailsFragmentArgs by navArgs()
     private val viewModel: MovieDetailsViewModel by viewModels()
 
+    companion object {
+        private const val MOVIE_ID = "movieId"
+        fun newInstance(movieId: Int): MovieDetailsFragment {
+            val fragment = MovieDetailsFragment()
+            Bundle().apply {
+                putInt(MOVIE_ID, movieId)
+            }.run {
+                fragment.arguments = this
+            }
+            return fragment
+        }
+    }
 
     override fun inflateViewBinding(inflater: LayoutInflater): FragmentMovieDetailsBinding =
         FragmentMovieDetailsBinding.inflate(inflater)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        viewModel.onInitialState(args.movieId)
+        val movieId = arguments?.getInt(MOVIE_ID)
+        movieId?.let { viewModel.onInitialState(it) }
         setupListeners()
         observeViewModel()
     }
@@ -41,17 +55,17 @@ class MovieDetailsFragment : BaseFragment<FragmentMovieDetailsBinding>() {
 
     private fun observeViewModel() = with(viewModel) {
         launchAndRepeatWithViewLifecycle {
-            movieDetail.customCollector(this@MovieDetailsFragment,
-                onLoading = ::onLoading,
-                onError = ::onError,
-                onSuccess = {
+            movieDetail.customCollector(
+                this@MovieDetailsFragment, onLoading = ::onLoading, onSuccess = {
                     binding.movieTitle.text = it.title
                     binding.description.text = it.overview
-                    binding.image.loadImageWithGlide(
-                        POSTER_BASE_URL + it.poster_path, binding.imgPb
+                    binding.image.loadImage(
+                        POSTER_BASE_URL + it.poster_path,
+                        binding.imgPb,
                     )
                     updateFavoriteDrawable(getFavoriteDrawable(true))
-                })
+                }, onError = ::onError
+            )
         }
     }
 
@@ -64,6 +78,4 @@ class MovieDetailsFragment : BaseFragment<FragmentMovieDetailsBinding>() {
     private fun updateFavoriteDrawable(drawable: Drawable?) = with(binding.favorite) {
         setImageDrawable(drawable)
     }
-
-
 }
