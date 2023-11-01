@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId "com.manoj.clean"
-        minSdkVersion 21
+        minSdkVersion 24
         targetSdkVersion 34
         versionCode 1
 
@@ -43,7 +43,7 @@ dependencies {
     implementation project(":data")
 
     //Support
-    implementation 'androidx.appcompat:appcompat:1.6.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'

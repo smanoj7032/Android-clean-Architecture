@@ -22,6 +22,10 @@ import com.manoj.clean.R
 import com.manoj.clean.util.glide.GlideImageLoader
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import java.text.ParseException
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.concurrent.TimeUnit
 import javax.annotation.Nullable
 
 
@@ -136,3 +140,53 @@ fun ImageView.loadImage(imageUrl: String?, loader: ProgressBar) {
             }
         }).into(this)
 }
+
+
+ fun covertTimeAgoToText(dataString: String?): String {
+     if (dataString == null) {
+         return ""
+     }
+
+     val suffix = "ago"
+
+     try {
+         val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+         val pasTime = dateFormat.parse(dataString)
+
+         val nowTime = Date()
+         val dateDiff = nowTime.time - pasTime.time
+         if (dateDiff < 0) {
+             return ""  // Handle the case where the parsed time is in the future
+         }
+
+         val seconds = TimeUnit.MILLISECONDS.toSeconds(dateDiff)
+         val minutes = TimeUnit.MILLISECONDS.toMinutes(dateDiff)
+         val hours = TimeUnit.MILLISECONDS.toHours(dateDiff)
+         val days = TimeUnit.MILLISECONDS.toDays(dateDiff).toDouble()
+
+         return when {
+             seconds < 60 -> "$seconds seconds $suffix"
+             minutes < 60 -> "$minutes minutes $suffix"
+             hours < 24 -> "$hours hours $suffix"
+             days < 7 -> "$days days $suffix"
+             else -> {
+                 val weeks = days / 7
+                 if (weeks < 4) {
+                     "$weeks weeks $suffix"
+                 } else {
+                     val months = weeks / 4
+                     if (months < 12) {
+                         "$months months $suffix"
+                     } else {
+                         val years = months / 12
+                         "$years years $suffix"
+                     }
+                 }
+             }
+         }
+     } catch (e: ParseException) {
+         e.printStackTrace()
+         "((day / 360) * 10.0).roundToInt() / 10.0"
+         return ""
+     }
+ }

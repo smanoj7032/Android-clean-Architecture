@@ -9,4 +9,10 @@
     <string name="no_favorite_movies_at_the_moment">There are no favorite movies\n on your list at the moment.</string>
     <string name="retry">Retry</string>
     <string name="session_expired">Session Expired</string>
+
+
+   <!--Permission Manager-->
+    <string name="dialog_permission_title">Permission required</string>
+    <string name="dialog_permission_default_message">Default message</string>
+    <string name="dialog_permission_button_positive">OK</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.manoj.clean.ui.feed
 
+import android.Manifest
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -18,6 +19,7 @@ import com.manoj.clean.ui.adapter.commonadapter.LoadMoreAdapter
 import com.manoj.clean.ui.adapter.commonadapter.RVAdapterWithPaging
 import com.manoj.clean.ui.adapter.commonadapter.RVAdapterWithPaging.Companion.createDiffCallback
 import com.manoj.clean.ui.base.BaseFragment
+import com.manoj.clean.ui.base.common.permissionutils.runWithPermissions
 import com.manoj.clean.ui.popularmovies.PopularMoviesFragment.Companion.POSTER_BASE_URL
 import com.manoj.clean.util.NetworkMonitor
 import com.manoj.clean.util.launchAndRepeatWithViewLifecycle
@@ -35,9 +37,6 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
     private lateinit var moviesAdapter: RVAdapterWithPaging<MovieEntity, ItemMovieBinding>
     private val viewModel: FeedViewModel by viewModels()
 
-    /*private val detailsNavController by lazy {
-        binding.container.getFragment<Fragment>().findNavController()
-    }*/
 
     private val loadStateListener: (CombinedLoadStates) -> Unit = {
         viewModel.onLoadStateUpdate(it)
@@ -50,10 +49,15 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
         FragmentFeedBinding.inflate(inflater)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        setupViews()
-        setupListeners()
-        observeViewModel()
+        init()
     }
+
+    private fun init() =
+        runWithPermissions(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.CAMERA) {
+            setupViews()
+            setupListeners()
+            observeViewModel()
+        }
 
     private fun setupViews() {
         initRecyclerView()
@@ -68,20 +72,18 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
             return@createDiffCallback oldItem.id == newItem.id
         }
 
-        moviesAdapter = object : RVAdapterWithPaging<MovieEntity, ItemMovieBinding>(
-            diffCallback, R.layout.item_movie, { binding, item, position ->
-                val options: RequestOptions = RequestOptions()
-                    .centerCrop()
-                    .placeholder(R.drawable.bg_image)
-                    .error(R.drawable.bg_image)
-                    .priority(Priority.HIGH)
+        moviesAdapter = object : RVAdapterWithPaging<MovieEntity, ItemMovieBinding>(diffCallback,
+            R.layout.item_movie,
+            { binding, item, position ->
+                val options: RequestOptions =
+                    RequestOptions().centerCrop().placeholder(R.drawable.bg_image)
+                        .error(R.drawable.bg_image).priority(Priority.HIGH)
                 binding.image.loadImageWithProgress(
                     POSTER_BASE_URL + item.poster_path, binding.imgPb, options
                 )
                 binding.tvId.text = item.id.toString()
                 binding.root.setOnClickListener { item.id?.let { it1 -> navigateToMovieDetails(it1) } }
-            }
-        ) {}
+            }) {}
 
         val footerAdapter = LoadMoreAdapter { moviesAdapter.retry() }
         val headerAdapter = LoadMoreAdapter { moviesAdapter.retry() }
@@ -120,8 +122,7 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
 
     private fun handleFeedUiState(it: UiState) {
         binding.progressBar.isVisible = it.showLoading
-        if (it.errorMessage != null)
-            binding.root.showSnackBar(it.errorMessage!!, true)
+        if (it.errorMessage != null) binding.root.showSnackBar(it.errorMessage!!, true)
     }
 
 
@@ -133,5 +134,4 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
         super.onDestroyView()
         moviesAdapter.removeLoadStateListener(loadStateListener)
     }
-
 }
