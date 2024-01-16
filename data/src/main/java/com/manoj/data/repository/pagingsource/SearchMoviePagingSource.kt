@@ -1,14 +1,15 @@
-package com.manoj.data.repository.movie
+package com.manoj.data.repository.pagingsource
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.manoj.data.repository.datasource.DataSource
 import com.manoj.domain.entities.PopularMovieEntity
 import com.manoj.domain.util.Status
 
 private const val STARTING_PAGE_INDEX = 1
 
 class SearchMoviePagingSource(
-    private val query: String, private val remote: MovieDataSource
+    private val query: String, private val remote: DataSource
 ) : PagingSource<Int, PopularMovieEntity>() {
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, PopularMovieEntity> {

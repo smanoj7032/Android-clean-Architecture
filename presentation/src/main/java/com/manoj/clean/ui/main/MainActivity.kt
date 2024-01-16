@@ -49,7 +49,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     )
 
     private fun setupNavigationView() = with(binding.navigationView) {
-        if (this is NavigationBarView) setupWithNavController(navController)
+        setupWithNavController(navController)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

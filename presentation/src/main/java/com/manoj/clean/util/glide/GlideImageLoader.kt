@@ -65,7 +65,7 @@ class GlideImageLoader(
     }
 
     private fun onFinished() {
-        if (mProgressBar != null && mImageView != null) {
+        if (mProgressBar != null) {
             mProgressBar.visibility = View.GONE
             mImageView.visibility = View.VISIBLE
         }

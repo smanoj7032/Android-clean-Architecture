@@ -12,8 +12,11 @@
         <item name="floatingActionButtonStyle">@style/Widget.Design.Float</item>
         <item name="bottomNavigationStyle">@style/Widget.Design.BottomNavigation</item>
         <item name="navigationRailStyle">@style/Widget.Design.NavigationRail</item>
+        <item name="alertDialogTheme">@style/AlertDialogStyle</item>
     </style>
-
+    <style name="SplashTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash_background</item>
+    </style>
     <style name="DarkTheme" parent="Theme.Material3.Dark">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
@@ -25,6 +28,25 @@
         <item name="floatingActionButtonStyle">@style/Widget.Design.Float</item>
         <item name="bottomNavigationStyle">@style/Widget.Design.BottomNavigation</item>
         <item name="navigationRailStyle">@style/Widget.Design.NavigationRail</item>
+        <item name="alertDialogTheme">@style/AlertDialogStyle</item>
+    </style>
+
+    <style name="AlertDialogStyle" parent="ThemeOverlay.Material3.Dialog.Alert">
+        <!-- Customize the button text color for AlertDialog -->
+        <item name="titleTextColor">@style/TitleColor</item>
+        <item name="buttonBarPositiveButtonStyle">@style/PositiveButtonStyle</item>
+        <item name="buttonBarNegativeButtonStyle">@style/NegativeButtonStyle</item>
+    </style>
+
+    <style name="PositiveButtonStyle" parent="Widget.Material3.Button.TextButton">
+        <item name="android:textColor">#FF0000</item> <!-- Set the text color for the positive button -->
+    </style>
+    <style name="TitleColor" parent="Widget.Material3.Button.TextButton">
+        <item name="android:textColor">#FF0000</item> <!-- Set the text color for the positive button -->
+    </style>
+
+    <style name="NegativeButtonStyle" parent="Widget.Material3.Button.TextButton">
+        <item name="android:textColor">#FF0000</item> <!-- Set the text color for the negative button -->
     </style>
 
     <style name="Widget.Design.Float" parent="Widget.Material3.FloatingActionButton.Primary">

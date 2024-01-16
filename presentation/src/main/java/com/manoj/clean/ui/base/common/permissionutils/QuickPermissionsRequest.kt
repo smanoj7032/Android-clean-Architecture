@@ -3,7 +3,7 @@ package com.manoj.clean.ui.base.common.permissionutils
 data class QuickPermissionsRequest(
     private var target: PermissionCheckerFragment,
     var permissions: Array<String> = emptyArray(),
-    var handleRationale: Boolean = true,
+    var handleRationale: Boolean = false,
     var rationaleMessage: String = "",
     var handlePermanentlyDenied: Boolean = true,
     var permanentlyDeniedMessage: String = "",

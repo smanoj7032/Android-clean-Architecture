@@ -1,11 +1,11 @@
-package com.manoj.data.repository.movie
+package com.manoj.data.repository.datasource
 
 import com.manoj.domain.entities.MovieEntity
 import com.manoj.domain.entities.MoviesEntity
 import com.manoj.domain.entities.PopularMoviesEntity
 import com.manoj.domain.util.State
 
-interface MovieDataSource {
+interface DataSource {
     suspend fun getMovies(page: Int?): State<MoviesEntity>
     suspend fun getPopularMovies(page: Int?): State<PopularMoviesEntity>
     suspend fun getMovie(movieId: Int): State<MovieEntity>

@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 open class RVAdapter<M, B : ViewDataBinding>(
     private val layoutResId: Int,
-    private val modelVarId: Int,
+    private val onBind: (B, M, Int) -> Unit
 
     ) : RecyclerView.Adapter<RVAdapter.Holder<B>>() {
 
@@ -28,16 +28,6 @@ open class RVAdapter<M, B : ViewDataBinding>(
         notifyDataSetChanged()
     }
 
-    fun addToList(newDataList: List<M>?) {
-        var newDataList = newDataList
-        if (newDataList == null) {
-            newDataList = emptyList()
-        }
-        val positionStart = dataList.size
-        val itemCount = newDataList.size
-        dataList.addAll(newDataList)
-        notifyItemRangeInserted(positionStart, itemCount)
-    }
 
     var list: List<M>?
         get() = dataList
@@ -53,20 +43,15 @@ open class RVAdapter<M, B : ViewDataBinding>(
         return Holder(binding)
     }
 
-    override fun getItemCount(): Int {
-        return dataList.size
-    }
+    override fun getItemCount()= dataList.size
+
 
     override fun onBindViewHolder(holder: Holder<B>, position: Int) {
         onBind(holder.binding, dataList[position], position)
         holder.binding.executePendingBindings()
     }
 
-    open fun onBind(binding: B, bean: M, position: Int) {
-        binding.setVariable(modelVarId, bean)
-    }
+    override fun getItemViewType(position: Int)=
+        position
 
-    override fun getItemViewType(position: Int): Int {
-        return position
-    }
 }

@@ -2,4 +2,8 @@
 <resources>
     <dimen name="item_movie_padding">1dp</dimen>
     <dimen name="movie_recycler_view_padding">4dp</dimen>
+    <dimen name="margin">16dp</dimen>
+    <dimen name="margin_big">36dp</dimen>
+    <dimen name="icon">48dp</dimen>
+    <dimen name="icon_small">40dp</dimen>
 </resources>

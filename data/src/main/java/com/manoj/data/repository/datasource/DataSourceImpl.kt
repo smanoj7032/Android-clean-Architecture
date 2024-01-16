@@ -1,4 +1,4 @@
-package com.manoj.data.repository.movie
+package com.manoj.data.repository.datasource
 
 import com.manoj.data.api.BaseApi
 import com.manoj.data.entities.toDomain
@@ -8,9 +8,9 @@ import com.manoj.domain.entities.PopularMoviesEntity
 import com.manoj.domain.util.State
 import com.manoj.domain.util.performApiCall
 
-class MovieDataSourceImpl(
+class DataSourceImpl(
     private val baseApi: BaseApi
-) : MovieDataSource {
+) : DataSource {
 
     override suspend fun getMovies(page: Int?): State<MoviesEntity> =
         performApiCall(apiCall = { baseApi.getMovies(page, false) },

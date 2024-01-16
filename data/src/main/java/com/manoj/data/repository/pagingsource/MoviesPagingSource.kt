@@ -1,15 +1,16 @@
-package com.manoj.data.repository.movie
+package com.manoj.data.repository.pagingsource
 
 import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.manoj.data.repository.datasource.DataSource
 import com.manoj.domain.entities.MovieEntity
 import com.manoj.domain.util.Status
 
 private const val MOVIE_STARTING_PAGE_INDEX = 1
 
 class MoviesPagingSource(
-    private val remote: MovieDataSource
+    private val remote: DataSource
 ) : PagingSource<Int, MovieEntity>() {
     override fun getRefreshKey(state: PagingState<Int, MovieEntity>): Int? {
         return state.anchorPosition?.let { anchorPosition ->

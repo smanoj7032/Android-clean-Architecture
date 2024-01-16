@@ -1,7 +1,7 @@
 package com.manoj.clean.di.core.module
 
 import com.manoj.data.api.BaseApi
-import com.manoj.data.repository.movie.*
+import com.manoj.data.repository.datasource.*
 import com.manoj.domain.repository.BaseRepository
 import com.manoj.domain.usecase.*
 import dagger.Module
@@ -17,7 +17,7 @@ class DataModule {
     @Provides
     @Singleton
     fun provideMovieRepository(
-        movieRemote: MovieDataSource,
+        movieRemote: DataSource,
     ): BaseRepository {
         return BaseRepositoryImpl(movieRemote)
     }
@@ -25,8 +25,8 @@ class DataModule {
 
     @Provides
     @Singleton
-    fun provideMovieRemoveDataSource(baseApi: BaseApi): MovieDataSource {
-        return MovieDataSourceImpl(baseApi)
+    fun provideMovieRemoveDataSource(baseApi: BaseApi): DataSource {
+        return DataSourceImpl(baseApi)
     }
 
     @Provides

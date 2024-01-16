@@ -13,7 +13,7 @@ object AlertManager {
         showAlert(activity, ALERT_POSITIVE, message)
     }
 
-    fun showNegativeAlert(activity: Activity, message: String?, action: (() -> Unit?)?=null) {
+    fun showNegativeAlert(activity: Activity, message: String?, action: (() -> Unit?)? = null) {
         showAlert(activity, ALERT_NEGATIVE, message, action = action)
     }
 
@@ -28,7 +28,7 @@ object AlertManager {
         title: String? = "Alert",
         action: (() -> Unit?)? = null
     ) {
-        val builder = AlertDialog.Builder(activity)
+        val builder = AlertDialog.Builder(activity, R.style.AlertDialogStyle)
         builder.setTitle(title)
         message.let { builder.setMessage(it) }
         when (alertType) {

@@ -231,7 +231,7 @@ class PermissionCheckerFragment : Fragment() {
             .setTitle(title)
             .setMessage(message)
             .setPositiveButton(positiveButtonText) { _, _ -> onPositiveClick() }
-            .setCancelable(false)
+            .setCancelable(true)
             .create()
     }
 }

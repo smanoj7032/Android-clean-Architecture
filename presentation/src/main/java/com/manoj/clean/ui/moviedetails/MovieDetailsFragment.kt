@@ -6,8 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
-import com.bumptech.glide.Priority
-import com.bumptech.glide.request.RequestOptions
 import com.manoj.clean.R
 import com.manoj.clean.databinding.FragmentMovieDetailsBinding
 import com.manoj.clean.ui.base.BaseFragment
@@ -16,7 +14,6 @@ import com.manoj.clean.ui.popularmovies.PopularMoviesFragment.Companion.POSTER_B
 import com.manoj.clean.util.customCollector
 import com.manoj.clean.util.launchAndRepeatWithViewLifecycle
 import com.manoj.clean.util.loadImage
-import com.manoj.clean.util.loadImageWithProgress
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -63,17 +60,16 @@ class MovieDetailsFragment : BaseFragment<FragmentMovieDetailsBinding>() {
                         POSTER_BASE_URL + it.poster_path,
                         binding.imgPb,
                     )
-                    updateFavoriteDrawable(getFavoriteDrawable(true))
+                    updateFavoriteDrawable(getFavoriteDrawable(false))
                 }, onError = ::onError
             )
         }
     }
 
-    private fun getFavoriteDrawable(favorite: Boolean): Drawable? = if (favorite) {
-        ContextCompat.getDrawable(requireContext(), R.drawable.ic_favorite_fill_white_48)
-    } else {
-        ContextCompat.getDrawable(requireContext(), R.drawable.ic_favorite_border_white_48)
-    }
+    private fun getFavoriteDrawable(favorite: Boolean): Drawable? =
+        if (favorite) ContextCompat.getDrawable(requireContext(), R.drawable.ic_favorite_fill_white_48)
+    else ContextCompat.getDrawable(requireContext(), R.drawable.ic_favorite_border_white_48)
+
 
     private fun updateFavoriteDrawable(drawable: Drawable?) = with(binding.favorite) {
         setImageDrawable(drawable)

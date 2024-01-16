@@ -118,7 +118,7 @@ class PopularMoviesFragment : BaseFragment<FragmentPopularMoviesBinding>() {
     }
 
     private fun navigateToMovieDetails(movieId: Int) = findNavController().navigate(
-        FeedFragmentDirections.toMovieDetailsActivity(movieId)
+        PopularMoviesFragmentDirections.toMovieDetailsActivity(movieId)
     )
 
     private fun handleNetworkState(state: NetworkMonitor.NetworkState) {

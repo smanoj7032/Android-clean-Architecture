@@ -1,6 +1,8 @@
 package com.manoj.clean.util
 
+import android.Manifest
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
@@ -190,3 +192,15 @@ fun ImageView.loadImage(imageUrl: String?, loader: ProgressBar) {
          return ""
      }
  }
+
+private fun getStoragePermission(): Array<String> {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        arrayOf(
+            Manifest.permission.READ_MEDIA_VIDEO,
+            Manifest.permission.READ_MEDIA_AUDIO,
+            Manifest.permission.READ_MEDIA_IMAGES
+        )
+    } else
+        arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
+}
+val PERMISSION_READ_STORAGE = getStoragePermission()

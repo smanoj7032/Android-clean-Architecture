@@ -1,7 +1,7 @@
 package com.manoj.clean.ui.base.common.permissionutils
 
 data class QuickPermissionsOptions(
-        var handleRationale: Boolean = true,
+        var handleRationale: Boolean = false,
         var rationaleMessage: String = "",
         var handlePermanentlyDenied: Boolean = true,
         var permanentlyDeniedMessage: String = "",
