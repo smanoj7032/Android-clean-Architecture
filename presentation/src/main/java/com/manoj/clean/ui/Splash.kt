@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import com.manoj.clean.R
 import com.manoj.clean.databinding.ActivitySplashBinding
-import com.manoj.clean.ui.base.BaseActivity
+import com.manoj.clean.ui.common.base.BaseActivity
 import com.manoj.clean.ui.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 

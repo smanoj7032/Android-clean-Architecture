@@ -17,9 +17,9 @@ import com.google.android.material.snackbar.Snackbar
 import com.manoj.clean.R
 import com.manoj.clean.databinding.ActivitySearchBinding
 import com.manoj.clean.databinding.ItemMovieBinding
-import com.manoj.clean.ui.adapter.commonadapter.LoadMoreAdapter
-import com.manoj.clean.ui.adapter.commonadapter.RVAdapterWithPaging
-import com.manoj.clean.ui.base.BaseActivity
+import com.manoj.clean.ui.common.adapter.commonadapter.LoadMoreAdapter
+import com.manoj.clean.ui.common.adapter.commonadapter.RVAdapterWithPaging
+import com.manoj.clean.ui.common.base.BaseActivity
 import com.manoj.clean.ui.moviedetails.MovieDetailsActivity
 import com.manoj.clean.ui.popularmovies.PopularMoviesFragment.Companion.POSTER_BASE_URL
 import com.manoj.clean.util.hide

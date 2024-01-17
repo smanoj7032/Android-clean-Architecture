@@ -16,6 +16,7 @@
     </style>
     <style name="SplashTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowBackground">@drawable/splash_background</item>
+        <item name="colorPrimaryDark">#DFAB04</item>
     </style>
     <style name="DarkTheme" parent="Theme.Material3.Dark">
         <!-- Customize your theme here. -->

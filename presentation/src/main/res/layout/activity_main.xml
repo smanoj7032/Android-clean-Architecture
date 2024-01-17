@@ -17,7 +17,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:navGraph="@navigation/main_graph" />
-    <com.manoj.clean.ui.base.compooundviews.ErrorView
+    <com.manoj.clean.ui.common.base.compooundviews.ErrorView
         android:id="@+id/error_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

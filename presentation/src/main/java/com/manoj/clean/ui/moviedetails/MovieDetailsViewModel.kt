@@ -3,7 +3,7 @@ package com.manoj.clean.ui.moviedetails
 import androidx.work.Data
 import androidx.work.ExistingWorkPolicy
 import androidx.work.WorkManager
-import com.manoj.clean.ui.base.BaseViewModel
+import com.manoj.clean.ui.common.base.BaseViewModel
 import com.manoj.clean.workers.SyncWork
 import com.manoj.data.util.DispatchersProvider
 import com.manoj.domain.entities.MovieEntity

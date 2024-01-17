@@ -18,11 +18,11 @@ import com.manoj.clean.databinding.ItemMovieBinding
 import com.manoj.clean.picker.ItemModel
 import com.manoj.clean.picker.PickerDialog
 import com.manoj.clean.picker.PickerDialog.Companion.TYPE_GRID
-import com.manoj.clean.ui.adapter.commonadapter.LoadMoreAdapter
-import com.manoj.clean.ui.adapter.commonadapter.RVAdapterWithPaging
-import com.manoj.clean.ui.adapter.commonadapter.RVAdapterWithPaging.Companion.createDiffCallback
-import com.manoj.clean.ui.base.BaseFragment
-import com.manoj.clean.ui.base.common.permissionutils.runWithPermissions
+import com.manoj.clean.ui.common.adapter.commonadapter.LoadMoreAdapter
+import com.manoj.clean.ui.common.adapter.commonadapter.RVAdapterWithPaging
+import com.manoj.clean.ui.common.adapter.commonadapter.RVAdapterWithPaging.Companion.createDiffCallback
+import com.manoj.clean.ui.common.base.BaseFragment
+import com.manoj.clean.ui.common.base.common.permissionutils.runWithPermissions
 import com.manoj.clean.ui.popularmovies.PopularMoviesFragment.Companion.POSTER_BASE_URL
 import com.manoj.clean.util.NetworkMonitor
 import com.manoj.clean.util.PERMISSION_READ_STORAGE
@@ -72,8 +72,8 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
             ItemModel(ItemModel.ITEM_VIDEO_GALLERY, itemIcon = R.drawable.ic_gallery_svg),
             ItemModel(ItemModel.ITEM_FILES, itemIcon = R.drawable.ic_camera_svg)
         )
-        pickerDialog = PickerDialog.Builder(this).setTitle("Select Media").setTitleTextSize(25f)
-            .setTitleTextColor(R.color.colorDialogBg).setListType(TYPE_GRID, 3).setItems(items)
+        pickerDialog = PickerDialog.Builder(this).setTitle("Select Media")/*.setTitleTextSize(25f)
+            .setTitleTextColor(R.color.colorDialogBg)*/.setListType(TYPE_GRID, 3).setItems(items)
             .create()
     }
 

@@ -8,7 +8,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import com.manoj.clean.R
 import com.manoj.clean.databinding.FragmentMovieDetailsBinding
-import com.manoj.clean.ui.base.BaseFragment
+import com.manoj.clean.ui.common.base.BaseFragment
 import com.manoj.clean.ui.moviedetails.MovieDetailsViewModel.Companion.movieDetail
 import com.manoj.clean.ui.popularmovies.PopularMoviesFragment.Companion.POSTER_BASE_URL
 import com.manoj.clean.util.customCollector

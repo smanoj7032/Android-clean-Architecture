@@ -14,9 +14,9 @@ import com.bumptech.glide.request.RequestOptions
 import com.manoj.clean.R
 import com.manoj.clean.databinding.FragmentPopularMoviesBinding
 import com.manoj.clean.databinding.ItemMovieBinding
-import com.manoj.clean.ui.adapter.commonadapter.LoadMoreAdapter
-import com.manoj.clean.ui.adapter.commonadapter.RVAdapterWithPaging
-import com.manoj.clean.ui.base.BaseFragment
+import com.manoj.clean.ui.common.adapter.commonadapter.LoadMoreAdapter
+import com.manoj.clean.ui.common.adapter.commonadapter.RVAdapterWithPaging
+import com.manoj.clean.ui.common.base.BaseFragment
 import com.manoj.clean.ui.feed.FeedFragmentDirections
 import com.manoj.clean.util.NetworkMonitor
 import com.manoj.clean.util.launchAndRepeatWithViewLifecycle

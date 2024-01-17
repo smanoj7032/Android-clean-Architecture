@@ -6,6 +6,7 @@
         android:id="@+id/action_dark_mode"
         android:icon="@drawable/ic_dark_mode"
         android:title="@string/search"
+        android:visible="false"
         app:showAsAction="always" />
 
     <item

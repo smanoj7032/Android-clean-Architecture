@@ -6,7 +6,7 @@ import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.manoj.clean.ui.base.BaseViewModel
+import com.manoj.clean.ui.common.base.BaseViewModel
 import com.manoj.clean.util.singleSharedFlow
 import com.manoj.data.util.DispatchersProvider
 import com.manoj.domain.entities.PopularMovieEntity

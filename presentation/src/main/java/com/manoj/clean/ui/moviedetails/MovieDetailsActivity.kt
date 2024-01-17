@@ -7,7 +7,7 @@ import android.view.LayoutInflater
 import androidx.navigation.navArgs
 import com.manoj.clean.R
 import com.manoj.clean.databinding.ActivityMovieDetailsBinding
-import com.manoj.clean.ui.base.BaseActivity
+import com.manoj.clean.ui.common.base.BaseActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 

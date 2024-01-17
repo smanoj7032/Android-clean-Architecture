@@ -394,7 +394,8 @@ class PickerDialog : BottomSheetDialogFragment() {
 
     private fun openVideoGallery() {
         val pickVideo =
-            Intent(Intent.ACTION_PICK, android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI)
+            Intent(Intent.ACTION_PICK)
+        pickVideo.type="video/*"
         chooseVideo.launch(pickVideo)
     }
 

@@ -3,46 +3,38 @@ package com.manoj.clean.ui.favorites
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import androidx.paging.CombinedLoadStates
-import androidx.recyclerview.widget.GridLayoutManager
-import com.bumptech.glide.Priority
-import com.bumptech.glide.request.RequestOptions
-import com.manoj.clean.R
+import androidx.recyclerview.widget.RecyclerView
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.manoj.clean.databinding.FragmentFavoritesBinding
-import com.manoj.clean.databinding.ItemMovieBinding
-import com.manoj.clean.ui.adapter.commonadapter.LoadMoreAdapter
-import com.manoj.clean.ui.adapter.commonadapter.RVAdapterWithPaging
-import com.manoj.clean.ui.base.BaseFragment
-import com.manoj.clean.ui.popularmovies.PopularMoviesFragment.Companion.POSTER_BASE_URL
-import com.manoj.clean.util.hide
+import com.manoj.clean.ui.common.base.BaseFragment
+import com.manoj.clean.ui.common.singlexoplayer.ControlListener
+import com.manoj.clean.ui.common.singlexoplayer.SingleExoPlayerView.Companion.isMuted
+import com.manoj.clean.ui.common.singlexoplayer.SingleExoPlayerView.Companion.isPlaying
+import com.manoj.clean.ui.common.singlexoplayer.VideoAutoPlayHelper
+import com.manoj.clean.ui.common.singlexoplayer.other.Constants
+import com.manoj.clean.ui.common.singlexoplayer.other.readJSONFromAssets
 import com.manoj.clean.util.launchAndRepeatWithViewLifecycle
-import com.manoj.clean.util.loadImageWithProgress
 import com.manoj.domain.entities.MovieDetails
-import com.manoj.domain.entities.MovieEntity
-import com.manoj.domain.entities.UiState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import java.lang.reflect.Type
 
 
 @AndroidEntryPoint
 class FavoritesFragment : BaseFragment<FragmentFavoritesBinding>() {
-    private lateinit var movieAdapter: RVAdapterWithPaging<MovieEntity, ItemMovieBinding>
+
+    private lateinit var videoAutoPlayHelper: VideoAutoPlayHelper
     private val viewModel: FavoritesViewModel by viewModels()
 
-
-    private val loadStateListener: (CombinedLoadStates) -> Unit = {
-        viewModel.onLoadStateUpdate(it, movieAdapter.itemCount)
-    }
 
     override fun inflateViewBinding(inflater: LayoutInflater): FragmentFavoritesBinding =
         FragmentFavoritesBinding.inflate(inflater)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setupViews()
-        setupListeners()
         setupObservers()
     }
 
@@ -50,60 +42,51 @@ class FavoritesFragment : BaseFragment<FragmentFavoritesBinding>() {
         setupRecyclerView()
     }
 
-    private fun setupListeners() {
-        movieAdapter.addLoadStateListener(loadStateListener)
-    }
 
     private fun setupRecyclerView() = with(binding.recyclerView) {
-        val diffCallback =
-            RVAdapterWithPaging.createDiffCallback<MovieEntity> { oldItem, newItem ->
-                return@createDiffCallback oldItem == newItem
+        val jsonString = readJSONFromAssets(requireContext(), "feed_data.json")
+        val listType: Type = object : TypeToken<List<List<FeedItem>>>() {}.type
+        Constants.dataList = (Gson().fromJson(jsonString, listType) as List<List<FeedItem>>)
+        /*Helper class to provide AutoPlay feature inside cell*/
+        videoAutoPlayHelper =
+            VideoAutoPlayHelper(this)
+
+        /* Set adapter (items are being used inside adapter, you can setup in your own way*/
+        val favouriteAdapter = FavouriteAdapter(requireContext(),object : RecyclerView.OnScrollListener(){
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                print("neha onScrolled horizontal")
+                videoAutoPlayHelper.onScrolled(true)
             }
-        movieAdapter = object : RVAdapterWithPaging<MovieEntity, ItemMovieBinding>(
-            diffCallback, R.layout.item_movie, { binding, item, position ->
-                val options: RequestOptions = RequestOptions()
-                    .centerCrop()
-                    .placeholder(R.drawable.bg_image)
-                    .error(R.drawable.bg_image)
-                    .priority(Priority.HIGH)
-                binding.image.loadImageWithProgress(
-                    POSTER_BASE_URL + item.poster_path, binding.imgPb,
-                    options
-                )
+        },object : ControlListener {
+            override fun onMute(position: Int, view: View) {
+                if ((videoAutoPlayHelper.getPlayer()?.volume == 0f)) {
+                    videoAutoPlayHelper.getPlayer()?.volume = 1.0F
+                    isMuted.postValue(false)
+                } else {
+                    videoAutoPlayHelper.getPlayer()?.volume = 0F
+                    isMuted.postValue(true)
+                }
             }
-        ) {}
-        val layoutManager = GridLayoutManager(requireActivity().applicationContext, 3)
-        val footerAdapter = LoadMoreAdapter { movieAdapter.retry() }
-        val headerAdapter = LoadMoreAdapter { movieAdapter.retry() }
-        layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-            override fun getSpanSize(position: Int): Int {
-                return if ((position == movieAdapter.itemCount) && footerAdapter.itemCount > 0) 3
-                else if (movieAdapter.itemCount == 0 && headerAdapter.itemCount > 0) 3
-                else 1
+
+            override fun onPlayPause(position: Int, view: View) {
+                if (isPlaying.value==true){
+                    videoAutoPlayHelper.pause()
+                }else videoAutoPlayHelper.play()
             }
-        }
-        this.layoutManager = layoutManager
-        adapter = movieAdapter
-        adapter = movieAdapter.withLoadStateHeaderAndFooter(headerAdapter, footerAdapter)
-        setHasFixedSize(true)
-        setItemViewCacheSize(0)
+
+        })
+        binding.adapter = favouriteAdapter
+
+        videoAutoPlayHelper.startObserving()
     }
 
     private fun setupObservers() = with(viewModel) {
         launchAndRepeatWithViewLifecycle {
-            launch { uiState.collect { handleFavoriteUiState(it) } }
             launch { navigationState.collect { handleNavigationState(it) } }
         }
     }
 
-    private fun handleFavoriteUiState(favoriteUiState: UiState) = with(favoriteUiState) {
-        binding.progressBar.isVisible = showLoading
-        if (showLoading) {
-            if (binding.noDataView.isVisible) binding.noDataView.hide()
-        } else {
-            binding.noDataView.isVisible = true
-        }
-    }
 
     private fun handleNavigationState(navigationState: MovieDetails) =
         navigateToMovieDetails(navigationState.movieId)
@@ -113,12 +96,17 @@ class FavoritesFragment : BaseFragment<FragmentFavoritesBinding>() {
         FavoritesFragmentDirections.toMovieDetailsActivity(movieId)
     )
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        movieAdapter.removeLoadStateListener(loadStateListener)
-    }
 
     private fun getImageFixedSize(): Int =
         requireContext().applicationContext.resources.displayMetrics.widthPixels / 3
 
+    override fun onPause() {
+        super.onPause()
+        videoAutoPlayHelper.pause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        videoAutoPlayHelper.play()
+    }
 }
