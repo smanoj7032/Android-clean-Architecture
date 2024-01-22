@@ -10,45 +10,55 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="25dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="5dp">
 
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/image"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_margin="3dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
             android:scaleType="fitXY"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintDimensionRatio="1:1.5"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/iv_bottom_view"
             app:layout_constraintTop_toTopOf="parent"
             tools:src="@drawable/bg_movie_cover" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_bottom_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/todo"
+            android:src="@drawable/dummy_bottom_view"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/image" />
+
         <ProgressBar
             android:id="@+id/img_pb"
-            android:layout_width="50dp"
-            android:padding="5dp"
-            android:layout_height="50dp"
             style="?android:attr/progressBarStyleHorizontal"
-            android:visibility="gone"
-            android:progress="0"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:max="100"
+            android:padding="5dp"
+            android:progress="0"
             android:progressDrawable="@drawable/circular_progress"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
         <TextView
             android:id="@+id/tv_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="10dp"
             android:gravity="center"
             android:text="id"
-            android:layout_margin="10dp"
             android:textColor="@color/white"
             android:textStyle="bold"
+            android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/image" />
     </androidx.constraintlayout.widget.ConstraintLayout>

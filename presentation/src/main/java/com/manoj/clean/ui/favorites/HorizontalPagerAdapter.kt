@@ -2,24 +2,17 @@ package com.manoj.clean.ui.favorites
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.res.ColorStateList
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.manoj.clean.R
 import com.manoj.clean.databinding.ImageItemSingleBinding
 import com.manoj.clean.databinding.VideoItemSingleBinding
-import com.manoj.clean.ui.common.singlexoplayer.ControlListener
-import com.manoj.clean.ui.common.singlexoplayer.SingleExoPlayerView.Companion.isMuted
-import com.manoj.clean.ui.common.singlexoplayer.SingleExoPlayerView.Companion.isPlaying
 import com.manoj.clean.ui.favorites.FavouriteAdapter.Companion.FEED_TYPE_IMAGE
 import com.manoj.clean.ui.favorites.FavouriteAdapter.Companion.FEED_TYPE_VIDEO
 
@@ -27,7 +20,6 @@ class HorizontalPagerAdapter(
     private val context: Context,
     private val parentPosition: Int,
     private val arrayList: List<FeedItem>,
-    private val controlListener: ControlListener
 ) : ListAdapter<FeedItem, HorizontalPagerAdapter.PagerViewHolder>(DIFF_CALLBACK) {
     companion object {
         /** Mandatory implementation inorder to use "ListAdapter" - new JetPack component" **/
@@ -70,8 +62,6 @@ class HorizontalPagerAdapter(
     override fun onBindViewHolder(pagerViewHolder: PagerViewHolder, position: Int) {
         if (pagerViewHolder is VideoViewHolder) {
             val holder: VideoViewHolder = pagerViewHolder/*Reset ViewHolder */
-            holder.customPlayerView.reset()
-
             (holder.videoThumbnail.layoutParams as ConstraintLayout.LayoutParams).dimensionRatio =
                 arrayList[0].ratio
 
@@ -84,22 +74,7 @@ class HorizontalPagerAdapter(
             /*Set video's thumbnail locally (by drawable), you can set it by remoteUrl too*/
             Glide.with(context).load(arrayList[position].thumbnail).centerCrop()
                 .into(holder.videoThumbnail)
-            holder.muteIcon.setOnClickListener {
-                controlListener.onMute(position, pagerViewHolder.itemView)
-            }
-            holder.customPlayerView.setOnClickListener {
-                controlListener.onPlayPause(position, pagerViewHolder.itemView)
-            }
 
-            holder.muteIcon.imageTintList =
-                ColorStateList.valueOf(ContextCompat.getColor(context, R.color.white))
-            isMuted.observeForever { value ->
-                holder.muteIcon.isSelected = value
-            }
-            isPlaying.observeForever {
-                holder.playPauseIcon.isVisible = !it
-                holder.playPauseIcon.isSelected = it
-            }
         } else if (pagerViewHolder is ImageViewHolder) {
             val holder: ImageViewHolder = pagerViewHolder
             Glide.with(context).load(arrayList[position].thumbnail).into(holder.imageView)
@@ -120,8 +95,6 @@ class HorizontalPagerAdapter(
     class VideoViewHolder(binding: VideoItemSingleBinding) : PagerViewHolder(binding.root) {
         val videoThumbnail = binding.feedThumbnailView
         val customPlayerView = binding.feedPlayerView
-        val playPauseIcon = binding.pauseIcon
-        val muteIcon = binding.muteIcon
     }
 
 }

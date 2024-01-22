@@ -12,14 +12,12 @@ import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SnapHelper
 import com.manoj.clean.databinding.FeedItemLayoutBinding
-import com.manoj.clean.ui.common.singlexoplayer.ControlListener
 import com.manoj.clean.ui.common.singlexoplayer.other.Constants.Companion.dataList
 
 
 class FavouriteAdapter(
     private val context: Context,
     private val scrollListener: RecyclerView.OnScrollListener,
-    private val controlListener: ControlListener,
 ) :
     ListAdapter<FeedItem, FavouriteAdapter.FeedViewHolder>(DIFF_CALLBACK) {
 
@@ -61,7 +59,6 @@ class FavouriteAdapter(
             context,
             position,
             dataList[position],
-            controlListener,
         )
         holder.recyclerViewHorizontal.adapter = feedAdapter
         holder.recyclerViewHorizontal.clearOnScrollListeners()

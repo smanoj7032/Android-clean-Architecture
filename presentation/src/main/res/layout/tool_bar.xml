@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/tool_bar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#8F1D4B"
+    android:orientation="horizontal">
+
+
+    <TextView
+        android:id="@+id/tv_inbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:layout_margin="10dp"
+        android:drawablePadding="10dp"
+        android:gravity="center"
+        android:text="Inbox"
+        android:textColor="@color/white"
+        app:drawableStartCompat="@drawable/inbox_menu_svg_icon"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <TextView
+        android:id="@+id/tv_logout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_margin="10dp"
+        android:drawablePadding="10dp"
+        android:gravity="center"
+        android:text="Logout"
+        android:textColor="@color/white"
+        app:drawableEndCompat="@drawable/logout_menu_svg_icon"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+</androidx.appcompat.widget.Toolbar>

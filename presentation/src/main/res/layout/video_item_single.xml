@@ -21,7 +21,6 @@
             tools:background="@color/colorPrimary" />
 
 
-
         <com.manoj.clean.ui.common.singlexoplayer.SingleExoPlayerView
             android:id="@+id/feedPlayerView"
             android:layout_width="0dp"
@@ -32,29 +31,6 @@
             app:layout_constraintTop_toTopOf="@id/feedThumbnailView"
             tools:background="@color/color_background" />
 
-        <ImageView
-            android:id="@+id/muteIcon"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_margin="12dp"
-            android:padding="4dp"
-            android:src="@drawable/mute_unmute"
-            app:layout_constraintDimensionRatio="680:259"
-            app:layout_constraintEnd_toEndOf="@id/feedThumbnailView"
-            app:layout_constraintTop_toTopOf="@id/feedThumbnailView"
-            tools:background="@color/colorPrimaryDark" />
-
-        <ImageView
-            android:id="@+id/pause_icon"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_margin="12dp"
-            android:padding="4dp"
-            android:src="@drawable/play_pause"
-            app:layout_constraintDimensionRatio="680:259"
-            app:layout_constraintStart_toStartOf="@+id/feedThumbnailView"
-            app:layout_constraintTop_toTopOf="@id/feedThumbnailView"
-            tools:background="@color/colorPrimaryDark" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

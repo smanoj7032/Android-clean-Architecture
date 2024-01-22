@@ -10,9 +10,6 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.manoj.clean.databinding.FragmentFavoritesBinding
 import com.manoj.clean.ui.common.base.BaseFragment
-import com.manoj.clean.ui.common.singlexoplayer.ControlListener
-import com.manoj.clean.ui.common.singlexoplayer.SingleExoPlayerView.Companion.isMuted
-import com.manoj.clean.ui.common.singlexoplayer.SingleExoPlayerView.Companion.isPlaying
 import com.manoj.clean.ui.common.singlexoplayer.VideoAutoPlayHelper
 import com.manoj.clean.ui.common.singlexoplayer.other.Constants
 import com.manoj.clean.ui.common.singlexoplayer.other.readJSONFromAssets
@@ -52,30 +49,14 @@ class FavoritesFragment : BaseFragment<FragmentFavoritesBinding>() {
             VideoAutoPlayHelper(this)
 
         /* Set adapter (items are being used inside adapter, you can setup in your own way*/
-        val favouriteAdapter = FavouriteAdapter(requireContext(),object : RecyclerView.OnScrollListener(){
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                print("neha onScrolled horizontal")
-                videoAutoPlayHelper.onScrolled(true)
-            }
-        },object : ControlListener {
-            override fun onMute(position: Int, view: View) {
-                if ((videoAutoPlayHelper.getPlayer()?.volume == 0f)) {
-                    videoAutoPlayHelper.getPlayer()?.volume = 1.0F
-                    isMuted.postValue(false)
-                } else {
-                    videoAutoPlayHelper.getPlayer()?.volume = 0F
-                    isMuted.postValue(true)
+        val favouriteAdapter =
+            FavouriteAdapter(requireContext(), object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+                    print("neha onScrolled horizontal")
+                    videoAutoPlayHelper.onScrolled(true)
                 }
-            }
-
-            override fun onPlayPause(position: Int, view: View) {
-                if (isPlaying.value==true){
-                    videoAutoPlayHelper.pause()
-                }else videoAutoPlayHelper.play()
-            }
-
-        })
+            })
         binding.adapter = favouriteAdapter
 
         videoAutoPlayHelper.startObserving()

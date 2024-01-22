@@ -9,7 +9,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.paging.CombinedLoadStates
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Priority
 import com.bumptech.glide.request.RequestOptions
 import com.manoj.clean.R
@@ -142,14 +142,14 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
         val footerAdapter = LoadMoreAdapter { moviesAdapter.retry() }
         val headerAdapter = LoadMoreAdapter { moviesAdapter.retry() }
 
-        val layoutManager = GridLayoutManager(requireActivity().applicationContext, 3)
-        layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-            override fun getSpanSize(position: Int): Int {
-                return if ((position == moviesAdapter.itemCount) && footerAdapter.itemCount > 0) 3
-                else if (moviesAdapter.itemCount == 0 && headerAdapter.itemCount > 0) 3
-                else 1
-            }
-        }
+        val layoutManager = LinearLayoutManager(requireContext())
+        /* layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+             override fun getSpanSize(position: Int): Int {
+                 return if ((position == moviesAdapter.itemCount) && footerAdapter.itemCount > 0) 5
+                 else if (moviesAdapter.itemCount == 0 && headerAdapter.itemCount > 0) 5
+                 else 1
+             }
+         }*/
 
         binding.recyclerView.apply {
             itemAnimator = null

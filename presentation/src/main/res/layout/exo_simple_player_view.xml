@@ -15,59 +15,29 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+
+    <FrameLayout
+        android:id="@+id/main_media_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <SurfaceView
-            android:id="@+id/surface_view"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/root_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:background="@color/black">
 
-        <ProgressBar
-            android:id="@+id/progress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="@id/surface_view"
-            app:layout_constraintEnd_toEndOf="@id/surface_view"
-            app:layout_constraintStart_toStartOf="@id/surface_view"
-            app:layout_constraintTop_toTopOf="@id/surface_view"
-            android:layout_gravity="center"
-            android:indeterminateTint="#FFEB3B" />
+            <androidx.media3.ui.PlayerView
+                android:id="@+id/player_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:show_buffering="always" />
 
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-
-        <androidx.media3.ui.DefaultTimeBar
-            android:id="@+id/time_bar"
-            android:layout_width="0dp"
-            android:layout_height="10dp"
-            android:layout_weight="9"
-            app:played_color="#FFFFFF"
-            app:scrubber_color="#00000000"
-            app:unplayed_color="#423F3F" />
-
-        <TextView
-            android:id="@+id/text_view_duration"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:lines="1"
-            android:text="10:00 : 10:00"
-            android:textColor="@android:color/white"
-            android:textSize="12sp"
-            android:visibility="visible" />
-
-    </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </FrameLayout>
 
 </merge>

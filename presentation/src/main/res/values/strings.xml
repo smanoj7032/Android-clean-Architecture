@@ -20,4 +20,5 @@
     <string name="video">Record Video</string>
     <string name="vgallery">Choose Video</string>
     <string name="file">Select File</string>
+    <string name="todo">TODO</string>
 </resources>
