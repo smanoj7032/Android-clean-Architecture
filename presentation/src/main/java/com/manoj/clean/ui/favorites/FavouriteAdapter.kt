@@ -1,5 +1,6 @@
 package com.manoj.clean.ui.favorites
 
+import android.app.Activity
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -16,7 +17,7 @@ import com.manoj.clean.ui.common.singlexoplayer.other.Constants.Companion.dataLi
 
 
 class FavouriteAdapter(
-    private val context: Context,
+    private val context: Context, private val activity: Activity,
     private val scrollListener: RecyclerView.OnScrollListener,
 ) :
     ListAdapter<FeedItem, FavouriteAdapter.FeedViewHolder>(DIFF_CALLBACK) {
@@ -58,7 +59,7 @@ class FavouriteAdapter(
         val feedAdapter = HorizontalPagerAdapter(
             context,
             position,
-            dataList[position],
+            dataList[position], activity
         )
         holder.recyclerViewHorizontal.adapter = feedAdapter
         holder.recyclerViewHorizontal.clearOnScrollListeners()

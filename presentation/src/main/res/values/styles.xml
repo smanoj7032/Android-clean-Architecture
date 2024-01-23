@@ -31,6 +31,12 @@
         <item name="navigationRailStyle">@style/Widget.Design.NavigationRail</item>
         <item name="alertDialogTheme">@style/AlertDialogStyle</item>
     </style>
+    <style name="FullscreenDialogTheme" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
+
 
     <style name="AlertDialogStyle" parent="ThemeOverlay.Material3.Dialog.Alert">
         <!-- Customize the button text color for AlertDialog -->

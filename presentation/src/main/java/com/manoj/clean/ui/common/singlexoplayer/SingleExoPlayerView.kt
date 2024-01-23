@@ -9,7 +9,6 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.annotation.OptIn
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.isVisible
 import androidx.lifecycle.MutableLiveData
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
@@ -23,6 +22,15 @@ import androidx.media3.ui.PlayerView
 import com.manoj.clean.App
 import com.manoj.clean.R
 
+/**
+USE THIS PLAYER VIEW YOU HAVE TO MAKE THESE CLASSES AND LAYOUT
+1. SingleExoPlayerView
+2. VideoAutoPlayHelper
+3. CustomViewBinding
+4. exo_player_view
+5. exo_simple_player_view
+6. custom_controls
+ */
 
 class SingleExoPlayerView @OptIn(UnstableApi::class) @JvmOverloads constructor(
     context: Context?, attrs: AttributeSet? = null, defStyleAttr: Int = 0
@@ -43,9 +51,19 @@ class SingleExoPlayerView @OptIn(UnstableApi::class) @JvmOverloads constructor(
     private lateinit var mFullScreenDialog: Dialog
     private var isFullScreen = false
 
+    interface OnFullScreenListener {
+        fun onFullScreenExit()
+        fun onFullScreenOpen()
+    }
+
+    private var fullScreenListener: OnFullScreenListener? = null
 
     fun getPlayer(): ExoPlayer? {
         return player
+    }
+
+    fun setOnFullScreenListener(listener: OnFullScreenListener) {
+        fullScreenListener = listener
     }
 
     @OptIn(UnstableApi::class)
@@ -170,10 +188,12 @@ class SingleExoPlayerView @OptIn(UnstableApi::class) @JvmOverloads constructor(
         detachVideoSurfaceView()
         attachVideoSurfaceViewToDialog()
         isFullScreen = true
+        fullScreenListener?.onFullScreenOpen()
         mFullScreenDialog.show()
     }
 
     private fun exitFullScreen() {
+        fullScreenListener?.onFullScreenExit()
         detachVideoSurfaceViewFromDialog()
         attachVideoSurfaceViewToParent()
         isFullScreen = false
@@ -195,7 +215,7 @@ class SingleExoPlayerView @OptIn(UnstableApi::class) @JvmOverloads constructor(
 
     private fun initFullscreenDialog() {
         mFullScreenDialog = object : Dialog(
-            context, R.style.LightTheme
+            context, R.style.FullscreenDialogTheme
         ) {
             init {
                 setOnKeyListener { dialog, keyCode, event ->
@@ -257,13 +277,14 @@ class SingleExoPlayerView @OptIn(UnstableApi::class) @JvmOverloads constructor(
         ivFullScreen = findViewById(R.id.iv_fullscreen)
         val play = playerView?.findViewById<ImageView>(R.id.exo_play)
         val mute = playerView?.findViewById<ImageView>(R.id.muteIcon)
-        mute?.setOnClickListener {
+
+        playerView?.setOnClickListener {
             if ((getPlayer()?.volume == 0f)) {
                 getPlayer()?.volume = 1.0F
-                mute.isSelected = (false)
+                mute?.isSelected = (false)
             } else {
                 getPlayer()?.volume = 0F
-                mute.isSelected = (true)
+                mute?.isSelected = (true)
             }
         }
         play?.setOnClickListener {

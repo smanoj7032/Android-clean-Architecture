@@ -9,11 +9,13 @@ import com.manoj.clean.ui.favorites.FavouriteAdapter
 import com.manoj.clean.ui.favorites.HorizontalPagerAdapter
 
 
+
+
 class VideoAutoPlayHelper(var recyclerView: RecyclerView) {
 
 
     fun getPlayer(): ExoPlayer? {
-        return lastPlayerView!!.getPlayer()
+        return lastPlayerView?.getPlayer()
     }
 
     private var lastPlayerView: SingleExoPlayerView? = null

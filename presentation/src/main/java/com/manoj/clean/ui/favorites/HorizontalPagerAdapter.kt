@@ -1,7 +1,9 @@
 package com.manoj.clean.ui.favorites
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
+import android.content.pm.ActivityInfo
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
@@ -13,13 +15,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.manoj.clean.databinding.ImageItemSingleBinding
 import com.manoj.clean.databinding.VideoItemSingleBinding
+import com.manoj.clean.ui.common.singlexoplayer.SingleExoPlayerView
 import com.manoj.clean.ui.favorites.FavouriteAdapter.Companion.FEED_TYPE_IMAGE
 import com.manoj.clean.ui.favorites.FavouriteAdapter.Companion.FEED_TYPE_VIDEO
 
 class HorizontalPagerAdapter(
     private val context: Context,
     private val parentPosition: Int,
-    private val arrayList: List<FeedItem>,
+    private val arrayList: List<FeedItem>, private val activity: Activity
 ) : ListAdapter<FeedItem, HorizontalPagerAdapter.PagerViewHolder>(DIFF_CALLBACK) {
     companion object {
         /** Mandatory implementation inorder to use "ListAdapter" - new JetPack component" **/
@@ -74,6 +77,17 @@ class HorizontalPagerAdapter(
             /*Set video's thumbnail locally (by drawable), you can set it by remoteUrl too*/
             Glide.with(context).load(arrayList[position].thumbnail).centerCrop()
                 .into(holder.videoThumbnail)
+            holder.customPlayerView.setOnFullScreenListener(object :
+                SingleExoPlayerView.OnFullScreenListener {
+                override fun onFullScreenExit() {
+                    activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+                }
+
+                override fun onFullScreenOpen() {
+                    activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                }
+
+            })
 
         } else if (pagerViewHolder is ImageViewHolder) {
             val holder: ImageViewHolder = pagerViewHolder

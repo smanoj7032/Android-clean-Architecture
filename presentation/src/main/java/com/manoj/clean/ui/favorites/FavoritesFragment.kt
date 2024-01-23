@@ -50,13 +50,15 @@ class FavoritesFragment : BaseFragment<FragmentFavoritesBinding>() {
 
         /* Set adapter (items are being used inside adapter, you can setup in your own way*/
         val favouriteAdapter =
-            FavouriteAdapter(requireContext(), object : RecyclerView.OnScrollListener() {
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    super.onScrolled(recyclerView, dx, dy)
-                    print("neha onScrolled horizontal")
-                    videoAutoPlayHelper.onScrolled(true)
-                }
-            })
+            FavouriteAdapter(
+                requireContext(), requireActivity(),
+                object : RecyclerView.OnScrollListener() {
+                    override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                        super.onScrolled(recyclerView, dx, dy)
+                        print("neha onScrolled horizontal")
+                        videoAutoPlayHelper.onScrolled(true)
+                    }
+                })
         binding.adapter = favouriteAdapter
 
         videoAutoPlayHelper.startObserving()
