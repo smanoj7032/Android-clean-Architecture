@@ -7,8 +7,10 @@ import android.util.AttributeSet
 import android.view.*
 import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.ProgressBar
 import androidx.annotation.OptIn
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.isVisible
 import androidx.lifecycle.MutableLiveData
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
@@ -19,6 +21,7 @@ import androidx.media3.datasource.cache.CacheDataSource
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.ui.PlayerView
+import com.bumptech.glide.Glide
 import com.manoj.clean.App
 import com.manoj.clean.R
 
@@ -46,6 +49,7 @@ class SingleExoPlayerView @OptIn(UnstableApi::class) @JvmOverloads constructor(
     private var lastPos: Long? = 0
     private var videoUri: Uri? = null
     private var playerView: PlayerView? = null
+    private var thumbnail: ImageView? = null
     private var ivFullScreen: ImageView? = null
     private var rootLayout: ConstraintLayout? = null
     private lateinit var mFullScreenDialog: Dialog
@@ -138,16 +142,21 @@ class SingleExoPlayerView @OptIn(UnstableApi::class) @JvmOverloads constructor(
     }
 
     private fun initPlayer() {
+        reset()
         val player = ExoPlayer.Builder(context).build()
         player.repeatMode = Player.REPEAT_MODE_ALL
         player.addListener(object : Player.Listener {
             override fun onPlaybackStateChanged(playbackState: Int) {
                 super.onPlaybackStateChanged(playbackState)
                 print("playbackState== $playbackState")
+                if (playbackState == Player.STATE_READY) {
+                    playerView?.alpha = 1f
+                }
             }
 
             override fun onIsPlayingChanged(isPlaying: Boolean) {
                 super.onIsPlayingChanged(isPlaying)
+                rootLayout?.findViewById<ProgressBar>(R.id.progress_bar)?.isVisible = !isPlaying
                 SingleExoPlayerView.isPlaying.value = isPlaying
             }
         })
@@ -158,6 +167,7 @@ class SingleExoPlayerView @OptIn(UnstableApi::class) @JvmOverloads constructor(
     @OptIn(UnstableApi::class)
     fun startPlaying() {
         if (videoUri == null) return
+        thumbnail?.alpha = 0f
         val mediaItem = MediaItem.fromUri(videoUri!!)
         val cacheDataSourceFactory: DataSource.Factory =
             CacheDataSource.Factory().setCache(App.cache).setUpstreamDataSourceFactory(
@@ -176,11 +186,13 @@ class SingleExoPlayerView @OptIn(UnstableApi::class) @JvmOverloads constructor(
     fun removePlayer() {
         getPlayer()?.playWhenReady = false
         lastPos = getPlayer()?.currentPosition
+        reset()
         getPlayer()?.stop()
     }
 
-    fun setVideoUri(uri: Uri?) {
+    fun setVideoUri(uri: Uri?, thumbNailUri: String) {
         this.videoUri = uri
+        thumbnail?.let { Glide.with(context).load(thumbNailUri).into(it) }
     }
 
 
@@ -215,7 +227,7 @@ class SingleExoPlayerView @OptIn(UnstableApi::class) @JvmOverloads constructor(
 
     private fun initFullscreenDialog() {
         mFullScreenDialog = object : Dialog(
-            context, R.style.FullscreenDialogTheme
+            context, android.R.style.Theme_Black_NoTitleBar_Fullscreen
         ) {
             init {
                 setOnKeyListener { dialog, keyCode, event ->
@@ -230,8 +242,12 @@ class SingleExoPlayerView @OptIn(UnstableApi::class) @JvmOverloads constructor(
                     return@setOnKeyListener false
                 }
             }
+
         }
+        mFullScreenDialog.window?.attributes?.windowAnimations = R.style.dialog_grow_in
+        mFullScreenDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
     }
+
 
     @OptIn(UnstableApi::class)
     private fun attachVideoSurfaceViewToDialog() {
@@ -273,6 +289,7 @@ class SingleExoPlayerView @OptIn(UnstableApi::class) @JvmOverloads constructor(
 
     private fun initViews() {
         playerView = findViewById(R.id.player_view)
+        thumbnail = findViewById(R.id.feedThumbnailView)
         rootLayout = findViewById(R.id.root_layout)
         ivFullScreen = findViewById(R.id.iv_fullscreen)
         val play = playerView?.findViewById<ImageView>(R.id.exo_play)
@@ -306,4 +323,8 @@ class SingleExoPlayerView @OptIn(UnstableApi::class) @JvmOverloads constructor(
         }
     }
 
+    fun reset() {
+        playerView?.alpha = 0f
+        thumbnail?.alpha = 1f
+    }
 }

@@ -9,27 +9,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/feedThumbnailView"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintDimensionRatio="1080:1346"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:background="@color/colorPrimary" />
-
 
         <com.manoj.clean.ui.common.singlexoplayer.SingleExoPlayerView
             android:id="@+id/feedPlayerView"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="@id/feedThumbnailView"
-            app:layout_constraintEnd_toEndOf="@id/feedThumbnailView"
-            app:layout_constraintStart_toStartOf="@id/feedThumbnailView"
-            app:layout_constraintTop_toTopOf="@id/feedThumbnailView"
-            tools:background="@color/color_background" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:background="@color/white" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

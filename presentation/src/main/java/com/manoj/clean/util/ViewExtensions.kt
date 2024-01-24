@@ -3,6 +3,7 @@ package com.manoj.clean.util
 import android.Manifest
 import android.graphics.drawable.Drawable
 import android.os.Build
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
@@ -144,54 +145,54 @@ fun ImageView.loadImage(imageUrl: String?, loader: ProgressBar) {
 }
 
 
- fun covertTimeAgoToText(dataString: String?): String {
-     if (dataString == null) {
-         return ""
-     }
+fun covertTimeAgoToText(dataString: String?): String {
+    if (dataString == null) {
+        return ""
+    }
 
-     val suffix = "ago"
+    val suffix = "ago"
 
-     try {
-         val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-         val pasTime = dateFormat.parse(dataString)
+    try {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        val pasTime = dateFormat.parse(dataString)
 
-         val nowTime = Date()
-         val dateDiff = nowTime.time - pasTime.time
-         if (dateDiff < 0) {
-             return ""  // Handle the case where the parsed time is in the future
-         }
+        val nowTime = Date()
+        val dateDiff = nowTime.time - pasTime.time
+        if (dateDiff < 0) {
+            return ""  // Handle the case where the parsed time is in the future
+        }
 
-         val seconds = TimeUnit.MILLISECONDS.toSeconds(dateDiff)
-         val minutes = TimeUnit.MILLISECONDS.toMinutes(dateDiff)
-         val hours = TimeUnit.MILLISECONDS.toHours(dateDiff)
-         val days = TimeUnit.MILLISECONDS.toDays(dateDiff).toDouble()
+        val seconds = TimeUnit.MILLISECONDS.toSeconds(dateDiff)
+        val minutes = TimeUnit.MILLISECONDS.toMinutes(dateDiff)
+        val hours = TimeUnit.MILLISECONDS.toHours(dateDiff)
+        val days = TimeUnit.MILLISECONDS.toDays(dateDiff).toDouble()
 
-         return when {
-             seconds < 60 -> "$seconds seconds $suffix"
-             minutes < 60 -> "$minutes minutes $suffix"
-             hours < 24 -> "$hours hours $suffix"
-             days < 7 -> "$days days $suffix"
-             else -> {
-                 val weeks = days / 7
-                 if (weeks < 4) {
-                     "$weeks weeks $suffix"
-                 } else {
-                     val months = weeks / 4
-                     if (months < 12) {
-                         "$months months $suffix"
-                     } else {
-                         val years = months / 12
-                         "$years years $suffix"
-                     }
-                 }
-             }
-         }
-     } catch (e: ParseException) {
-         e.printStackTrace()
-         "((day / 360) * 10.0).roundToInt() / 10.0"
-         return ""
-     }
- }
+        return when {
+            seconds < 60 -> "$seconds seconds $suffix"
+            minutes < 60 -> "$minutes minutes $suffix"
+            hours < 24 -> "$hours hours $suffix"
+            days < 7 -> "$days days $suffix"
+            else -> {
+                val weeks = days / 7
+                if (weeks < 4) {
+                    "$weeks weeks $suffix"
+                } else {
+                    val months = weeks / 4
+                    if (months < 12) {
+                        "$months months $suffix"
+                    } else {
+                        val years = months / 12
+                        "$years years $suffix"
+                    }
+                }
+            }
+        }
+    } catch (e: ParseException) {
+        e.printStackTrace()
+        "((day / 360) * 10.0).roundToInt() / 10.0"
+        return ""
+    }
+}
 
 private fun getStoragePermission(): Array<String> {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -201,6 +202,72 @@ private fun getStoragePermission(): Array<String> {
             Manifest.permission.READ_MEDIA_IMAGES,
         )
     } else
-        arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        arrayOf(
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        )
 }
+
 val PERMISSION_READ_STORAGE = getStoragePermission()
+
+object Logger {
+    private var TAG = "HMS"
+    var isDebug = false
+    fun setTAG(tag: String) {
+        TAG = tag
+    }
+
+    fun d(msg: String?) {
+        if (isDebug) Log.d(TAG, msg!!)
+    }
+
+    fun d(tag: String?, msg: String?) {
+        if (isDebug) Log.d(tag, msg!!)
+    }
+
+    fun d(msg: Int) {
+        if (isDebug) Log.d(TAG, msg.toString() + "")
+    }
+
+    fun d(tag: String?, msg: Int) {
+        if (isDebug) Log.d(tag, msg.toString() + "")
+    }
+
+    fun e(msg: String?) {
+        if (isDebug) Log.e(TAG, msg!!)
+    }
+
+    fun e(tag: String?, msg: String?) {
+        if (isDebug) Log.e(tag, msg!!)
+    }
+
+    fun e(msg: Int) {
+        if (isDebug) Log.e(TAG, msg.toString() + "")
+    }
+
+    fun e(tag: String?, msg: Int) {
+        if (isDebug) Log.e(tag, msg.toString() + "")
+    }
+
+    fun i(msg: String?) {
+        if (isDebug) Log.i(TAG, msg!!)
+    }
+
+    fun i(tag: String?, msg: String?) {
+        if (isDebug) Log.i(tag, msg!!)
+    }
+
+    fun i(msg: Int) {
+        if (isDebug) Log.i(TAG, msg.toString() + "")
+    }
+
+    fun i(tag: String?, msg: Int) {
+        if (isDebug) Log.i(tag, msg.toString() + "")
+    }
+
+    fun v(tag: String?, message: String?) {
+        if (isDebug) {
+            Log.v(tag, message!!)
+        }
+    }
+}

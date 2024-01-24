@@ -9,10 +9,9 @@ import com.manoj.clean.ui.favorites.FavouriteAdapter
 import com.manoj.clean.ui.favorites.HorizontalPagerAdapter
 
 
-
-
 class VideoAutoPlayHelper(var recyclerView: RecyclerView) {
 
+    private var isScrolling = true
 
     fun getPlayer(): ExoPlayer? {
         return lastPlayerView?.getPlayer()
@@ -26,6 +25,11 @@ class VideoAutoPlayHelper(var recyclerView: RecyclerView) {
 
     fun startObserving() {
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                isScrolling = newState != RecyclerView.SCROLL_STATE_IDLE
+            }
+
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 onScrolled(false)
@@ -37,6 +41,9 @@ class VideoAutoPlayHelper(var recyclerView: RecyclerView) {
      * Detects the visible view and attach/detach player from it according to visibility
      */
     fun onScrolled(forHorizontalScroll: Boolean) {
+        if (!isScrolling) {
+            return
+        }
         val firstVisiblePosition: Int = findFirstVisibleItemPosition()
         val lastVisiblePosition: Int = findLastVisibleItemPosition()
         val pos = getMostVisibleItem(firstVisiblePosition, lastVisiblePosition)
@@ -76,6 +83,13 @@ class VideoAutoPlayHelper(var recyclerView: RecyclerView) {
                     firstVisiblePosition
                 ) as HorizontalPagerAdapter.PagerViewHolder?)!!
 
+            feedViewHolder.recyclerViewHorizontal.addOnScrollListener(object :
+                RecyclerView.OnScrollListener() {
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    super.onScrollStateChanged(recyclerView, newState)
+                    isScrolling = newState != RecyclerView.SCROLL_STATE_IDLE
+                }
+            })
             if (itemViewHolder is HorizontalPagerAdapter.VideoViewHolder) {
                 /** In case its a video**/
                 if (lastPlayerView == null || lastPlayerView != itemViewHolder.customPlayerView) {

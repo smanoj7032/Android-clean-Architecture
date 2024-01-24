@@ -8,7 +8,6 @@ import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -64,19 +63,15 @@ class HorizontalPagerAdapter(
     @SuppressLint("UseCompatLoadingForDrawables", "DiscouragedApi")
     override fun onBindViewHolder(pagerViewHolder: PagerViewHolder, position: Int) {
         if (pagerViewHolder is VideoViewHolder) {
-            val holder: VideoViewHolder = pagerViewHolder/*Reset ViewHolder */
-            (holder.videoThumbnail.layoutParams as ConstraintLayout.LayoutParams).dimensionRatio =
-                arrayList[0].ratio
-
+            val holder: VideoViewHolder = pagerViewHolder
             /*Set separate ID for each player view, to prevent it being overlapped by other player's changes*/
             holder.customPlayerView.id = View.generateViewId()
-
             /*Set video's direct url*/
-            holder.customPlayerView.setVideoUri(Uri.parse(arrayList[position].link))
+            holder.customPlayerView.setVideoUri(
+                Uri.parse(arrayList[position].link),
+                arrayList[position].thumbnail
+            )
 
-            /*Set video's thumbnail locally (by drawable), you can set it by remoteUrl too*/
-            Glide.with(context).load(arrayList[position].thumbnail).centerCrop()
-                .into(holder.videoThumbnail)
             holder.customPlayerView.setOnFullScreenListener(object :
                 SingleExoPlayerView.OnFullScreenListener {
                 override fun onFullScreenExit() {
@@ -107,7 +102,6 @@ class HorizontalPagerAdapter(
     }
 
     class VideoViewHolder(binding: VideoItemSingleBinding) : PagerViewHolder(binding.root) {
-        val videoThumbnail = binding.feedThumbnailView
         val customPlayerView = binding.feedPlayerView
     }
 

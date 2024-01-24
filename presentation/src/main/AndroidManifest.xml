@@ -45,7 +45,6 @@
         <activity android:name="com.manoj.clean.ui.moviedetails.MovieDetailsActivity" />
         <activity
             android:name="com.manoj.clean.ui.main.MainActivity"
-            android:launchMode="singleTask"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden" />
 
         <activity android:name="com.manoj.clean.ui.search.SearchActivity" />
