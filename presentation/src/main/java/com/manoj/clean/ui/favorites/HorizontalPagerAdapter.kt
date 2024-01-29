@@ -15,13 +15,16 @@ import com.bumptech.glide.Glide
 import com.manoj.clean.databinding.ImageItemSingleBinding
 import com.manoj.clean.databinding.VideoItemSingleBinding
 import com.manoj.clean.ui.common.singlexoplayer.SingleExoPlayerView
+import com.manoj.clean.ui.common.singlexoplayer.VideoAutoPlayHelper
 import com.manoj.clean.ui.favorites.FavouriteAdapter.Companion.FEED_TYPE_IMAGE
 import com.manoj.clean.ui.favorites.FavouriteAdapter.Companion.FEED_TYPE_VIDEO
 
 class HorizontalPagerAdapter(
     private val context: Context,
     private val parentPosition: Int,
-    private val arrayList: List<FeedItem>, private val activity: Activity
+    private val videoAutoPlayHelper: VideoAutoPlayHelper,
+    private val arrayList: List<FeedItem>,
+    private val activity: Activity
 ) : ListAdapter<FeedItem, HorizontalPagerAdapter.PagerViewHolder>(DIFF_CALLBACK) {
     companion object {
         /** Mandatory implementation inorder to use "ListAdapter" - new JetPack component" **/
@@ -71,15 +74,19 @@ class HorizontalPagerAdapter(
                 Uri.parse(arrayList[position].link),
                 arrayList[position].thumbnail
             )
-
-            holder.customPlayerView.setOnFullScreenListener(object :
+            if (parentPosition == 0) videoAutoPlayHelper.attachVideoPlayerAt(0)
+            holder.customPlayerView.setPlayerListener(object :
                 SingleExoPlayerView.OnFullScreenListener {
                 override fun onFullScreenExit() {
-                    activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+                    activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
                 }
 
                 override fun onFullScreenOpen() {
                     activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                }
+
+                override fun onThumbnailClick() {
+                    videoAutoPlayHelper.attachVideoPlayerAt(parentPosition)
                 }
 
             })

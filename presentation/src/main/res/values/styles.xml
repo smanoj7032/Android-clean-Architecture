@@ -108,5 +108,30 @@
         <item name="android:windowEnterAnimation">@anim/grow_in</item>
         <item name="android:windowExitAnimation">@anim/grow_out</item>
     </style>
+    <declare-styleable name="advDrawerLayout">
+        <attr name="adl_customBehavior" format="boolean" />
+        <attr name="adl_viewScale" format="float" />
+        <attr name="adl_viewScrimColor" format="color" />
+        <attr name="adl_viewElevation" format="dimension" />
+        <attr name="adl_drawerElevation" format="dimension" />
+        <attr name="adl_cardBackgroundColor" format="reference|color" />
+    </declare-styleable>
+
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
 
 </resources>

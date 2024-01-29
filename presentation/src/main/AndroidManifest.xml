@@ -45,9 +45,42 @@
         <activity android:name="com.manoj.clean.ui.moviedetails.MovieDetailsActivity" />
         <activity
             android:name="com.manoj.clean.ui.main.MainActivity"
+            android:screenOrientation="userPortrait"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden" />
 
         <activity android:name="com.manoj.clean.ui.search.SearchActivity" />
+        <activity
+            android:name=".ui.common.drawer.DefaultDrawerActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity
+            android:name=".ui.common.drawer.AdvanceDrawer1Activity"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity
+            android:name=".ui.common.drawer.AdvanceDrawer2Activity"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity
+            android:name=".ui.common.drawer.AdvanceDrawer3Activity"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity
+            android:name=".ui.common.drawer.AdvanceDrawer4Activity"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity
+            android:name=".ui.common.drawer.AdvanceDrawer5Activity"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity
+            android:name=".ui.common.drawer.AdvanceDrawer6Activity"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity
+            android:name=".ui.common.drawer.Advance3DDrawer1Activity"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
 
         <provider
             android:name="androidx.startup.InitializationProvider"

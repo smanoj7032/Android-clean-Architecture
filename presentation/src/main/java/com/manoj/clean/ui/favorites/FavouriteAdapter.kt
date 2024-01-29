@@ -13,14 +13,17 @@ import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SnapHelper
 import com.manoj.clean.databinding.FeedItemLayoutBinding
-import com.manoj.clean.ui.common.singlexoplayer.other.Constants.Companion.dataList
+import com.manoj.clean.ui.common.singlexoplayer.VideoAutoPlayHelper
 
 
 class FavouriteAdapter(
-    private val context: Context, private val activity: Activity,
+    private val context: Context,
+    private val activity: Activity,
     private val scrollListener: RecyclerView.OnScrollListener,
+    private val playerHelper: VideoAutoPlayHelper
 ) :
     ListAdapter<FeedItem, FavouriteAdapter.FeedViewHolder>(DIFF_CALLBACK) {
+    private val dataList: MutableList<List<FeedItem>> = ArrayList()
 
     companion object {
         /** Mandatory implementation inorder to use "ListAdapter" - new JetPack component" **/
@@ -38,6 +41,12 @@ class FavouriteAdapter(
         const val FEED_TYPE_VIDEO = 4
     }
 
+    fun setData(newDataList: List<List<FeedItem>>) {
+        val diffResult = DiffUtil.calculateDiff(DiffCallback(dataList, newDataList))
+        dataList.clear()
+        dataList.addAll(newDataList)
+        diffResult.dispatchUpdatesTo(this)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FeedViewHolder {
         return FeedViewHolder(
@@ -58,12 +67,11 @@ class FavouriteAdapter(
         /* Set adapter (items are being used inside adapter, you can setup in your own way*/
         val feedAdapter = HorizontalPagerAdapter(
             context,
-            position,
+            position, playerHelper,
             dataList[position], activity
         )
         holder.recyclerViewHorizontal.adapter = feedAdapter
         holder.recyclerViewHorizontal.clearOnScrollListeners()
-
         holder.recyclerViewHorizontal.addOnScrollListener(scrollListener)
         holder.recyclerViewHorizontal.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
@@ -110,4 +118,23 @@ class FavouriteAdapter(
         }
     }
 
+    private class DiffCallback<M>(
+        private val oldList: List<M>, private val newList: List<M>
+    ) : DiffUtil.Callback() {
+
+        override fun getOldListSize(): Int = oldList.size
+
+        override fun getNewListSize(): Int = newList.size
+
+        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            return oldList[oldItemPosition] == newList[newItemPosition]
+        }
+
+        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            return oldList[oldItemPosition] == newList[newItemPosition]
+        }
+    }
 }
+
+
+

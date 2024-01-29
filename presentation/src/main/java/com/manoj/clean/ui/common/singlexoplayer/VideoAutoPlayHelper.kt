@@ -1,18 +1,18 @@
 package com.manoj.clean.ui.common.singlexoplayer
 
 import android.graphics.Rect
+import android.os.SystemClock
 import android.util.Log
+import androidx.core.widget.NestedScrollView
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.manoj.clean.ui.favorites.FavouriteAdapter
 import com.manoj.clean.ui.favorites.HorizontalPagerAdapter
+import kotlin.math.abs
 
 
-class VideoAutoPlayHelper(var recyclerView: RecyclerView) {
-
-    private var isScrolling = true
-
+class VideoAutoPlayHelper(var recyclerView: RecyclerView, val nestedScrollView: NestedScrollView) {
     fun getPlayer(): ExoPlayer? {
         return lastPlayerView?.getPlayer()
     }
@@ -24,26 +24,35 @@ class VideoAutoPlayHelper(var recyclerView: RecyclerView) {
     private var currentPlayingVideoItemPos = -1 // -1 indicates nothing playing
 
     fun startObserving() {
-        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
-                isScrolling = newState != RecyclerView.SCROLL_STATE_IDLE
-            }
+        var lastScrollTime = 0L
+        var lastScrollY = 0
 
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
+        nestedScrollView.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
+            val currentTime = SystemClock.elapsedRealtime()
+            val elapsedTime = currentTime - lastScrollTime
+
+            val scrollSpeed = if (elapsedTime > 0) (scrollY - lastScrollY) / elapsedTime.toFloat()
+            else 0f
+
+            val isFastScrolling = abs(scrollSpeed) > 0.4
+
+            val isAtTop = !nestedScrollView.canScrollVertically(-1)
+            val isAtBottom = !nestedScrollView.canScrollVertically(1)
+
+            lastScrollTime = currentTime
+            lastScrollY = scrollY
+
+            if (isAtTop || isAtBottom || !isFastScrolling || scrollSpeed == 0f) {
                 onScrolled(false)
             }
         })
+        nestedScrollView.post { nestedScrollView.smoothScrollTo(0, 5) }
     }
 
     /**
      * Detects the visible view and attach/detach player from it according to visibility
      */
     fun onScrolled(forHorizontalScroll: Boolean) {
-        if (!isScrolling) {
-            return
-        }
         val firstVisiblePosition: Int = findFirstVisibleItemPosition()
         val lastVisiblePosition: Int = findLastVisibleItemPosition()
         val pos = getMostVisibleItem(firstVisiblePosition, lastVisiblePosition)
@@ -70,26 +79,20 @@ class VideoAutoPlayHelper(var recyclerView: RecyclerView) {
         }
     }
 
-    private fun attachVideoPlayerAt(pos: Int) {
-        val feedViewHolder: FavouriteAdapter.FeedViewHolder =
-            (recyclerView.findViewHolderForAdapterPosition(pos) as FavouriteAdapter.FeedViewHolder?)!!
+    fun attachVideoPlayerAt(pos: Int) {
+        val feedViewHolder: FavouriteAdapter.FeedViewHolder? =
+            (recyclerView.findViewHolderForAdapterPosition(pos) as FavouriteAdapter.FeedViewHolder?)
 
-        if (feedViewHolder.recyclerViewHorizontal.adapter is HorizontalPagerAdapter) {
+        if (feedViewHolder?.recyclerViewHorizontal?.adapter is HorizontalPagerAdapter) {
             val layoutManager: LinearLayoutManager =
                 feedViewHolder.recyclerViewHorizontal.layoutManager as LinearLayoutManager
             val firstVisiblePosition: Int = layoutManager.findFirstVisibleItemPosition()
-            val itemViewHolder: HorizontalPagerAdapter.PagerViewHolder =
+            val itemViewHolder: HorizontalPagerAdapter.PagerViewHolder? =
                 (feedViewHolder.recyclerViewHorizontal.findViewHolderForAdapterPosition(
                     firstVisiblePosition
-                ) as HorizontalPagerAdapter.PagerViewHolder?)!!
+                ) as HorizontalPagerAdapter.PagerViewHolder?)
 
-            feedViewHolder.recyclerViewHorizontal.addOnScrollListener(object :
-                RecyclerView.OnScrollListener() {
-                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                    super.onScrollStateChanged(recyclerView, newState)
-                    isScrolling = newState != RecyclerView.SCROLL_STATE_IDLE
-                }
-            })
+
             if (itemViewHolder is HorizontalPagerAdapter.VideoViewHolder) {
                 /** In case its a video**/
                 if (lastPlayerView == null || lastPlayerView != itemViewHolder.customPlayerView) {
@@ -108,7 +111,6 @@ class VideoAutoPlayHelper(var recyclerView: RecyclerView) {
                 }
             }
         }
-
     }
 
     private fun getMostVisibleItem(firstVisiblePosition: Int, lastVisiblePosition: Int): Int {

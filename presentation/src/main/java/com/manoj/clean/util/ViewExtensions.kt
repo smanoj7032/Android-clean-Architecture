@@ -1,6 +1,8 @@
 package com.manoj.clean.util
 
 import android.Manifest
+import android.annotation.SuppressLint
+import android.content.Context
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.util.Log
@@ -8,11 +10,15 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -98,8 +104,7 @@ fun View.showSnackBar(
 
     if (negativeSnackBar) snackBar.setBackgroundTint(
         ContextCompat.getColor(
-            this.context,
-            R.color.red
+            this.context, R.color.red
         )
     )
     else snackBar.setBackgroundTint(ContextCompat.getColor(this.context, R.color.green))
@@ -107,19 +112,15 @@ fun View.showSnackBar(
 }
 
 fun ImageView.loadImageWithProgress(
-    url: String?,
-    progressBar: ProgressBar,
-    options: RequestOptions
+    url: String?, progressBar: ProgressBar, options: RequestOptions
 ) {
     GlideImageLoader(this, progressBar).load(url, options)
 }
 
 fun ImageView.loadImage(imageUrl: String?, loader: ProgressBar) {
     loader.visibility = View.VISIBLE
-    Glide.with(this).load(imageUrl).placeholder(R.drawable.bg_image)
-        .skipMemoryCache(true)
-        .diskCacheStrategy(DiskCacheStrategy.NONE)
-        .listener(object : RequestListener<Drawable?> {
+    Glide.with(this).load(imageUrl).placeholder(R.drawable.bg_image).skipMemoryCache(true)
+        .diskCacheStrategy(DiskCacheStrategy.NONE).listener(object : RequestListener<Drawable?> {
             override fun onLoadFailed(
                 @Nullable e: GlideException?,
                 model: Any?,
@@ -194,6 +195,65 @@ fun covertTimeAgoToText(dataString: String?): String {
     }
 }
 
+/**
+ *
+ * Returns FirstVisibleItemPosition
+ *
+ */
+fun RecyclerView.findFirstVisibleItemPosition(): Int {
+    if (layoutManager is LinearLayoutManager) {
+        return (layoutManager as LinearLayoutManager?)!!.findFirstVisibleItemPosition()
+    }
+    return if (layoutManager is StaggeredGridLayoutManager) {
+        val mItemPositionsHolder =
+            IntArray((layoutManager as StaggeredGridLayoutManager?)!!.spanCount)
+        return min(
+            (layoutManager as StaggeredGridLayoutManager?)!!.findFirstVisibleItemPositions(
+                mItemPositionsHolder
+            )
+        )
+    } else -1
+}
+
+
+/**
+ *
+ * Returns the min value in an array.
+ *
+ * @param array  an array, must not be null or empty
+ * @return the min value in the array
+ */
+private fun min(array: IntArray): Int {
+
+    // Finds and returns max
+    var min: Int = array[0]
+    for (j in 1 until array.size) {
+        if (array[j] < min) {
+            min = array[j]
+        }
+    }
+    return min
+}
+
+
+/**
+ *
+ * Returns true if recyclerView isAtTop
+ *
+ */
+fun RecyclerView.isAtTop(): Boolean {
+    val pos: Int =
+        (layoutManager as LinearLayoutManager?)?.findFirstCompletelyVisibleItemPosition()!!
+    return pos == 0
+}
+
+
+@SuppressLint("DiscouragedApi")
+fun Context.getResource(name: String): Drawable? {
+    val resID = this.resources.getIdentifier(name, "drawable", this.packageName)
+    return ActivityCompat.getDrawable(this, resID)
+}
+
 private fun getStoragePermission(): Array<String> {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         arrayOf(
@@ -201,18 +261,16 @@ private fun getStoragePermission(): Array<String> {
             Manifest.permission.READ_MEDIA_AUDIO,
             Manifest.permission.READ_MEDIA_IMAGES,
         )
-    } else
-        arrayOf(
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
-        )
+    } else arrayOf(
+        Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE
+    )
 }
 
 val PERMISSION_READ_STORAGE = getStoragePermission()
 
 object Logger {
     private var TAG = "HMS"
-    var isDebug = false
+    var isDebug = true
     fun setTAG(tag: String) {
         TAG = tag
     }

@@ -8,6 +8,7 @@ import android.view.*
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.ProgressBar
+import android.widget.RelativeLayout
 import androidx.annotation.OptIn
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
@@ -50,6 +51,7 @@ class SingleExoPlayerView @OptIn(UnstableApi::class) @JvmOverloads constructor(
     private var videoUri: Uri? = null
     private var playerView: PlayerView? = null
     private var thumbnail: ImageView? = null
+    private var relLayout: RelativeLayout? = null
     private var ivFullScreen: ImageView? = null
     private var rootLayout: ConstraintLayout? = null
     private lateinit var mFullScreenDialog: Dialog
@@ -58,16 +60,17 @@ class SingleExoPlayerView @OptIn(UnstableApi::class) @JvmOverloads constructor(
     interface OnFullScreenListener {
         fun onFullScreenExit()
         fun onFullScreenOpen()
+        fun onThumbnailClick()
     }
 
-    private var fullScreenListener: OnFullScreenListener? = null
+    private var playerListener: OnFullScreenListener? = null
 
     fun getPlayer(): ExoPlayer? {
         return player
     }
 
-    fun setOnFullScreenListener(listener: OnFullScreenListener) {
-        fullScreenListener = listener
+    fun setPlayerListener(listener: OnFullScreenListener) {
+        playerListener = listener
     }
 
     @OptIn(UnstableApi::class)
@@ -167,7 +170,7 @@ class SingleExoPlayerView @OptIn(UnstableApi::class) @JvmOverloads constructor(
     @OptIn(UnstableApi::class)
     fun startPlaying() {
         if (videoUri == null) return
-        thumbnail?.alpha = 0f
+        relLayout?.isVisible=false
         val mediaItem = MediaItem.fromUri(videoUri!!)
         val cacheDataSourceFactory: DataSource.Factory =
             CacheDataSource.Factory().setCache(App.cache).setUpstreamDataSourceFactory(
@@ -197,15 +200,16 @@ class SingleExoPlayerView @OptIn(UnstableApi::class) @JvmOverloads constructor(
 
 
     private fun enterFullScreen() {
+        playerView?.findViewById<ImageView>(R.id.iv_fullscreen_land)?.visibility = View.VISIBLE
         detachVideoSurfaceView()
         attachVideoSurfaceViewToDialog()
         isFullScreen = true
-        fullScreenListener?.onFullScreenOpen()
         mFullScreenDialog.show()
     }
 
     private fun exitFullScreen() {
-        fullScreenListener?.onFullScreenExit()
+        playerView?.findViewById<ImageView>(R.id.iv_fullscreen_land)?.visibility = View.GONE
+        playerListener?.onFullScreenExit()
         detachVideoSurfaceViewFromDialog()
         attachVideoSurfaceViewToParent()
         isFullScreen = false
@@ -290,18 +294,24 @@ class SingleExoPlayerView @OptIn(UnstableApi::class) @JvmOverloads constructor(
     private fun initViews() {
         playerView = findViewById(R.id.player_view)
         thumbnail = findViewById(R.id.feedThumbnailView)
+        relLayout = findViewById(R.id.relLay)
         rootLayout = findViewById(R.id.root_layout)
         ivFullScreen = findViewById(R.id.iv_fullscreen)
         val play = playerView?.findViewById<ImageView>(R.id.exo_play)
+        playerView?.findViewById<ImageView>(R.id.iv_fullscreen_land)?.setOnClickListener {
+            playerListener?.onFullScreenOpen()
+            playerView?.findViewById<ImageView>(R.id.iv_fullscreen_land)?.visibility = View.GONE
+        }
+        thumbnail?.setOnClickListener { playerListener?.onThumbnailClick() }
         val mute = playerView?.findViewById<ImageView>(R.id.muteIcon)
 
-        playerView?.setOnClickListener {
+        mute?.setOnClickListener {
             if ((getPlayer()?.volume == 0f)) {
                 getPlayer()?.volume = 1.0F
-                mute?.isSelected = (false)
+                mute.isSelected = (false)
             } else {
                 getPlayer()?.volume = 0F
-                mute?.isSelected = (true)
+                mute.isSelected = (true)
             }
         }
         play?.setOnClickListener {
@@ -325,6 +335,6 @@ class SingleExoPlayerView @OptIn(UnstableApi::class) @JvmOverloads constructor(
 
     fun reset() {
         playerView?.alpha = 0f
-        thumbnail?.alpha = 1f
+        relLayout?.isVisible = true
     }
 }

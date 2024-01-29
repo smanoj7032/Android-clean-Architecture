@@ -47,17 +47,33 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageView
-                android:id="@+id/feedThumbnailView"
+            <RelativeLayout
+                android:id="@+id/relLay"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/colorPrimary"
-                android:scaleType="fitCenter"
-                android:src="@drawable/fullscreen"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/feedThumbnailView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_centerInParent="true"
+                    android:background="@color/colorPrimary"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/fullscreen" />
+
+                <ImageView
+                    android:id="@+id/ivPauseIcon"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_centerInParent="true"
+                    android:adjustViewBounds="true"
+                    android:src="@drawable/ic_play" />
+
+            </RelativeLayout>
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
