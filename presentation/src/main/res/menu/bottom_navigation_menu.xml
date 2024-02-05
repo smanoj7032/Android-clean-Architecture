@@ -1,16 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/feedFragment"
         android:icon="@drawable/ic_feed_border_48"
-        android:title="@string/feed" />
+        android:title="@string/feed"
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/favoritesFragment"
         android:icon="@drawable/ic_favorite_border_white_48"
-        android:title="@string/favorites" />
+        android:title="@string/favorites"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/empty"
+        android:enabled="false"
+        android:title=""
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/popularMoviesFragment"
         android:icon="@drawable/ic_movie"
-        android:title="@string/favorites" />
+        android:title="@string/favorites"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/profileFragment"
+        android:icon="@drawable/account_icon"
+        android:title="@string/profile"
+        app:showAsAction="ifRoom" />
 </menu>

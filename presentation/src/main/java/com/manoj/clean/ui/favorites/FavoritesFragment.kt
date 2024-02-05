@@ -3,7 +3,6 @@ package com.manoj.clean.ui.favorites
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import androidx.core.view.ViewCompat
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
@@ -40,8 +39,9 @@ class FavoritesFragment : BaseFragment<FragmentFavoritesBinding>() {
 
 
     private fun setupRecyclerView() = with(binding.recyclerView) {
-        videoAutoPlayHelper = VideoAutoPlayHelper(this, binding.nestedScrollView)
-        favouriteAdapter = FavouriteAdapter(requireContext(),
+        videoAutoPlayHelper = VideoAutoPlayHelper(this)
+        favouriteAdapter = FavouriteAdapter(
+            requireContext(),
             requireActivity(),
             object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -51,8 +51,9 @@ class FavoritesFragment : BaseFragment<FragmentFavoritesBinding>() {
                 }
             }, videoAutoPlayHelper
         )
+        setHasFixedSize(true)
+        setItemViewCacheSize(10)
         binding.adapter = favouriteAdapter
-        ViewCompat.setNestedScrollingEnabled(this, false);
         videoAutoPlayHelper.startObserving()
     }
 

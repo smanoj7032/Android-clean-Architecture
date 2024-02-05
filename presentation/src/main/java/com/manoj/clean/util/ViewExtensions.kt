@@ -3,8 +3,12 @@ package com.manoj.clean.util
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Build
+import android.os.Build.VERSION.SDK_INT
+import android.os.Bundle
+import android.os.Parcelable
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
@@ -255,7 +259,7 @@ fun Context.getResource(name: String): Drawable? {
 }
 
 private fun getStoragePermission(): Array<String> {
-    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+    return if (SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         arrayOf(
             Manifest.permission.READ_MEDIA_VIDEO,
             Manifest.permission.READ_MEDIA_AUDIO,
@@ -265,8 +269,39 @@ private fun getStoragePermission(): Array<String> {
         Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE
     )
 }
-
+fun getLocationPermissions(): Array<String> {
+    return if (SDK_INT >= Build.VERSION_CODES.Q) {
+        arrayOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_BACKGROUND_LOCATION
+        )
+    } else {
+        arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION)
+    }
+}
 val PERMISSION_READ_STORAGE = getStoragePermission()
+
+
+inline fun <reified T : Parcelable> Intent.parcelable(key: String): T? = when {
+    SDK_INT >= 33 -> getParcelableExtra(key, T::class.java)
+    else -> @Suppress("DEPRECATION") getParcelableExtra(key) as? T
+}
+
+inline fun <reified T : Parcelable> Bundle.parcelable(key: String): T? = when {
+    SDK_INT >= 33 -> getParcelable(key, T::class.java)
+    else -> @Suppress("DEPRECATION") getParcelable(key) as? T
+}
+
+inline fun <reified T : Parcelable> Bundle.parcelableArrayList(key: String): ArrayList<T>? = when {
+    SDK_INT >= 33 -> getParcelableArrayList(key, T::class.java)
+    else -> @Suppress("DEPRECATION") getParcelableArrayList(key)
+}
+
+inline fun <reified T : Parcelable> Intent.parcelableArrayList(key: String): ArrayList<T>? = when {
+    SDK_INT >= 33 -> getParcelableArrayListExtra(key, T::class.java)
+    else -> @Suppress("DEPRECATION") getParcelableArrayListExtra(key)
+}
 
 object Logger {
     private var TAG = "HMS"

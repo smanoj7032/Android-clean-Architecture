@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <FrameLayout
+        android:id="@+id/previewFrame"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/flow"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/imageViewPreview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:visibility="gone" />
+
+        <VideoView
+            android:id="@+id/videoViewPreview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+    </FrameLayout>
+
+    <androidx.constraintlayout.helper.widget.Flow
+        android:id="@+id/flow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:constraint_referenced_ids="btnOk,btnCancel"
+        app:flow_horizontalGap="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/previewFrame" />
+
+    <Button
+        android:id="@+id/btnOk"
+        style="@style/ButtonSolid"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Ok" />
+
+    <Button
+        android:id="@+id/btnCancel"
+        style="@style/ButtonStroke"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Cancel" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

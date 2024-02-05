@@ -48,13 +48,13 @@ class FavoritesViewModel @Inject constructor(
                 FeedItem(
                     "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
                     "video",
-                    "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Big_Buck_Bunny_thumbnail_vlc.png/1200px-Big_Buck_Bunny_thumbnail_vlc.png",
+                    "https://image.tmdb.org/t/p/w342/7lTnXOy0iNtBAdRP3TZvaKJ77F6.jpg",
                     "1282:718"
                 ),
                 FeedItem(
                     "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
                     "video",
-                    "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Big_Buck_Bunny_thumbnail_vlc.png/1200px-Big_Buck_Bunny_thumbnail_vlc.png",
+                    "https://image.tmdb.org/t/p/w342/qhb1qOilapbapxWQn9jtRCMwXJF.jpg",
                     "1282:718"
                 )
             ),
@@ -62,8 +62,14 @@ class FavoritesViewModel @Inject constructor(
                 FeedItem(
                     "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
                     "video",
-                    "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Big_Buck_Bunny_thumbnail_vlc.png/1200px-Big_Buck_Bunny_thumbnail_vlc.png",
+                    "https://image.tmdb.org/t/p/w342/ldfCF9RhR40mppkzmftxapaHeTo.jpg",
                     "1282:718"
+                ),
+                FeedItem(
+                    "https://i.imgur.com/CzXTtJV.jpg",
+                    "image",
+                    "https://i.imgur.com/CzXTtJV.jpg",
+                    "604:450"
                 )
             ),
             listOf(
@@ -72,6 +78,12 @@ class FavoritesViewModel @Inject constructor(
                     "video",
                     "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Big_Buck_Bunny_thumbnail_vlc.png/1200px-Big_Buck_Bunny_thumbnail_vlc.png",
                     "1282:718"
+                ),
+                FeedItem(
+                    "https://image.tmdb.org/t/p/w342/eSatbygYZp8ooprBHZdb6GFZxGB.jpg",
+                    "image",
+                    "https://i.imgur.com/CzXTtJV.jpg",
+                    "604:450"
                 )
             ),
             listOf(
@@ -88,7 +100,14 @@ class FavoritesViewModel @Inject constructor(
                     "video",
                     "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Big_Buck_Bunny_thumbnail_vlc.png/1200px-Big_Buck_Bunny_thumbnail_vlc.png",
                     "1282:718"
+                ),
+                FeedItem(
+                    "https://image.tmdb.org/t/p/w342/eSatbygYZp8ooprBHZdb6GFZxGB.jpg",
+                    "image",
+                    "https://i.imgur.com/CzXTtJV.jpg",
+                    "604:450"
                 )
+
             ),
             listOf(
                 FeedItem(
@@ -96,6 +115,24 @@ class FavoritesViewModel @Inject constructor(
                     "video",
                     "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Big_Buck_Bunny_thumbnail_vlc.png/1200px-Big_Buck_Bunny_thumbnail_vlc.png",
                     "1282:718"
+                ),
+                FeedItem(
+                    "https://image.tmdb.org/t/p/w342/eSatbygYZp8ooprBHZdb6GFZxGB.jpg",
+                    "image",
+                    "https://i.imgur.com/CzXTtJV.jpg",
+                    "604:450"
+                ),
+                FeedItem(
+                    "https://image.tmdb.org/t/p/w342/eSatbygYZp8ooprBHZdb6GFZxGB.jpg",
+                    "image",
+                    "https://i.imgur.com/CzXTtJV.jpg",
+                    "604:450"
+                ),
+                FeedItem(
+                    "https://image.tmdb.org/t/p/w342/eSatbygYZp8ooprBHZdb6GFZxGB.jpg",
+                    "image",
+                    "https://i.imgur.com/CzXTtJV.jpg",
+                    "604:450"
                 )
             ),
             listOf(

@@ -1,10 +1,10 @@
 package com.manoj.clean.ui.feed
 
-import android.Manifest
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -22,10 +22,8 @@ import com.manoj.clean.ui.common.adapter.commonadapter.LoadMoreAdapter
 import com.manoj.clean.ui.common.adapter.commonadapter.RVAdapterWithPaging
 import com.manoj.clean.ui.common.adapter.commonadapter.RVAdapterWithPaging.Companion.createDiffCallback
 import com.manoj.clean.ui.common.base.BaseFragment
-import com.manoj.clean.ui.common.base.common.permissionutils.runWithPermissions
 import com.manoj.clean.ui.popularmovies.PopularMoviesFragment.Companion.POSTER_BASE_URL
 import com.manoj.clean.util.NetworkMonitor
-import com.manoj.clean.util.PERMISSION_READ_STORAGE
 import com.manoj.clean.util.launchAndRepeatWithViewLifecycle
 import com.manoj.clean.util.loadImageWithProgress
 import com.manoj.clean.util.showSnackBar
@@ -40,7 +38,6 @@ import javax.inject.Inject
 class FeedFragment : BaseFragment<FragmentFeedBinding>() {
     private lateinit var moviesAdapter: RVAdapterWithPaging<MovieEntity, ItemMovieBinding>
     private val viewModel: FeedViewModel by viewModels()
-    private lateinit var pickerDialog: PickerDialog
 
     private val loadStateListener: (CombinedLoadStates) -> Unit = {
         viewModel.onLoadStateUpdate(it)
@@ -60,22 +57,10 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
         setupViews()
         setupListeners()
         observeViewModel()
-        setPickerDialog()
     }
 
 
-    private fun setPickerDialog() {
-        val items: ArrayList<ItemModel> = arrayListOf(
-            ItemModel(ItemModel.ITEM_CAMERA, itemIcon = R.drawable.ic_camera_svg),
-            ItemModel(ItemModel.ITEM_GALLERY, itemIcon = R.drawable.ic_gallery_svg),
-            ItemModel(ItemModel.ITEM_VIDEO, itemIcon = R.drawable.ic_camera_svg),
-            ItemModel(ItemModel.ITEM_VIDEO_GALLERY, itemIcon = R.drawable.ic_gallery_svg),
-            ItemModel(ItemModel.ITEM_FILES, itemIcon = R.drawable.ic_camera_svg)
-        )
-        pickerDialog = PickerDialog.Builder(this).setTitle("Select Media")/*.setTitleTextSize(25f)
-            .setTitleTextColor(R.color.colorDialogBg)*/.setListType(TYPE_GRID, 3).setItems(items)
-            .create()
-    }
+
 
     private fun setupViews() {
         initRecyclerView()
@@ -100,43 +85,7 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
                     POSTER_BASE_URL + item.poster_path, binding.imgPb, options
                 )
                 binding.tvId.text = item.id.toString()
-                binding.root.setOnClickListener {/* item.id?.let { it1 -> navigateToMovieDetails(it1) }*/
-
-                    runWithPermissions(
-                        Manifest.permission.CAMERA,
-                        *PERMISSION_READ_STORAGE
-                    ) { pickerDialog.show() }
-                }
-
-
-                pickerDialog.setPickerCloseListener { type, uri ->
-                    when (type) {
-                        ItemModel.ITEM_CAMERA -> {
-                            binding.image.loadImageWithProgress(
-                                uri.toString(), binding.imgPb, options
-                            )
-                        }
-
-                        ItemModel.ITEM_GALLERY -> {
-                            binding.image.loadImageWithProgress(
-                                uri.toString(), binding.imgPb, options
-                            )
-                        }
-
-                        ItemModel.ITEM_VIDEO -> {
-                            Log.e("URI---->>", "setPickerDialog: $type----->>>   Uri ----->>$uri")
-                        }
-
-                        ItemModel.ITEM_VIDEO_GALLERY -> {
-                            Log.e("URI---->>", "setPickerDialog: $type----->>>   Uri ----->>$uri")
-                        }
-
-                        ItemModel.ITEM_FILES -> {
-                            Log.e("URI---->>", "setPickerDialog: $type----->>>   Uri ----->>$uri")
-                        }
-                    }
-                }
-
+                binding.root.setOnClickListener { item.id?.let { it1 -> navigateToMovieDetails(it1) } }
             }) {}
 
         val footerAdapter = LoadMoreAdapter { moviesAdapter.retry() }

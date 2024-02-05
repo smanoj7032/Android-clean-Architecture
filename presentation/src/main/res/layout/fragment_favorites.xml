@@ -13,36 +13,20 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.core.widget.NestedScrollView
-            android:id="@+id/nestedScrollView"
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:overScrollMode="never"
-            android:fillViewport="true"
+            android:layout_marginStart="@dimen/movie_recycler_view_padding"
+            android:layout_marginEnd="@dimen/movie_recycler_view_padding"
+            android:orientation="vertical"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerView"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="@dimen/movie_recycler_view_padding"
-                    android:layout_marginEnd="@dimen/movie_recycler_view_padding"
-                    android:nestedScrollingEnabled="false"
-                    android:orientation="vertical"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    app:setAdapter="@{adapter}" />
-
-            </LinearLayout>
-        </androidx.core.widget.NestedScrollView>
+            app:layout_constraintTop_toTopOf="parent"
+            app:setAdapter="@{adapter}" />
 
 
         <ProgressBar
@@ -51,8 +35,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/nestedScrollView"
-            app:layout_constraintEnd_toEndOf="@+id/nestedScrollView"
+            app:layout_constraintBottom_toBottomOf="@+id/recyclerView"
+            app:layout_constraintEnd_toEndOf="@+id/recyclerView"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 

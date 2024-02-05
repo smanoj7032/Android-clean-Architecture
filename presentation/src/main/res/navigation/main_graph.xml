@@ -38,6 +38,14 @@
 
     </fragment>
 
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.manoj.clean.ui.profile.ProfileFragment"
+        android:label="Profile"
+        tools:layout="@layout/fragment_profile" />
+
+
+
     <activity
         android:id="@+id/movieDetailsActivity"
         android:name="com.manoj.clean.ui.moviedetails.MovieDetailsActivity"

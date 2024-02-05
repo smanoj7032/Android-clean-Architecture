@@ -1,14 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#1A1A1A</color>
-    <color name="colorPrimaryDark">@color/colorPrimary</color>
-    <color name="colorAccent">@color/white</color>
+
 
     <color name="colorPrimaryDark23">#f1f1f1</color>
     <color name="colorDark">#1a1a18</color>
     <color name="colorDialogBg">#ffffff</color>
     <color name="color_background">@color/colorPrimary</color>
     <color name="color_text_primary">@color/white</color>
+
+
+
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FFFFFF</color>
+    <color name="whiteish">#FAFAFA</color>
+    <color name="blue">#3897F0</color>
 
     <color name="white">#FFFFFF</color>
     <color name="red">#FF0000</color>

@@ -174,7 +174,7 @@ class PermissionCheckerFragment : Fragment() {
                 }
 
                 val alert = activity?.createAlertDialog(
-                    title = "Alert", // You can provide a title or leave it as null
+                    title = "Alert",
                     message = quickPermissionsRequest?.permanentlyDeniedMessage.orEmpty(),
                     positiveButtonText = "SETTINGS"
                 ) { openAppSettings() }
@@ -191,7 +191,7 @@ class PermissionCheckerFragment : Fragment() {
                     return
                 }
                 val alert = activity?.createAlertDialog(
-                    title = "Alert", // You can provide a title or leave it as null
+                    title = "Alert",
                     message = quickPermissionsRequest?.rationaleMessage.orEmpty(),
                     positiveButtonText = "TRY AGAIN"
                 ) { requestPermissionsFromUser() }
@@ -231,7 +231,7 @@ class PermissionCheckerFragment : Fragment() {
             .setTitle(title)
             .setMessage(message)
             .setPositiveButton(positiveButtonText) { _, _ -> onPositiveClick() }
-            .setCancelable(true)
+            .setCancelable(false)
             .create()
     }
 }

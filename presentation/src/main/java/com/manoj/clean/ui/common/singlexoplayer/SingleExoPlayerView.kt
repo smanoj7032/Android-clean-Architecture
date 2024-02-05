@@ -155,11 +155,16 @@ class SingleExoPlayerView @OptIn(UnstableApi::class) @JvmOverloads constructor(
                 if (playbackState == Player.STATE_READY) {
                     playerView?.alpha = 1f
                 }
+                if (playbackState == Player.STATE_BUFFERING) {
+                    rootLayout?.findViewById<ProgressBar>(R.id.progress_bar)?.isVisible =
+                        true
+                }
             }
 
             override fun onIsPlayingChanged(isPlaying: Boolean) {
                 super.onIsPlayingChanged(isPlaying)
-                rootLayout?.findViewById<ProgressBar>(R.id.progress_bar)?.isVisible = !isPlaying
+                if (isPlaying) rootLayout?.findViewById<ProgressBar>(R.id.progress_bar)?.isVisible =
+                    false
                 SingleExoPlayerView.isPlaying.value = isPlaying
             }
         })
@@ -170,7 +175,7 @@ class SingleExoPlayerView @OptIn(UnstableApi::class) @JvmOverloads constructor(
     @OptIn(UnstableApi::class)
     fun startPlaying() {
         if (videoUri == null) return
-        relLayout?.isVisible=false
+        relLayout?.isVisible = false
         val mediaItem = MediaItem.fromUri(videoUri!!)
         val cacheDataSourceFactory: DataSource.Factory =
             CacheDataSource.Factory().setCache(App.cache).setUpstreamDataSourceFactory(

@@ -1,53 +1,53 @@
 package com.manoj.clean.ui.common.singlexoplayer
 
 import android.graphics.Rect
-import android.os.SystemClock
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
-import androidx.core.widget.NestedScrollView
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.manoj.clean.ui.favorites.FavouriteAdapter
 import com.manoj.clean.ui.favorites.HorizontalPagerAdapter
-import kotlin.math.abs
+import kotlinx.coroutines.delay
 
 
-class VideoAutoPlayHelper(var recyclerView: RecyclerView, val nestedScrollView: NestedScrollView) {
+class VideoAutoPlayHelper(var recyclerView: RecyclerView) {
     fun getPlayer(): ExoPlayer? {
         return lastPlayerView?.getPlayer()
     }
 
     private var lastPlayerView: SingleExoPlayerView? = null
     private val minVisibilityPercentage =
-        20 // When playerView will be less than 20% visible than it will stop the player
+        20
 
-    private var currentPlayingVideoItemPos = -1 // -1 indicates nothing playing
+    /** When playerView will be less than 20% visible than it will stop the player*/
+
+    private var currentPlayingVideoItemPos = -1
+
+    /**-1 indicates nothing playing*/
+    val handler = Handler(Looper.getMainLooper())
 
     fun startObserving() {
-        var lastScrollTime = 0L
-        var lastScrollY = 0
-
-        nestedScrollView.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
-            val currentTime = SystemClock.elapsedRealtime()
-            val elapsedTime = currentTime - lastScrollTime
-
-            val scrollSpeed = if (elapsedTime > 0) (scrollY - lastScrollY) / elapsedTime.toFloat()
-            else 0f
-
-            val isFastScrolling = abs(scrollSpeed) > 0.4
-
-            val isAtTop = !nestedScrollView.canScrollVertically(-1)
-            val isAtBottom = !nestedScrollView.canScrollVertically(1)
-
-            lastScrollTime = currentTime
-            lastScrollY = scrollY
-
-            if (isAtTop || isAtBottom || !isFastScrolling || scrollSpeed == 0f) {
-                onScrolled(false)
+       // PagerSnapHelper().attachToRecyclerView(recyclerView)
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    /**Cancel any existing coroutine job to ensure only one delay is applied at a time*/
+                    handler.postDelayed(runnable, 200)
+                }else {
+                    /**Cancel any existing coroutine job to ensure only one delay is applied at a time*/
+                    handler.removeCallbacks(runnable)
+                }
             }
         })
-        nestedScrollView.post { nestedScrollView.smoothScrollTo(0, 5) }
+        recyclerView.post { recyclerView.smoothScrollBy(0, 1) }
     }
+
+    val runnable = Runnable {  onScrolled(false) }
+
 
     /**
      * Detects the visible view and attach/detach player from it according to visibility
@@ -58,7 +58,7 @@ class VideoAutoPlayHelper(var recyclerView: RecyclerView, val nestedScrollView: 
         val pos = getMostVisibleItem(firstVisiblePosition, lastVisiblePosition)
 
         if (pos == -1) {
-            /*check if current view is more than MIN_LIMIT_VISIBILITY*/
+            /**check if current view is more than MIN_LIMIT_VISIBILITY*/
             if (currentPlayingVideoItemPos != -1) {
                 val viewHolder: RecyclerView.ViewHolder? =
                     recyclerView.findViewHolderForAdapterPosition(currentPlayingVideoItemPos)
@@ -105,7 +105,7 @@ class VideoAutoPlayHelper(var recyclerView: RecyclerView, val nestedScrollView: 
             } else {
                 /** in case its a image**/
                 if (lastPlayerView != null) {
-                    // stop last player
+                    /**stop last player*/
                     lastPlayerView?.removePlayer()
                     lastPlayerView = null
                 }

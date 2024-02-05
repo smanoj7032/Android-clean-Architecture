@@ -27,12 +27,12 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.manoj.clean.util.parcelableArrayList
 import kotlinx.android.synthetic.main.dialog_picker.*
 import kotlinx.android.synthetic.main.item_picker_grid.view.*
 import java.io.IOException
 
-class PickerDialog : BottomSheetDialogFragment() {
-    var activity: AppCompatActivity? = null
+class PickerDialog(private val activity: AppCompatActivity) : BottomSheetDialogFragment() {
     var fragment: Fragment? = null
     private var uri: Uri? = null
     private var fileName = ""
@@ -50,7 +50,14 @@ class PickerDialog : BottomSheetDialogFragment() {
 
 
     /** ACTIVITY RESULT LAUNCHER */
-    private lateinit var takePhoto: ActivityResultLauncher<Intent>
+    private val takePhoto: ActivityResultLauncher<Uri> =
+        activity.registerForActivityResult(ActivityResultContracts.TakePicture())
+        { isSaved ->
+            if (isSaved) {
+                onPickerCloseListener?.onPickerClosed(ItemModel.ITEM_CAMERA, uri)
+                dismiss()
+            }
+        }
     private lateinit var openGallery: ActivityResultLauncher<Intent>
     private lateinit var recordVideo: ActivityResultLauncher<Intent>
     private lateinit var chooseVideo: ActivityResultLauncher<Intent>
@@ -72,7 +79,6 @@ class PickerDialog : BottomSheetDialogFragment() {
         const val REQUEST_PERMISSION_VGALLERY = 1004
         const val REQUEST_PERMISSION_FILE = 1005
 
-        const val REQUEST_TAKE_PHOTO = 1101
         const val REQUEST_PICK_PHOTO = 1102
         const val REQUEST_VIDEO = 1103
         const val REQUEST_PICK_FILE = 1104
@@ -99,9 +105,8 @@ class PickerDialog : BottomSheetDialogFragment() {
             args.putInt(ARG_GRID_SPAN, dialogGridSpan)
             args.putParcelableArrayList(ARG_ITEMS, dialogItems)
 
-            val dialog = PickerDialog()
+            val dialog = PickerDialog(activity!!)
             dialog.arguments = args
-            dialog.activity = activity
             dialog.fragment = fragment
 
             return dialog
@@ -216,7 +221,7 @@ class PickerDialog : BottomSheetDialogFragment() {
         dialogTitleColor = args.getInt(ARG_TITLE_COLOR)
         dialogListType = args.getLong(ARG_LIST_TYPE)
         dialogGridSpan = args.getInt(ARG_GRID_SPAN)
-        dialogItems = args.getParcelableArrayList(ARG_ITEMS)!!
+        dialogItems = args.parcelableArrayList(ARG_ITEMS)!!
     }
 
     private fun createTitle() {
@@ -358,19 +363,10 @@ class PickerDialog : BottomSheetDialogFragment() {
     }
 
     private fun openCamera() {
-        fileName = (System.currentTimeMillis() / 1000).toString() + ".jpg"
-
-        val contentValues = ContentValues()
-        contentValues.put(MediaStore.Images.Media.TITLE, fileName)
-        contentValues.put(MediaStore.Images.Media.DESCRIPTION, getString(Str.app_name))
-        uri = requireContext().contentResolver.insert(
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-            contentValues
+        uri = MediaUtils.getUriFromFile(
+            requireContext(), MediaUtils.getMakeFile(requireContext(), ".png")
         )
-
-        val takePhoto = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        takePhoto.putExtra(MediaStore.EXTRA_OUTPUT, uri)
-        this.takePhoto.launch(takePhoto)
+        takePhoto.launch(uri)
     }
 
     private fun openGallery() {
@@ -408,42 +404,11 @@ class PickerDialog : BottomSheetDialogFragment() {
     private fun onActivityResult(requestCode: Int, resultCode: ActivityResult) {
         if (resultCode.resultCode == RESULT_OK) {
             when (requestCode) {
-                REQUEST_TAKE_PHOTO -> takePhoto()
                 REQUEST_PICK_PHOTO -> pickPhoto(resultCode.data)
                 REQUEST_VIDEO -> pickVideo(resultCode.data)
                 REQUEST_PICK_FILE -> pickFile(resultCode.data)
             }
         }
-    }
-
-    private fun takePhoto() {
-        val uri = this.uri ?: return
-
-        var bitmap: Bitmap
-        try {
-            bitmap = MediaStore.Images.Media.getBitmap(requireActivity().contentResolver, uri)
-
-            val exif = uri.realPath(requireContext()).path?.let { ExifInterface(it) }
-
-            if (exif != null) {
-                when (exif.getAttribute(ExifInterface.TAG_ORIENTATION)) {
-                    "6" -> bitmap = bitmap rotate 90
-                    "8" -> bitmap = bitmap rotate 270
-                    "3" -> bitmap = bitmap rotate 180
-                }
-            }
-
-            if (onPickerCloseListener != null) {
-                onPickerCloseListener?.onPickerClosed(
-                    ItemModel.ITEM_CAMERA,
-                    bitmap.toUri(requireContext(), fileName)
-                )
-            }
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-
-        dismiss()
     }
 
     private fun pickPhoto(data: Intent?) {
@@ -490,17 +455,10 @@ class PickerDialog : BottomSheetDialogFragment() {
     }
 
     fun show() {
-        if (activity == null) {
-            fragment?.fragmentManager?.let { show(it, "") }
-        } else {
-            activity?.supportFragmentManager?.let { show(it, "") }
-        }
+        show(activity.supportFragmentManager, "")
     }
 
-    fun setLauncher() {
-        takePhoto = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            onActivityResult(REQUEST_TAKE_PHOTO,it)
-        }
+    private fun setLauncher() {
         openGallery =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
                 onActivityResult(REQUEST_PICK_PHOTO, result)

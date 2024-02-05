@@ -12,12 +12,17 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.Priority
+import com.bumptech.glide.request.RequestOptions
+import com.manoj.clean.R
 import com.manoj.clean.databinding.ImageItemSingleBinding
 import com.manoj.clean.databinding.VideoItemSingleBinding
 import com.manoj.clean.ui.common.singlexoplayer.SingleExoPlayerView
 import com.manoj.clean.ui.common.singlexoplayer.VideoAutoPlayHelper
 import com.manoj.clean.ui.favorites.FavouriteAdapter.Companion.FEED_TYPE_IMAGE
 import com.manoj.clean.ui.favorites.FavouriteAdapter.Companion.FEED_TYPE_VIDEO
+import com.manoj.clean.ui.popularmovies.PopularMoviesFragment
+import com.manoj.clean.util.loadImageWithProgress
 
 class HorizontalPagerAdapter(
     private val context: Context,
@@ -94,6 +99,14 @@ class HorizontalPagerAdapter(
         } else if (pagerViewHolder is ImageViewHolder) {
             val holder: ImageViewHolder = pagerViewHolder
             Glide.with(context).load(arrayList[position].thumbnail).into(holder.imageView)
+            val options: RequestOptions = RequestOptions()
+                .centerCrop()
+                .placeholder(R.drawable.bg_image)
+                .error(R.drawable.bg_image)
+                .priority(Priority.HIGH)
+            holder.imageView.loadImageWithProgress(
+                arrayList[position].thumbnail, holder.progress, options
+            )
         }
     }
 
@@ -106,6 +119,8 @@ class HorizontalPagerAdapter(
     class ImageViewHolder(binding: ImageItemSingleBinding) : PagerViewHolder(binding.root) {
         val imageView =
             binding.imageView
+        val progress =
+            binding.imgPb
     }
 
     class VideoViewHolder(binding: VideoItemSingleBinding) : PagerViewHolder(binding.root) {

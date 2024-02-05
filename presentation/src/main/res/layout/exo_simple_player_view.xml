@@ -62,7 +62,8 @@
                     android:layout_height="match_parent"
                     android:layout_centerInParent="true"
                     android:background="@color/colorPrimary"
-                    android:scaleType="fitCenter"
+                    android:scaleType="centerCrop"
+                    android:adjustViewBounds="true"
                     android:src="@drawable/fullscreen" />
 
                 <ImageView
