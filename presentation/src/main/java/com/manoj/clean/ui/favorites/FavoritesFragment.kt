@@ -51,8 +51,6 @@ class FavoritesFragment : BaseFragment<FragmentFavoritesBinding>() {
                 }
             }, videoAutoPlayHelper
         )
-        setHasFixedSize(true)
-        setItemViewCacheSize(10)
         binding.adapter = favouriteAdapter
         videoAutoPlayHelper.startObserving()
     }

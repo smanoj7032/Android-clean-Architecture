@@ -87,7 +87,7 @@ class HorizontalPagerAdapter(
                 }
 
                 override fun onFullScreenOpen() {
-                    activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                    activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
                 }
 
                 override fun onThumbnailClick() {

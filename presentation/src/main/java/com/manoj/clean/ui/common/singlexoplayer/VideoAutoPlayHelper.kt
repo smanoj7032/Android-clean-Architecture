@@ -35,10 +35,8 @@ class VideoAutoPlayHelper(var recyclerView: RecyclerView) {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
                 if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    /**Cancel any existing coroutine job to ensure only one delay is applied at a time*/
                     handler.postDelayed(runnable, 200)
                 }else {
-                    /**Cancel any existing coroutine job to ensure only one delay is applied at a time*/
                     handler.removeCallbacks(runnable)
                 }
             }

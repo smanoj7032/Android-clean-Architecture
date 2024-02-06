@@ -205,7 +205,7 @@ class SingleExoPlayerView @OptIn(UnstableApi::class) @JvmOverloads constructor(
 
 
     private fun enterFullScreen() {
-        playerView?.findViewById<ImageView>(R.id.iv_fullscreen_land)?.visibility = View.VISIBLE
+        playerListener?.onFullScreenOpen()
         detachVideoSurfaceView()
         attachVideoSurfaceViewToDialog()
         isFullScreen = true
@@ -213,7 +213,6 @@ class SingleExoPlayerView @OptIn(UnstableApi::class) @JvmOverloads constructor(
     }
 
     private fun exitFullScreen() {
-        playerView?.findViewById<ImageView>(R.id.iv_fullscreen_land)?.visibility = View.GONE
         playerListener?.onFullScreenExit()
         detachVideoSurfaceViewFromDialog()
         attachVideoSurfaceViewToParent()
@@ -277,10 +276,9 @@ class SingleExoPlayerView @OptIn(UnstableApi::class) @JvmOverloads constructor(
                     rootLayout?.post {
                         if (rootLayout != null) {
                             val screenWidth = rootLayout?.width ?: 0
-                            val targetWidth = screenWidth
-                            val targetHeight = (targetWidth * aspectRatio).toInt()
+                            val targetHeight = (screenWidth * aspectRatio).toInt()
 
-                            layoutParams.width = targetWidth
+                            layoutParams.width = screenWidth
                             layoutParams.height = targetHeight
 
                             playerView?.videoSurfaceView?.layoutParams = layoutParams
@@ -303,10 +301,7 @@ class SingleExoPlayerView @OptIn(UnstableApi::class) @JvmOverloads constructor(
         rootLayout = findViewById(R.id.root_layout)
         ivFullScreen = findViewById(R.id.iv_fullscreen)
         val play = playerView?.findViewById<ImageView>(R.id.exo_play)
-        playerView?.findViewById<ImageView>(R.id.iv_fullscreen_land)?.setOnClickListener {
-            playerListener?.onFullScreenOpen()
-            playerView?.findViewById<ImageView>(R.id.iv_fullscreen_land)?.visibility = View.GONE
-        }
+
         thumbnail?.setOnClickListener { playerListener?.onThumbnailClick() }
         val mute = playerView?.findViewById<ImageView>(R.id.muteIcon)
 
@@ -338,7 +333,7 @@ class SingleExoPlayerView @OptIn(UnstableApi::class) @JvmOverloads constructor(
         }
     }
 
-    fun reset() {
+    private fun reset() {
         playerView?.alpha = 0f
         relLayout?.isVisible = true
     }
