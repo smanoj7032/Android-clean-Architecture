@@ -6,7 +6,7 @@ apply plugin: 'com.google.dagger.hilt.android'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion 34
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.manoj.clean"
@@ -81,7 +81,6 @@ dependencies {
     kapt 'com.github.bumptech.glide:compiler:4.13.2'
 
 
-
     //Hilt
     implementation "com.google.dagger:hilt-android:2.45"
     kapt "com.google.dagger:hilt-compiler:2.45"
@@ -125,7 +124,11 @@ dependencies {
 
     //google maps
     implementation 'com.google.android.gms:play-services-maps:18.2.0'
+    implementation "com.google.android.gms:play-services-location:21.0.1"
+    implementation 'androidx.preference:preference:1.2.0'
+    implementation 'com.github.tbruyelle:rxpermissions:0.12'
 
+    implementation("com.github.tbruyelle:rxpermissions:0.10.2")
 
     testImplementation 'androidx.arch.core:core-testing:2.1.0'
     testImplementation 'junit:junit:4.13.2'

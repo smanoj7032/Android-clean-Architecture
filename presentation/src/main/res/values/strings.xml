@@ -28,4 +28,47 @@
 
     <string name="action_right_drawer">Right Drawer</string>
     <string name="profile">Profile</string>
+
+
+    <!-- Location Tracker -->
+    <integer name="location_update_interval_in_millis">0</integer>
+    <integer name="location_fastest_update_interval_in_millis">0</integer>
+    <integer name="location_max_wait_time_interval_in_millis">0</integer>
+    <integer name="location_min_distance_for_updates_in_meters">0</integer>
+
+    <!-- Geofencer -->
+    <integer name="loitering_delay">1</integer>
+    <integer name="notification_responsiveness">1</integer>
+    <integer name="expiration_duration">-1</integer>
+
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyDGn7d0iulunZkWMmnkJohxrha_ZTeOqqM</string>
+
+
+    <string name="instruction_where_description">Where do you want to add a geofence?</string>
+    <string name="instruction_where_subtitle_description">Drag the map to set the location</string>
+    <string name="instruction_radius_description">Choose the radius</string>
+    <string name="instruction_message_description">Enter the message</string>
+    <string name="continue_description">Continue</string>
+    <string name="error_required">Required</string>
+    <string name="message_hint">We arrived! :]</string>
+    <string name="radius_description">%1$s meters</string>
+
+    <string name="reminder_removal_alert">Remove geofence?</string>
+    <string name="reminder_removal_alert_positive">OK</string>
+    <string name="reminder_removal_alert_negative">Cancel</string>
+
+    <string name="reminder_added_success">Geofence added!</string>
+    <string name="reminder_removed_success">Geofence removed!</string>
+
+    <string name="marker_content_description">Marker</string>
+    <string name="dialog_rationale_permission">We need notification permission to let you know through local push notification when you enter geo fence zone to send</string>
+
+    <plurals name="num_locations_reported">
+        <item quantity="zero">No location reported</item>
+        <item quantity="one">One location reported</item>
+        <item quantity="other">%d locations reported</item>
+    </plurals>
+    <string name="dialog_rationale_coarse_location">We need GPS Location in background so that we can guide you when you are at that locations</string>
+    <string name="button_allow">Allow</string>
+    <string name="button_reject">Reject</string>
 </resources>

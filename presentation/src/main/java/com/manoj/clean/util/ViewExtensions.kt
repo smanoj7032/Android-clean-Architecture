@@ -13,6 +13,7 @@ import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -269,17 +270,19 @@ private fun getStoragePermission(): Array<String> {
         Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE
     )
 }
+
 fun getLocationPermissions(): Array<String> {
-    return if (SDK_INT >= Build.VERSION_CODES.Q) {
-        arrayOf(
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION,
-            Manifest.permission.ACCESS_BACKGROUND_LOCATION
-        )
-    } else {
-        arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION)
-    }
+    return arrayOf(
+        Manifest.permission.ACCESS_COARSE_LOCATION,
+        Manifest.permission.ACCESS_FINE_LOCATION
+    )
+
 }
+@RequiresApi(Build.VERSION_CODES.Q)
+fun getBackgroundLocationPermission(): Array<String>{
+    return  arrayOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+}
+
 val PERMISSION_READ_STORAGE = getStoragePermission()
 
 

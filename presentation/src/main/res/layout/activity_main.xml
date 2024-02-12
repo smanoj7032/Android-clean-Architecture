@@ -69,11 +69,4 @@
             app:layout_anchor="@id/bottomAppBar" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/fragment_detail"
-        android:layout_width="300dp"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_height="match_parent"
-        android:layout_weight="1" />
 </androidx.slidingpanelayout.widget.SlidingPaneLayout>

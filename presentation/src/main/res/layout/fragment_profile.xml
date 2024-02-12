@@ -8,102 +8,144 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/white"
-        tools:context=".screens.home.HomeActivity">
+        android:layout_height="match_parent">
 
-
-        <ImageView
-            android:id="@+id/profile_image"
+        <fragment
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginStart="15dp"
-            android:layout_marginTop="15dp"
-            android:layout_marginEnd="15dp"
-            android:src="@drawable/account_icon"
-            app:layout_constraintDimensionRatio="1:1"
-            app:layout_constraintEnd_toStartOf="@id/edit_profile_btn"
-            app:layout_constraintHorizontal_weight="2"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
-
-        <TextView
-            android:id="@+id/posts_count_text"
-            style="@style/profile_text_count"
-            app:layout_constraintBottom_toTopOf="@id/edit_profile_btn"
-            app:layout_constraintEnd_toEndOf="@id/posts_text"
-            app:layout_constraintStart_toStartOf="@id/posts_text"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.3"
-            tools:text="50" />
-
-        <TextView
-            android:id="@+id/posts_text"
-            style="@style/profile_text"
-            android:text="Posts"
-            app:layout_constraintEnd_toStartOf="@id/followers_text"
-            app:layout_constraintStart_toStartOf="@id/edit_profile_btn"
-            app:layout_constraintTop_toBottomOf="@id/posts_count_text" />
-
-        <TextView
-            android:id="@+id/followers_count_text"
-            style="@style/profile_text_count"
-            app:layout_constraintBaseline_toBaselineOf="@id/posts_count_text"
-            app:layout_constraintEnd_toEndOf="@id/followers_text"
-            app:layout_constraintStart_toStartOf="@id/followers_text"
-            tools:text="100" />
-
-        <TextView
-            android:id="@+id/followers_text"
-            style="@style/profile_text"
-            android:text="Followers"
-            app:layout_constraintBaseline_toBaselineOf="@id/posts_text"
-            app:layout_constraintEnd_toStartOf="@id/following_text"
-            app:layout_constraintStart_toEndOf="@id/posts_text" />
-
-        <TextView
-            android:id="@+id/following_count_text"
-            style="@style/profile_text_count"
-            app:layout_constraintBaseline_toBaselineOf="@id/posts_count_text"
-            app:layout_constraintEnd_toEndOf="@id/following_text"
-            app:layout_constraintStart_toStartOf="@id/following_text"
-            tools:text="200" />
-
-        <TextView
-            android:id="@+id/following_text"
-            style="@style/profile_text"
-            android:text="Following"
-            app:layout_constraintBaseline_toBaselineOf="@id/posts_text"
-            app:layout_constraintEnd_toEndOf="@id/edit_profile_btn"
-            app:layout_constraintStart_toEndOf="@id/followers_text" />
-
-        <Button
-            android:id="@+id/edit_profile_btn"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="15dp"
-            android:layout_marginBottom="5dp"
-            android:minHeight="0dp"
-            android:paddingTop="4dp"
-            android:paddingBottom="4dp"
-            android:text="Edit Profile"
-            android:textAllCaps="false"
-            android:textSize="14sp"
-            app:layout_constraintBottom_toBottomOf="@id/profile_image"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_weight="5"
-            app:layout_constraintStart_toEndOf="@id/profile_image" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/images_recycler"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginTop="30dp"
+            android:padding="@dimen/activity_horizontal_margin"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/edit_profile_btn">
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        </androidx.recyclerview.widget.RecyclerView>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_dodgeInsetEdges="bottom">
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fabCurrentLocation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/activity_horizontal_margin"
+                app:srcCompat="@drawable/ic_baseline_my_location_24px" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fabNewReminder"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/activity_horizontal_margin"
+                app:srcCompat="@drawable/ic_baseline_add_24px" />
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/container2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+
+            <ImageView
+                android:id="@+id/marker"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_centerInParent="true"
+                app:srcCompat="@drawable/ic_twotone_location_on_48px" />
+
+            <LinearLayout
+                android:id="@+id/container_settings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:background="#ffffff"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/instructionTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginTop="@dimen/activity_horizontal_margin"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin"
+                    android:layout_marginBottom="8dp"
+                    android:textColor="#000"
+                    android:textSize="18sp"
+                    tools:text="@string/instruction_where_description" />
+
+                <TextView
+                    android:id="@+id/instructionSubtitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin"
+                    android:layout_marginBottom="8dp"
+                    android:text="@string/instruction_where_subtitle_description" />
+
+                <SeekBar
+                    android:id="@+id/radiusBar"
+                    style="@style/Widget.AppCompat.SeekBar.Discrete"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="2dp"
+                    android:layout_marginRight="2dp"
+                    android:max="4"
+                    android:progress="2" />
+
+                <TextView
+                    android:id="@+id/radiusDescription"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start|bottom"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin"
+                    android:layout_marginBottom="4dp"
+                    tools:text="100 meters" />
+
+                <EditText
+                    android:id="@+id/message"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="13dp"
+                    android:layout_marginRight="13dp"
+                    android:layout_marginBottom="8dp"
+                    android:hint="@string/message_hint"
+                    android:imeOptions="actionDone"
+                    android:inputType="textCapSentences"
+                    android:maxLines="1" />
+
+                <Button
+                    android:id="@+id/next"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin"
+                    android:layout_marginBottom="8dp"
+                    android:background="@drawable/bg_button"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:text="@string/continue_description"
+                    android:textColor="@color/colorAccent" />
+
+            </LinearLayout>
+
+
+        </RelativeLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -3,7 +3,6 @@ package com.manoj.clean.ui.main
 import android.Manifest
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
@@ -13,34 +12,23 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
 import com.manoj.clean.R
 import com.manoj.clean.databinding.ActivityMainBinding
 import com.manoj.clean.picker.CustomPickerDialog
 import com.manoj.clean.picker.ItemModel
 import com.manoj.clean.picker.PickerDialog
 import com.manoj.clean.ui.common.base.BaseActivity
-import com.manoj.clean.ui.common.base.common.permissionutils.QuickPermissionsOptions
 import com.manoj.clean.ui.common.base.common.permissionutils.runWithPermissions
 import com.manoj.clean.ui.search.SearchActivity
 import com.manoj.clean.util.PERMISSION_READ_STORAGE
-import com.manoj.clean.util.getLocationPermissions
 import dagger.hilt.android.AndroidEntryPoint
 
 
 @RequiresApi(Build.VERSION_CODES.P)
 @AndroidEntryPoint
-class MainActivity : BaseActivity<ActivityMainBinding>(), OnMapReadyCallback {
+class MainActivity : BaseActivity<ActivityMainBinding>() {
     private lateinit var pickerDialog: PickerDialog
     private val navController by lazy { binding.container.getFragment<NavHostFragment>().navController }
-    val locationLatitude = 31.4653170
-    val locationLongitude = 76.7249976
-    val formatString = "geo:%f,%f?q=%s"
 
 
     override fun inflateViewBinding(inflater: LayoutInflater): ActivityMainBinding =
@@ -56,19 +44,11 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), OnMapReadyCallback {
         setupActionBar()
         initViews()
         setupNavigationView()
-        setMap()
     }
 
-    private fun setMap() =
-        runWithPermissions(
-            *getLocationPermissions(),
-            options = QuickPermissionsOptions(handleRationale = true)
-        ) {
-            val mapFragment = supportFragmentManager
-                .findFragmentById(R.id.fragment_detail) as SupportMapFragment
-            mapFragment.getMapAsync(this)
-            Log.e("T-----AG", "setMap: ")
-        }
+
+
+
 
     private fun initViews() {
         setPickerDialog()
@@ -173,16 +153,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), OnMapReadyCallback {
              }*/
         }
         return true
-    }
-
-    override fun onMapReady(googleMap: GoogleMap) {
-        googleMap.mapType = GoogleMap.MAP_TYPE_HYBRID
-        val latLng = LatLng(locationLatitude, locationLongitude)
-        val markerOptions = MarkerOptions()
-        markerOptions.position(latLng)
-        googleMap.clear()
-        googleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng))
-        googleMap.addMarker(markerOptions)
     }
 
 }

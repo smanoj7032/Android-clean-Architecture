@@ -1,6 +1,7 @@
 package com.manoj.clean
 
 import android.app.Application
+import android.content.Context
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.database.StandaloneDatabaseProvider
@@ -14,8 +15,15 @@ import javax.inject.Inject
 class App : Application(), Configuration.Provider {
     companion object {
         lateinit var cache: SimpleCache
-    }
+        private var instance: App? = null
 
+        fun applicationContext() : Context {
+            return instance!!.applicationContext
+        }
+    }
+    init {
+        instance = this
+    }
     private lateinit var cacheEvictor: LeastRecentlyUsedCacheEvictor
     private lateinit var exoplayerDatabaseProvider: StandaloneDatabaseProvider
     private val cacheSize: Long = 900 * 1024 * 1024
