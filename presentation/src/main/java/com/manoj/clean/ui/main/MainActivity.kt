@@ -24,7 +24,6 @@ import com.manoj.clean.util.PERMISSION_READ_STORAGE
 import dagger.hilt.android.AndroidEntryPoint
 
 
-@RequiresApi(Build.VERSION_CODES.P)
 @AndroidEntryPoint
 class MainActivity : BaseActivity<ActivityMainBinding>() {
     private lateinit var pickerDialog: PickerDialog
