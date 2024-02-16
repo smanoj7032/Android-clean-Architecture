@@ -55,6 +55,6 @@ class LocationTrackerUpdateBroadcastReceiver : BroadcastReceiver() {
     companion object {
 
         internal val ACTION_PROCESS_UPDATES =
-            "com.sprotte.geolocator.tracking.service" + ".PROCESS_UPDATES"
+            "com.manoj.clean.util.geolocator.tracking.service" + ".PROCESS_UPDATES"
     }
 }

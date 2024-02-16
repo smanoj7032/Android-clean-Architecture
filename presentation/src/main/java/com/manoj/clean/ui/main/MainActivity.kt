@@ -3,6 +3,7 @@ package com.manoj.clean.ui.main
 import android.Manifest
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
@@ -18,6 +19,9 @@ import com.manoj.clean.picker.CustomPickerDialog
 import com.manoj.clean.picker.ItemModel
 import com.manoj.clean.picker.PickerDialog
 import com.manoj.clean.ui.common.base.BaseActivity
+import com.manoj.clean.ui.common.base.common.biometrics.BiometricPromptUtils
+import com.manoj.clean.ui.common.base.common.biometrics.CryptoUtils
+import com.manoj.clean.ui.common.base.common.biometrics.TAG
 import com.manoj.clean.ui.common.base.common.permissionutils.runWithPermissions
 import com.manoj.clean.ui.search.SearchActivity
 import com.manoj.clean.util.PERMISSION_READ_STORAGE
@@ -28,6 +32,36 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : BaseActivity<ActivityMainBinding>() {
     private lateinit var pickerDialog: PickerDialog
     private val navController by lazy { binding.container.getFragment<NavHostFragment>().navController }
+    private val biometricPromptUtils =
+        BiometricPromptUtils(this, object : BiometricPromptUtils.BiometricListener {
+            override fun onAuthenticationLockoutError() {
+                Log.d(TAG, "onAuthenticationLockoutError")
+            }
+
+            override fun onAuthenticationPermanentLockoutError() {
+                Log.d(TAG, "onAuthenticationPermanentLockoutError")
+            }
+
+            override fun onNewBiometricEnrollment() {
+                Log.d(TAG, "onNewBiometricEnrollment")
+            }
+
+            override fun onFirstBiometricAuthentication() {
+                Log.d(TAG, "on First Biometric Authentication")
+            }
+
+            override fun onAuthenticationSuccess() {
+                runOnUiThread { SearchActivity.start(this@MainActivity) }
+            }
+
+            override fun onAuthenticationFailed() {
+                Log.d(TAG, "onAuthenticationFailed")
+            }
+
+            override fun onAuthenticationError() {
+                Log.d(TAG, "onAuthenticationError")
+            }
+        }, CryptoUtils())
 
 
     override fun inflateViewBinding(inflater: LayoutInflater): ActivityMainBinding =
@@ -46,10 +80,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     }
 
 
-
-
-
     private fun initViews() {
+        biometricPromptUtils.generateCryptoKey()
         setPickerDialog()
         binding.fabAdd.setOnClickListener {
             runWithPermissions(
@@ -145,7 +177,18 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.action_search -> SearchActivity.start(this)
+            R.id.action_search -> {
+                if (biometricPromptUtils.isDeviceSupportingBiometrics()) {
+                    biometricPromptUtils.showBiometricPrompt(
+                        resources.getString(R.string.confirmYourBiometricsKey),
+                        resources.getString(R.string.cancelKey),
+                        confirmationRequired = false
+                    )
+                } else {
+                    SearchActivity.start(this@MainActivity)
+                }
+
+            }
             /* R.id.action_dark_mode -> {
                  enableDarkMode(!isDarkModeEnabled())
                  recreate()

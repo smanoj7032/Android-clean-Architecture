@@ -36,8 +36,6 @@ data class Geofence(
     @TransitionType
     var transitionType: Int = 1
 ) {
-    /**
-     * Event Receiver. Needs to be [com.sprotte.geolocator.geofencer.models.CoreWorkerModule]
-     */
+
     var intentClassName: String = ""
 }

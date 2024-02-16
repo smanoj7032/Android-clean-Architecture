@@ -1,6 +1,7 @@
 package com.manoj.clean.util.geolocator.geofencer.service
 
 import android.content.Context
+import android.util.Log
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.manoj.clean.util.geolocator.geofencer.Geofencer
@@ -35,6 +36,7 @@ class GeoFenceUpdateWorker(val ctx: Context, params: WorkerParameters) : Worker(
     override fun doWork(): Result {
         return try {
             val geoFenceId = inputData.getString(Geofencer.INTENT_EXTRAS_KEY) ?: return Result.failure()
+            Log.e("GeoFenceUpdateWorker----->>", "doWork: called")
             Geofencer(ctx).get(geoFenceId)?.run { startWorker(this) }
             Result.success()
         } catch (e: Exception) {

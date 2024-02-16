@@ -84,7 +84,6 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
                 binding.image.loadImageWithProgress(
                     POSTER_BASE_URL + item.poster_path, binding.imgPb, options
                 )
-                binding.tvId.text = item.id.toString()
                 binding.root.setOnClickListener { item.id?.let { it1 -> navigateToMovieDetails(it1) } }
             }) {}
 

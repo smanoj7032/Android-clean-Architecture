@@ -35,7 +35,7 @@ class VideoAutoPlayHelper(var recyclerView: RecyclerView) {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
                 if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    handler.postDelayed(runnable, 200)
+                    handler.postDelayed(runnable, 400)
                 }else {
                     handler.removeCallbacks(runnable)
                 }
@@ -44,7 +44,9 @@ class VideoAutoPlayHelper(var recyclerView: RecyclerView) {
         recyclerView.post { recyclerView.smoothScrollBy(0, 1) }
     }
 
-    val runnable = Runnable {  onScrolled(false) }
+    val runnable = Runnable {  onScrolled(false)
+    Log.e("Check----->>>","onScrolled")
+    }
 
 
     /**

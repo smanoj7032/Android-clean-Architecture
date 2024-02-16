@@ -78,7 +78,6 @@ class PopularMoviesFragment : BaseFragment<FragmentPopularMoviesBinding>() {
                     POSTER_BASE_URL + item.poster_path, binding.imgPb, options
                 )
                 Log.e("TAG----->>", "initRecyclerView: ${POSTER_BASE_URL + item.poster_path}", )
-                binding.tvId.text = item.id.toString()
                 binding.root.setOnClickListener { viewModel.onMovieClicked(item.id) }
             }) {}
 

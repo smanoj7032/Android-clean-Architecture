@@ -30,6 +30,11 @@ import com.manoj.clean.R
 import com.manoj.clean.databinding.FragmentProfileBinding
 import com.manoj.clean.ui.common.base.BaseFragment
 import com.manoj.clean.ui.common.base.common.permissionutils.runWithPermissions
+import com.manoj.clean.ui.common.customdialogs.CustomDialog
+import com.manoj.clean.ui.common.customdialogs.DialogAnimation
+import com.manoj.clean.ui.common.customdialogs.DialogStyle
+import com.manoj.clean.ui.common.customdialogs.DialogType
+import com.manoj.clean.ui.common.customdialogs.OnDialogClickListener
 import com.manoj.clean.util.NetworkMonitor
 import com.manoj.clean.util.geolocator.LocationTrackerWorker
 import com.manoj.clean.util.geolocator.NotificationWorker
@@ -143,6 +148,10 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(), GoogleMap.OnMark
         Geofencer(requireContext())
             .addGeofenceWorker(geofence, NotificationWorker::class.java) {
                 binding.container2.isGone = true
+                CustomDialog.Builder(requireActivity(), DialogStyle.TOASTER, DialogType.SUCCESS)
+                    .setTitle("Geofence")
+                    .setMessage("Geofence added")
+                    .show()
                 showGeofences()
             }
 
@@ -180,24 +189,21 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(), GoogleMap.OnMark
 
 
     private fun FragmentProfileBinding.showGeofenceRemoveAlert(geofence: Geofence) {
-        val alertDialog = AlertDialog.Builder(requireContext()).create()
-        alertDialog.run {
-            setMessage(getString(R.string.reminder_removal_alert))
-            setButton(
-                AlertDialog.BUTTON_POSITIVE,
-                getString(R.string.reminder_removal_alert_positive)
-            ) { dialog, _ ->
-                removeGeofence(geofence)
-                dialog.dismiss()
-            }
-            setButton(
-                AlertDialog.BUTTON_NEGATIVE,
-                getString(R.string.reminder_removal_alert_negative)
-            ) { dialog, _ ->
-                dialog.dismiss()
-            }
-            show()
-        }
+        CustomDialog.Builder(requireActivity(), DialogStyle.FLAT, DialogType.INFO)
+            .setTitle("Geofence")
+            .setMessage(getString(R.string.reminder_removal_alert))
+            .setAnimation(DialogAnimation.SHRINK)
+            .setOnClickListener(object : OnDialogClickListener {
+                override fun onClick(dialog: CustomDialog.Builder) {
+                    removeGeofence(geofence)
+                    dialog.dismiss()
+                }
+
+                override fun onNegativeClick(dialog: CustomDialog.Builder) {
+                    dialog.dismiss()
+                }
+            })
+            .show()
     }
 
     private fun FragmentProfileBinding.removeGeofence(geofence: Geofence) {

@@ -5,6 +5,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.util.Log
 import com.google.android.gms.location.Geofence.Builder
 import com.google.android.gms.location.Geofence.NEVER_EXPIRE
 import com.google.android.gms.location.GeofencingRequest
@@ -57,6 +58,7 @@ class GeofenceRepository(private val context: Context) {
             }
             .addOnFailureListener {
                 loge(it.message)
+                Log.e("GeoFenceUpdateWorker----->>", "add: $it")
             }
     }
 
@@ -105,7 +107,7 @@ class GeofenceRepository(private val context: Context) {
     private fun buildGeofence(geofence: Geofence): com.google.android.gms.location.Geofence {
         return Builder()
             .setRequestId(geofence.id)
-            .setLoiteringDelay(context.resources.getInteger(R.integer.loitering_delay))
+          /*  .setLoiteringDelay(context.resources.getInteger(R.integer.loitering_delay))*/
             .setNotificationResponsiveness(context.resources.getInteger(R.integer.notification_responsiveness))
             .setExpirationDuration(context.getRes(R.integer.expiration_duration))
             .setCircularRegion(
@@ -120,7 +122,7 @@ class GeofenceRepository(private val context: Context) {
 
     private fun buildGeofencingRequest(geofence: com.google.android.gms.location.Geofence): GeofencingRequest {
         return GeofencingRequest.Builder()
-            .setInitialTrigger(1)
+            .setInitialTrigger(com.google.android.gms.location.Geofence.GEOFENCE_TRANSITION_ENTER)
             .addGeofences(listOf(geofence))
             .build()
     }

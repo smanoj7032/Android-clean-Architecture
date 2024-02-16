@@ -121,6 +121,7 @@ dependencies {
 
     //verticak seekbar
     implementation 'com.h6ah4i.android.widget.verticalseekbar:verticalseekbar:1.0.0'
+    implementation 'androidx.biometric:biometric:1.1.0'
 
     //google maps
     implementation 'com.google.android.gms:play-services-maps:18.2.0'

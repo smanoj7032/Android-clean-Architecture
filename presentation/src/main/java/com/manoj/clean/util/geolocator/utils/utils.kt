@@ -66,10 +66,7 @@ internal fun <T> lazyFast(operation: () -> T): Lazy<T> = lazy(LazyThreadSafetyMo
 
 internal fun Context.safeContext(): Context =
     takeUnless {
-        when {
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.N -> isDeviceProtectedStorage
-            else -> true
-        }
+        isDeviceProtectedStorage
     }?.run {
         applicationContext.let {
             ContextCompat.createDeviceProtectedStorageContext(it) ?: it
