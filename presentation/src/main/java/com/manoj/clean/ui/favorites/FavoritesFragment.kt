@@ -1,13 +1,25 @@
 package com.manoj.clean.ui.favorites
 
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.ImageView
+import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
+import com.manoj.clean.R
 import com.manoj.clean.databinding.FragmentFavoritesBinding
 import com.manoj.clean.ui.common.base.BaseFragment
+import com.manoj.clean.ui.common.imageslider.listener.CarouselListener
+import com.manoj.clean.ui.common.imageslider.model.CarouselGravity
+import com.manoj.clean.ui.common.imageslider.model.CarouselItem
+import com.manoj.clean.ui.common.imageslider.model.CarouselType
+import com.manoj.clean.ui.common.imageslider.utils.dpToPx
+import com.manoj.clean.ui.common.imageslider.utils.spToPx
 import com.manoj.clean.ui.common.singlexoplayer.VideoAutoPlayHelper
 import com.manoj.clean.util.SingleRequestStateFlow
 import com.manoj.clean.util.launchAndRepeatWithViewLifecycle
@@ -35,8 +47,110 @@ class FavoritesFragment : BaseFragment<FragmentFavoritesBinding>() {
 
     private fun setupViews() {
         setupRecyclerView()
+        setImageSlider()
     }
+    private fun setImageSlider() {
+        binding.imageCarousel.apply {
+            registerLifecycle(lifecycle)
 
+            showTopShadow = true
+            topShadowAlpha = 0.15f // 0 to 1, 1 means 100%
+            topShadowHeight = 32.dpToPx(context) // px value of dp
+
+            showBottomShadow = true
+            bottomShadowAlpha = 0.6f // 0 to 1, 1 means 100%
+            bottomShadowHeight = 64.dpToPx(context) // px value of dp
+
+            showCaption = true
+            captionMargin = 0.dpToPx(context) // px value of dp
+            captionTextSize = 14.spToPx(context) // px value of sp
+
+            showIndicator = true
+            indicatorMargin = 0.dpToPx(context) // px value of dp
+
+            imageScaleType = ImageView.ScaleType.CENTER_CROP
+
+            carouselBackground = ColorDrawable(Color.parseColor("#333333"))
+            imagePlaceholder = ContextCompat.getDrawable(
+                requireContext(),
+                R.drawable.carousel_default_placeholder
+            )
+
+            carouselPadding = 0.dpToPx(context)
+            carouselPaddingStart = 0.dpToPx(context)
+            carouselPaddingTop = 0.dpToPx(context)
+            carouselPaddingEnd = 0.dpToPx(context)
+            carouselPaddingBottom = 0.dpToPx(context)
+
+            showNavigationButtons = true
+            previousButtonLayout =
+                R.layout.previous_button_layout
+            previousButtonId =
+                R.id.btn_previous
+            previousButtonMargin = 4.dpToPx(context) // px value of dp
+            nextButtonLayout =
+                R.layout.next_button_layout
+            nextButtonId = R.id.btn_next
+            nextButtonMargin = 4.dpToPx(context) // px value of dp
+
+            carouselType = CarouselType.BLOCK
+
+            carouselGravity = CarouselGravity.CENTER
+
+            scaleOnScroll = false
+            scalingFactor = .15f // 0 to 1; 1 means 100
+            autoWidthFixing = true
+            autoPlay = true
+            autoPlayDelay = 3000 // Milliseconds
+            infiniteCarousel = true
+            touchToPause = true
+
+            carouselListener = object : CarouselListener {
+                override fun onClick(position: Int, carouselItem: CarouselItem) {
+                    Toast.makeText(
+                        requireContext(),
+                        "You clicked at position ${position + 1}.",
+                        Toast.LENGTH_SHORT
+                    )
+                        .show()
+                }
+
+                override fun onLongClick(position: Int, carouselItem: CarouselItem) {
+                    Toast.makeText(
+                        requireContext(),
+                        "You long clicked at position ${position + 1}.",
+                        Toast.LENGTH_SHORT
+                    )
+                        .show()
+                }
+            }
+        }
+
+        // Dummy header
+        val headers = mutableMapOf<String, String>()
+        headers["header_key"] = "header_value"
+
+        val listOne = mutableListOf<CarouselItem>()
+        val one = listOf(
+            "https://image.tmdb.org/t/p/w342/7lTnXOy0iNtBAdRP3TZvaKJ77F6.jpg",
+            "https://image.tmdb.org/t/p/w342/qhb1qOilapbapxWQn9jtRCMwXJF.jpg",
+            "https://image.tmdb.org/t/p/w342/7lTnXOy0iNtBAdRP3TZvaKJ77F6.jpg",
+            "https://image.tmdb.org/t/p/w342/qhb1qOilapbapxWQn9jtRCMwXJF.jpg",
+            "https://image.tmdb.org/t/p/w342/7lTnXOy0iNtBAdRP3TZvaKJ77F6.jpg",
+            "https://image.tmdb.org/t/p/w342/qhb1qOilapbapxWQn9jtRCMwXJF.jpg",
+        )
+        for ((index, item) in one.withIndex()) {
+            listOne.add(
+                CarouselItem(
+                    imageUrl = item,
+                    caption = "Image ${index + 1} of $one.size}",
+                    headers = headers
+                )
+            )
+        }
+
+        binding.imageCarousel.setData(listOne)
+    }
 
     private fun setupRecyclerView() = with(binding.recyclerView) {
         videoAutoPlayHelper = VideoAutoPlayHelper(this)
@@ -46,7 +160,6 @@ class FavoritesFragment : BaseFragment<FragmentFavoritesBinding>() {
             object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy)
-                    print("neha onScrolled horizontal")
                     videoAutoPlayHelper.onScrolled(true)
                 }
             }, videoAutoPlayHelper
@@ -63,7 +176,7 @@ class FavoritesFragment : BaseFragment<FragmentFavoritesBinding>() {
             viewModel.list.collect(requireActivity(),
                 object : SingleRequestStateFlow.Collector<List<List<FeedItem>>> {
                     override fun onRequestReceived(resource: State<List<List<FeedItem>>>) {
-                        resource.data?.let { favouriteAdapter.setData(it) }
+                        resource.data?.let { favouriteAdapter.submitList(it) }
                     }
                 })
         }

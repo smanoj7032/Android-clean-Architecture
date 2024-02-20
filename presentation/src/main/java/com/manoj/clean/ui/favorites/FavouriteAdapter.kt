@@ -22,119 +22,70 @@ class FavouriteAdapter(
     private val scrollListener: RecyclerView.OnScrollListener,
     private val playerHelper: VideoAutoPlayHelper
 ) :
-    ListAdapter<FeedItem, FavouriteAdapter.FeedViewHolder>(DIFF_CALLBACK) {
-    private val dataList: MutableList<List<FeedItem>> = ArrayList()
+    ListAdapter<List<FeedItem>, FavouriteAdapter.FeedViewHolder>(DIFF_CALLBACK) {
 
     companion object {
-        /** Mandatory implementation inorder to use "ListAdapter" - new JetPack component" **/
-        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<FeedItem>() {
-            override fun areItemsTheSame(oldItem: FeedItem, newItem: FeedItem): Boolean {
-                return false
+        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<List<FeedItem>>() {
+            override fun areItemsTheSame(
+                oldItem: List<FeedItem>,
+                newItem: List<FeedItem>
+            ): Boolean {
+                return oldItem.size == newItem.size && oldItem.containsAll(newItem)
             }
 
-            override fun areContentsTheSame(oldItem: FeedItem, newItem: FeedItem): Boolean {
-                return false
+            override fun areContentsTheSame(
+                oldItem: List<FeedItem>,
+                newItem: List<FeedItem>
+            ): Boolean {
+                return true
             }
-
         }
-        const val FEED_TYPE_IMAGE = 3
-        const val FEED_TYPE_VIDEO = 4
-    }
-
-    fun setData(newDataList: List<List<FeedItem>>) {
-        val diffResult = DiffUtil.calculateDiff(DiffCallback(dataList, newDataList))
-        dataList.clear()
-        dataList.addAll(newDataList)
-        diffResult.dispatchUpdatesTo(this)
+        const val
+                FEED_TYPE_IMAGE = 3
+        const val
+                FEED_TYPE_VIDEO = 4
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FeedViewHolder {
-        return FeedViewHolder(
-            FeedItemLayoutBinding.inflate(
-                LayoutInflater.from(
-                    parent.context
-                ), parent, false
-            )
-        )
+        val binding =
+            FeedItemLayoutBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return FeedViewHolder(binding)
     }
 
-
     override fun onBindViewHolder(holder: FeedViewHolder, position: Int) {
+        val dataList = getItem(position)
 
-        /*Set ratio according to first video*/
         (holder.recyclerViewHorizontal.layoutParams as ConstraintLayout.LayoutParams).dimensionRatio =
-            dataList[position][0].ratio
-        /* Set adapter (items are being used inside adapter, you can setup in your own way*/
-        val feedAdapter = HorizontalPagerAdapter(
-            context,
-            position, playerHelper,
-            dataList[position], activity
-        )
+            dataList[0].ratio
+
+        val feedAdapter =
+            HorizontalPagerAdapter(context, position, playerHelper, dataList, activity)
         holder.recyclerViewHorizontal.adapter = feedAdapter
+
+        val layoutManager = holder.recyclerViewHorizontal.layoutManager as LinearLayoutManager
+        layoutManager.scrollToPositionWithOffset(0, 0)
         holder.recyclerViewHorizontal.clearOnScrollListeners()
         holder.recyclerViewHorizontal.addOnScrollListener(scrollListener)
-        holder.recyclerViewHorizontal.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
-                val itemPosition: Int =
-                    (holder.recyclerViewHorizontal.layoutManager as LinearLayoutManager).findFirstCompletelyVisibleItemPosition()
-
-                try {
-                    holder.binding.dots.getTabAt(itemPosition)?.select()
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-            }
-        })
-
-        /**
-         * Add dots (fixed size for now)
-         */
         holder.binding.dots.removeAllTabs()
-        if (dataList[position].size > 1) {
-            for (i in 0 until dataList[position].size) {
+
+        if (dataList.size > 1) {
+            for (i in dataList.indices) {
                 holder.binding.dots.addTab(holder.binding.dots.newTab())
             }
         }
-
     }
 
-    override fun getItemCount(): Int {
-        return dataList.size
-    }
+    inner class FeedViewHolder(val binding: FeedItemLayoutBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        val recyclerViewHorizontal = binding.recyclerViewHorizontal
 
-    class FeedViewHolder(root: View) : RecyclerView.ViewHolder(root) {
-        lateinit var recyclerViewHorizontal: RecyclerView
-        lateinit var binding: FeedItemLayoutBinding
-
-        constructor(binding: FeedItemLayoutBinding) : this(binding.root) {
-            this.binding = binding
-            recyclerViewHorizontal =
-                binding.recyclerViewHorizontal
-
-            /** Keep the item center aligned**/
+        init {
             val snapHelper: SnapHelper = PagerSnapHelper()
             snapHelper.attachToRecyclerView(recyclerViewHorizontal)
         }
     }
-
-    private class DiffCallback<M>(
-        private val oldList: List<M>, private val newList: List<M>
-    ) : DiffUtil.Callback() {
-
-        override fun getOldListSize(): Int = oldList.size
-
-        override fun getNewListSize(): Int = newList.size
-
-        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-            return oldList[oldItemPosition] == newList[newItemPosition]
-        }
-
-        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-            return oldList[oldItemPosition] == newList[newItemPosition]
-        }
-    }
 }
+
 
 
 
