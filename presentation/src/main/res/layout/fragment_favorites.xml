@@ -13,16 +13,26 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.manoj.clean.ui.common.imageslider.ImageCarousel
-            android:id="@+id/imageCarousel"
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cvCarousel"
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:layout_margin="@dimen/movie_recycler_view_padding"
             android:padding="5dp"
-            app:autoPlay="true"
-            app:autoPlayDelay="3000"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="10dp"
             app:layout_constraintBottom_toTopOf="@+id/recyclerView"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.manoj.clean.ui.common.imageslider.ImageCarousel
+                android:id="@+id/imageCarousel"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_margin="@dimen/movie_recycler_view_padding"
+                android:padding="5dp"
+                app:autoPlay="true"
+                app:autoPlayDelay="3000" />
+        </androidx.cardview.widget.CardView>
 
 
         <androidx.recyclerview.widget.RecyclerView
@@ -36,7 +46,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageCarousel"
+            app:layout_constraintTop_toBottomOf="@+id/cvCarousel"
             app:setAdapter="@{adapter}" />
 
 

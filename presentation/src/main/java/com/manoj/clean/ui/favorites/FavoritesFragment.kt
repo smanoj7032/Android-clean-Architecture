@@ -132,18 +132,18 @@ class FavoritesFragment : BaseFragment<FragmentFavoritesBinding>() {
 
         val listOne = mutableListOf<CarouselItem>()
         val one = listOf(
-            "https://image.tmdb.org/t/p/w342/7lTnXOy0iNtBAdRP3TZvaKJ77F6.jpg",
-            "https://image.tmdb.org/t/p/w342/qhb1qOilapbapxWQn9jtRCMwXJF.jpg",
-            "https://image.tmdb.org/t/p/w342/7lTnXOy0iNtBAdRP3TZvaKJ77F6.jpg",
-            "https://image.tmdb.org/t/p/w342/qhb1qOilapbapxWQn9jtRCMwXJF.jpg",
-            "https://image.tmdb.org/t/p/w342/7lTnXOy0iNtBAdRP3TZvaKJ77F6.jpg",
-            "https://image.tmdb.org/t/p/w342/qhb1qOilapbapxWQn9jtRCMwXJF.jpg",
+            "https://cdn.photographylife.com/wp-content/uploads/2017/01/Simplified-composition-of-the-same-photo.jpg",
+            "https://farm5.staticflickr.com/4240/34943640193_c2a25d399e_z.jpg",
+            "https://cdn.mos.cms.futurecdn.net/FUE7XiFApEqWZQ85wYcAfM.jpg",
+            "https://iso.500px.com/wp-content/uploads/2014/07/big-one.jpg",
+            "https://static.photocdn.pt/images/articles/2017/04/28/iStock-646511634.jpg",
+            "https://static.photocdn.pt/images/articles/2017_1/iStock-545347988.jpg",
         )
         for ((index, item) in one.withIndex()) {
             listOne.add(
                 CarouselItem(
                     imageUrl = item,
-                    caption = "Image ${index + 1} of $one.size}",
+                    caption = /*"Image ${index + 1} of $one.size}"*/"",
                     headers = headers
                 )
             )

@@ -20,6 +20,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.manoj.clean.R
 import com.manoj.clean.databinding.ActivityGeofenceBinding
 import com.manoj.clean.ui.common.base.BaseActivity
+import com.manoj.clean.ui.common.base.common.permissionutils.QuickPermissionsOptions
 import com.manoj.clean.ui.common.base.common.permissionutils.runWithPermissions
 import com.manoj.clean.util.NetworkMonitor
 import com.manoj.clean.util.SingleRequestStateFlow
@@ -188,7 +189,9 @@ class GeofenceActivity : BaseActivity<ActivityGeofenceBinding>(), OnMapReadyCall
 
     private fun addReminderWithPermission(reminder: GeofenceData) {
         if (isSdkVersionGreaterThanOrEqualTo(Build.VERSION_CODES.TIRAMISU)) {
-            runWithPermissions(Manifest.permission.POST_NOTIFICATIONS) {
+            runWithPermissions(Manifest.permission.POST_NOTIFICATIONS,
+                options = QuickPermissionsOptions(handleRationale = true)
+            ) {
                 viewModel.addReminder(reminder)
             }
         } else viewModel.addReminder(reminder)

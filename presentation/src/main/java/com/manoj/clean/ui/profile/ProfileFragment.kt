@@ -3,7 +3,6 @@ package com.manoj.clean.ui.profile
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.AlertDialog
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
@@ -13,14 +12,10 @@ import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.SeekBar
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.content.getSystemService
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -31,31 +26,23 @@ import com.google.android.material.snackbar.Snackbar
 import com.manoj.clean.R
 import com.manoj.clean.databinding.FragmentProfileBinding
 import com.manoj.clean.ui.common.base.BaseFragment
+import com.manoj.clean.ui.common.base.common.permissionutils.QuickPermissionsOptions
 import com.manoj.clean.ui.common.base.common.permissionutils.runWithPermissions
 import com.manoj.clean.ui.common.customdialogs.CustomDialog
 import com.manoj.clean.ui.common.customdialogs.DialogStyle
 import com.manoj.clean.ui.common.customdialogs.DialogType
 import com.manoj.clean.ui.common.customdialogs.OnDialogClickListener
-import com.manoj.clean.ui.feed.FeedFragmentDirections
 import com.manoj.clean.ui.geofence.GeofenceActivity
 import com.manoj.clean.util.NetworkMonitor
 import com.manoj.clean.util.geofence.GeofenceData
 import com.manoj.clean.util.geofence.GeofenceRepository
-import com.manoj.clean.util.geofence.hideKeyboard
-import com.manoj.clean.util.geofence.isSdkVersionGreaterThanOrEqualTo
-import com.manoj.clean.util.geofence.requestFocusWithKeyboard
 import com.manoj.clean.util.geofence.showGeofenceInMap
 import com.manoj.clean.util.getLocationPermissions
-import com.manoj.clean.util.hide
 import com.manoj.clean.util.launchAndRepeatWithViewLifecycle
-import com.manoj.clean.util.show
 import com.manoj.clean.util.showSnackBar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.activity_main.container
-import kotlinx.android.synthetic.main.fragment_profile.newGeofence
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.math.roundToInt
 
 @AndroidEntryPoint
 class ProfileFragment : BaseFragment<FragmentProfileBinding>(), GoogleMap.OnMarkerClickListener,
@@ -89,7 +76,10 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(), GoogleMap.OnMark
         binding.apply {
             newGeofence.visibility = View.GONE
             newGeofence.setOnClickListener {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) runWithPermissions(Manifest.permission.ACCESS_BACKGROUND_LOCATION) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) runWithPermissions(
+                    Manifest.permission.ACCESS_BACKGROUND_LOCATION,
+                    options = QuickPermissionsOptions(handleRationale = true)
+                ) {
                     startGeofenceActivity()
                 }
                 else startGeofenceActivity()
@@ -109,7 +99,8 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(), GoogleMap.OnMark
     }
 
 
-    private fun setMap() = runWithPermissions(*getLocationPermissions()) {
+    private fun setMap() = runWithPermissions(*getLocationPermissions(),
+        options = QuickPermissionsOptions(handleRationale = true)) {
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this@ProfileFragment)
         locationManager =
@@ -132,7 +123,8 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(), GoogleMap.OnMark
     }
 
     private fun handlePermission() = runWithPermissions(
-        Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION
+        Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,
+        options = QuickPermissionsOptions(handleRationale = true)
     ) {
         onMapAndPermissionReady()
     }
@@ -167,17 +159,14 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(), GoogleMap.OnMark
                 override fun onNegativeClick(dialog: CustomDialog.Builder) {
                     dialog.dismiss()
                 }
-            })
-            .show()
+            }).show()
     }
 
     private fun removeGeofence(geofenceData: GeofenceData) {
         geofenceRepository.removeGeofence(geofenceData, success = {
             showGeoFences()
             CustomDialog.Builder(requireActivity(), DialogStyle.TOASTER, DialogType.SUCCESS)
-                .setTitle("Alert")
-                .setMessage("Geofence removed!")
-                .show()
+                .setTitle("Alert").setMessage("Geofence removed!").show()
         }, failure = {
             Snackbar.make(binding.main, it, Snackbar.LENGTH_LONG).show()
         })
