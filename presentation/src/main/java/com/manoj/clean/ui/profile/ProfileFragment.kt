@@ -15,10 +15,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.SeekBar
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.content.getSystemService
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -30,6 +32,12 @@ import com.manoj.clean.R
 import com.manoj.clean.databinding.FragmentProfileBinding
 import com.manoj.clean.ui.common.base.BaseFragment
 import com.manoj.clean.ui.common.base.common.permissionutils.runWithPermissions
+import com.manoj.clean.ui.common.customdialogs.CustomDialog
+import com.manoj.clean.ui.common.customdialogs.DialogStyle
+import com.manoj.clean.ui.common.customdialogs.DialogType
+import com.manoj.clean.ui.common.customdialogs.OnDialogClickListener
+import com.manoj.clean.ui.feed.FeedFragmentDirections
+import com.manoj.clean.ui.geofence.GeofenceActivity
 import com.manoj.clean.util.NetworkMonitor
 import com.manoj.clean.util.geofence.GeofenceData
 import com.manoj.clean.util.geofence.GeofenceRepository
@@ -55,23 +63,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(), GoogleMap.OnMark
     private val viewModel: ProfileViewModel by viewModels()
     private var googleMap: GoogleMap? = null
     private lateinit var locationManager: LocationManager
-    private var reminder = GeofenceData(latLng = null, radius = null, message = null)
 
-    private val radiusBarChangeListener = object : SeekBar.OnSeekBarChangeListener {
-        override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-        override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-        override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-            updateRadiusWithProgress(progress)
-            showReminderUpdate()
-        }
-    }
-
-    private fun updateRadiusWithProgress(progress: Int) {
-        val radius = getRadius(progress)
-        reminder.radius = radius
-        binding.radiusDescription.text =
-            getString(R.string.radius_description, radius.roundToInt().toString())
-    }
 
     @Inject
     lateinit var networkMonitor: NetworkMonitor
@@ -89,25 +81,31 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(), GoogleMap.OnMark
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        observeViewModel()
         setupViews()
     }
 
     private fun setupViews() {
         binding.apply {
             newGeofence.visibility = View.GONE
-
             newGeofence.setOnClickListener {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) runWithPermissions(Manifest.permission.ACCESS_BACKGROUND_LOCATION) {
-
-                    showConfigureLocationStep()
+                    startGeofenceActivity()
                 }
-                else {
+                else startGeofenceActivity()
 
-                    showConfigureLocationStep()
-                }
             }
         }
         setMap()
+    }
+
+    private fun startGeofenceActivity() {
+        googleMap?.run {
+            val intent = GeofenceActivity.newIntent(
+                requireContext(), cameraPosition.target, cameraPosition.zoom
+            )
+            addGeoFenceActivityLauncher.launch(intent)
+        }
     }
 
 
@@ -158,30 +156,28 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(), GoogleMap.OnMark
     }
 
     private fun showRemoveGeofenceAlert(geofenceData: GeofenceData) {
-        val alertDialog = AlertDialog.Builder(requireContext()).create()
-        alertDialog.run {
-            setMessage(getString(R.string.geofence_removal_alert))
-            setButton(
-                AlertDialog.BUTTON_POSITIVE, getString(R.string.geofence_removal_alert_positive)
-            ) { dialog, _ ->
-                removeGeofence(geofenceData)
-                dialog.dismiss()
-            }
-            setButton(
-                AlertDialog.BUTTON_NEGATIVE, getString(R.string.geofence_removal_alert_negative)
-            ) { dialog, _ ->
-                dialog.dismiss()
-            }
-            show()
-        }
+        CustomDialog.Builder(requireActivity(), DialogStyle.FLAT, DialogType.INFO)
+            .setMessage(getString(R.string.geofence_removal_alert))
+            .setOnClickListener(object : OnDialogClickListener {
+                override fun onClick(dialog: CustomDialog.Builder) {
+                    removeGeofence(geofenceData)
+                    dialog.dismiss()
+                }
+
+                override fun onNegativeClick(dialog: CustomDialog.Builder) {
+                    dialog.dismiss()
+                }
+            })
+            .show()
     }
 
     private fun removeGeofence(geofenceData: GeofenceData) {
         geofenceRepository.removeGeofence(geofenceData, success = {
             showGeoFences()
-            Snackbar.make(
-                binding.main, R.string.geofence_removed_success, Snackbar.LENGTH_LONG
-            ).show()
+            CustomDialog.Builder(requireActivity(), DialogStyle.TOASTER, DialogType.SUCCESS)
+                .setTitle("Alert")
+                .setMessage("Geofence removed!")
+                .show()
         }, failure = {
             Snackbar.make(binding.main, it, Snackbar.LENGTH_LONG).show()
         })
@@ -201,92 +197,6 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(), GoogleMap.OnMark
         return bestLocation
     }
 
-    private fun showConfigureLocationStep() {
-        binding.apply {
-            newGeofence.hide()
-            container.show()
-            marker.visibility = View.VISIBLE
-            instructionTitle.visibility = View.VISIBLE
-            instructionSubtitle.visibility = View.VISIBLE
-            radiusBar.visibility = View.GONE
-            radiusDescription.visibility = View.GONE
-            message.visibility = View.GONE
-            instructionTitle.text = getString(R.string.instruction_where_description)
-            next.setOnClickListener {
-                reminder.latLng = googleMap?.cameraPosition?.target
-                showConfigureRadiusStep()
-            }
-        }
-        showReminderUpdate()
-    }
-
-    private fun showConfigureRadiusStep() {
-        binding.apply {
-            marker.visibility = View.GONE
-            instructionTitle.visibility = View.VISIBLE
-            instructionSubtitle.visibility = View.GONE
-            radiusBar.visibility = View.VISIBLE
-            radiusDescription.visibility = View.VISIBLE
-            message.visibility = View.GONE
-            instructionTitle.text = getString(R.string.instruction_radius_description)
-            next.setOnClickListener {
-                showConfigureMessageStep()
-            }
-            radiusBar.setOnSeekBarChangeListener(radiusBarChangeListener)
-            updateRadiusWithProgress(radiusBar.progress)
-        }
-        googleMap?.animateCamera(CameraUpdateFactory.zoomTo(15f))
-        showReminderUpdate()
-    }
-
-    private fun getRadius(progress: Int) = 100 + (2 * progress.toDouble() + 1) * 100
-
-    private fun showConfigureMessageStep() {
-        binding.apply {
-            marker.visibility = View.GONE
-            instructionTitle.visibility = View.VISIBLE
-            instructionSubtitle.visibility = View.GONE
-            radiusBar.visibility = View.GONE
-            radiusDescription.visibility = View.GONE
-            message.visibility = View.VISIBLE
-            instructionTitle.text = getString(R.string.instruction_message_description)
-            next.setOnClickListener {
-                hideKeyboard(requireContext(), message)
-
-                reminder.message = message.text.toString()
-
-                if (reminder.message.isNullOrEmpty()) message.error =
-                    getString(R.string.error_required)
-                else addReminderWithPermission(reminder)
-            }
-            message.requestFocusWithKeyboard()
-        }
-        showReminderUpdate()
-    }
-
-    private fun addReminder(reminder: GeofenceData) {
-        geofenceRepository.addGeofence(reminder,
-            success = {
-                binding.container.hide()
-                newGeofence.show()
-            },
-            failure = {
-                Snackbar.make(binding.main, it, Snackbar.LENGTH_LONG).show()
-            })
-    }
-
-    private fun addReminderWithPermission(reminder: GeofenceData) {
-        if (isSdkVersionGreaterThanOrEqualTo(Build.VERSION_CODES.TIRAMISU)) {
-            runWithPermissions(Manifest.permission.POST_NOTIFICATIONS) {
-                addReminder(reminder)
-            }
-        } else addReminder(reminder)
-    }
-
-    private fun showReminderUpdate() {
-        googleMap?.clear()
-        googleMap?.let { showGeofenceInMap(requireContext(), it, reminder) }
-    }
 
     override fun onMarkerClick(marker: Marker): Boolean {
         val geofence = geofenceRepository.get(marker.tag as String)
@@ -314,4 +224,17 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(), GoogleMap.OnMark
         handlePermission()
     }
 
+    private val addGeoFenceActivityLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
+            if (activityResult.resultCode == Activity.RESULT_OK) {
+                showGeoFences()
+
+                val reminder = geofenceRepository.getLast()
+                reminder?.latLng?.let { CameraUpdateFactory.newLatLngZoom(it, 15f) }
+                    ?.let { googleMap?.moveCamera(it) }
+
+                Snackbar.make(binding.main, R.string.geofence_added_success, Snackbar.LENGTH_LONG)
+                    .show()
+            }
+        }
 }
