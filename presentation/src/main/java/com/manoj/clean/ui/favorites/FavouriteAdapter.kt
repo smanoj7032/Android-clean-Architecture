@@ -66,6 +66,20 @@ class FavouriteAdapter(
         layoutManager.scrollToPositionWithOffset(0, 0)
         holder.recyclerViewHorizontal.clearOnScrollListeners()
         holder.recyclerViewHorizontal.addOnScrollListener(scrollListener)
+        holder.recyclerViewHorizontal.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                val itemPosition: Int =
+                    (holder.recyclerViewHorizontal.layoutManager as LinearLayoutManager).findFirstCompletelyVisibleItemPosition()
+
+                try {
+                    holder.binding.dots.getTabAt(itemPosition)?.select()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+        })
+
         holder.binding.dots.removeAllTabs()
 
         if (dataList.size > 1) {

@@ -1,6 +1,8 @@
 package com.manoj.clean.ui.main
 
 import android.Manifest
+import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -13,6 +15,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.gms.maps.model.LatLng
 import com.manoj.clean.R
 import com.manoj.clean.databinding.ActivityMainBinding
 import com.manoj.clean.picker.CustomPickerDialog
@@ -83,12 +86,12 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     private fun initViews() {
         biometricPromptUtils.generateCryptoKey()
         setPickerDialog()
-        binding.fabAdd.setOnClickListener {
+       /* binding.fabAdd.setOnClickListener {
             runWithPermissions(
                 Manifest.permission.CAMERA,
                 *PERMISSION_READ_STORAGE
             ) { pickerDialog.show() }
-        }
+        }*/
     }
 
     private fun setPickerDialog() {
@@ -197,4 +200,13 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         return true
     }
 
+    companion object {
+        private const val EXTRA_LAT_LNG = "EXTRA_LAT_LNG"
+
+        fun newIntent(context: Context, latLng: LatLng): Intent {
+            return Intent(context, MainActivity::class.java).apply {
+                putExtra(EXTRA_LAT_LNG, latLng)
+            }
+        }
+    }
 }

@@ -6,6 +6,7 @@ import androidx.work.WorkManager
 import com.manoj.clean.di.core.AppSettingsSharedPreference
 import com.manoj.clean.util.NetworkMonitor
 import com.manoj.clean.util.ResourceProvider
+import com.manoj.clean.util.geofence.GeofenceRepository
 import com.manoj.data.util.DiskExecutor
 import com.manoj.data.util.DispatchersProvider
 import com.manoj.data.util.DispatchersProviderImpl
@@ -52,4 +53,9 @@ class AppModule {
     fun provideNetworkMonitor(
         @ApplicationContext context: Context
     ): NetworkMonitor = NetworkMonitor(context)
+
+    @Provides
+    @Singleton
+    fun provideGeofenceRepository(@ApplicationContext context: Context): GeofenceRepository =
+        GeofenceRepository(context)
 }

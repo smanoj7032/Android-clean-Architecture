@@ -367,3 +367,24 @@ object Logger {
         }
     }
 }
+
+
+fun isSdkVersionGreaterThan(version: Int): Boolean {
+    return Build.VERSION.SDK_INT > version
+}
+
+fun isSdkVersionGreaterThanOrEqualTo(version: Int): Boolean {
+    return Build.VERSION.SDK_INT >= version
+}
+
+fun isSdkVersionLessThan(version: Int): Boolean {
+    return Build.VERSION.SDK_INT < version
+}
+
+fun isSdkVersionLessThanOrEqualTo(version: Int): Boolean {
+    return Build.VERSION.SDK_INT <= version
+}
+
+fun isSdkVersionEqualTo(version: Int): Boolean {
+    return Build.VERSION.SDK_INT == version
+}

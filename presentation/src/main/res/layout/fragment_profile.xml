@@ -24,95 +24,40 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/input_password"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:hint="@string/search"
-            app:boxBackgroundColor="@color/white"
-            app:boxCornerRadiusBottomEnd="14dp"
-            app:boxCornerRadiusBottomStart="14dp"
-            app:boxCornerRadiusTopEnd="14dp"
-            app:boxCornerRadiusTopStart="14dp"
-            app:boxStrokeColor="@color/colorPrimary"
-            app:boxStrokeWidth="0dp"
-            app:boxStrokeWidthFocused="1dp"
-            app:hintTextColor="@color/colorPrimary"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:passwordToggleEnabled="true"
-            app:passwordToggleTint="@color/black">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:imeOptions="actionDone"
-                android:inputType="textPassword"
-                android:textColor="@color/black" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="@dimen/activity_horizontal_margin"
-            android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_dodgeInsetEdges="bottom">
-
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fabCurrentLocation"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/activity_horizontal_margin"
-                app:srcCompat="@drawable/ic_baseline_my_location_24px" />
-
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fabNewReminder"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/activity_horizontal_margin"
-                app:srcCompat="@drawable/ic_baseline_add_24px" />
-        </LinearLayout>
-
         <RelativeLayout
-            android:id="@+id/container2"
+            android:id="@+id/container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
+            app:layout_constraintBottom_toBottomOf="parent">
 
             <ImageView
                 android:id="@+id/marker"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_centerInParent="true"
+                android:layout_gravity="center"
+                android:layout_marginBottom="24dp"
+                android:contentDescription="@string/marker_content_description"
                 app:srcCompat="@drawable/ic_twotone_location_on_48px" />
 
             <LinearLayout
-                android:id="@+id/container_settings"
+                android:id="@+id/llayContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:background="#ffffff"
-                android:orientation="vertical">
+                android:layout_gravity="bottom"
+                android:background="@color/white"
+                android:orientation="vertical"
+                android:padding="16dp">
 
                 <TextView
                     android:id="@+id/instructionTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                    android:layout_marginTop="@dimen/activity_horizontal_margin"
-                    android:layout_marginRight="@dimen/activity_horizontal_margin"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginRight="16dp"
                     android:layout_marginBottom="8dp"
                     android:textColor="#000"
                     android:textSize="18sp"
@@ -122,8 +67,8 @@
                     android:id="@+id/instructionSubtitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                    android:layout_marginRight="@dimen/activity_horizontal_margin"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
                     android:layout_marginBottom="8dp"
                     android:text="@string/instruction_where_subtitle_description" />
 
@@ -142,9 +87,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start|bottom"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginLeft="16dp"
                     android:layout_marginTop="4dp"
-                    android:layout_marginRight="@dimen/activity_horizontal_margin"
+                    android:layout_marginRight="16dp"
                     android:layout_marginBottom="4dp"
                     tools:text="100 meters" />
 
@@ -158,26 +103,42 @@
                     android:hint="@string/message_hint"
                     android:imeOptions="actionDone"
                     android:inputType="textCapSentences"
-                    android:maxLines="1" />
+                    android:maxLines="1"
+                    android:minHeight="48dp"
+                    tools:ignore="Autofill" />
 
                 <Button
                     android:id="@+id/next"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginLeft="16dp"
                     android:layout_marginTop="8dp"
-                    android:layout_marginRight="@dimen/activity_horizontal_margin"
+                    android:layout_marginRight="16dp"
                     android:layout_marginBottom="8dp"
-                    android:background="@drawable/bg_button"
-                    android:foreground="?attr/selectableItemBackground"
+                    android:backgroundTint="@color/blue"
                     android:text="@string/continue_description"
-                    android:textColor="@color/colorAccent" />
+                    android:textColor="@color/white" />
 
             </LinearLayout>
 
-
         </RelativeLayout>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/newGeofence"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="8dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="16dp"
+            android:gravity="start"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:srcCompat="@drawable/ic_add"
+            tools:ignore="ContentDescription" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

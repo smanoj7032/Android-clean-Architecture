@@ -105,35 +105,11 @@
         <meta-data
             android:name="com.bumptech.glide.integration.okhttp3.OkHttpGlideModule"
             android:value="ProgressAppGlideModule" />
-
         <receiver
-            android:name=".util.geolocator.geofencer.service.GeofenceBroadcastReceiver"
+            android:name=".util.geofence.GeofenceBroadcastReceiver"
             android:enabled="true"
-            android:exported="false" />
-
-        <receiver
-            android:name=".util.geolocator.geofencer.service.GeofenceBootReceiver"
-            android:enabled="true"
-            android:exported="false">
-            <intent-filter>
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
-                <!--For HTC devices-->
-                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON" />
-            </intent-filter>
-        </receiver>
-
-        <receiver
-            android:name=".util.geolocator.tracking.service.LocationTrackerUpdateBroadcastReceiver"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="com.sprotte.geolocator.tracking.service.ACTION_PROCESS_UPDATES" />
-            </intent-filter>
-        </receiver>
-
-
+            android:exported="true"
+            tools:ignore="ExportedReceiver" />
     </application>
 
 </manifest>

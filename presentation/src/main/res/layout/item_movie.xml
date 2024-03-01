@@ -24,6 +24,7 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:src="@drawable/bg_movie_cover" />
 
+
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_bottom_view"
             android:layout_width="match_parent"

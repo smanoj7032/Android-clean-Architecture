@@ -12,11 +12,7 @@
         android:icon="@drawable/ic_favorite_border_white_48"
         android:title="@string/favorites"
         app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/empty"
-        android:enabled="false"
-        android:title=""
-        app:showAsAction="ifRoom" />
+
     <item
         android:id="@+id/popularMoviesFragment"
         android:icon="@drawable/ic_movie"
