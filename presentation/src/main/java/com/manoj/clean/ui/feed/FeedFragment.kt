@@ -1,10 +1,12 @@
 package com.manoj.clean.ui.feed
 
+import android.Manifest
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -15,6 +17,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.manoj.clean.R
 import com.manoj.clean.databinding.FragmentFeedBinding
 import com.manoj.clean.databinding.ItemMovieBinding
+import com.manoj.clean.picker.CustomPickerDialog
 import com.manoj.clean.picker.ItemModel
 import com.manoj.clean.picker.PickerDialog
 import com.manoj.clean.picker.PickerDialog.Companion.TYPE_GRID
@@ -22,14 +25,18 @@ import com.manoj.clean.ui.common.adapter.commonadapter.LoadMoreAdapter
 import com.manoj.clean.ui.common.adapter.commonadapter.RVAdapterWithPaging
 import com.manoj.clean.ui.common.adapter.commonadapter.RVAdapterWithPaging.Companion.createDiffCallback
 import com.manoj.clean.ui.common.base.BaseFragment
+import com.manoj.clean.ui.common.base.common.permissionutils.runWithPermissions
+import com.manoj.clean.ui.main.MainActivity
 import com.manoj.clean.ui.popularmovies.PopularMoviesFragment.Companion.POSTER_BASE_URL
 import com.manoj.clean.util.NetworkMonitor
+import com.manoj.clean.util.PERMISSION_READ_STORAGE
 import com.manoj.clean.util.launchAndRepeatWithViewLifecycle
 import com.manoj.clean.util.loadImageWithProgress
 import com.manoj.clean.util.showSnackBar
 import com.manoj.domain.entities.MovieEntity
 import com.manoj.domain.entities.UiState
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -38,6 +45,7 @@ import javax.inject.Inject
 class FeedFragment : BaseFragment<FragmentFeedBinding>() {
     private lateinit var moviesAdapter: RVAdapterWithPaging<MovieEntity, ItemMovieBinding>
     private val viewModel: FeedViewModel by viewModels()
+    private var pickerDialog: PickerDialog? = null
 
     private val loadStateListener: (CombinedLoadStates) -> Unit = {
         viewModel.onLoadStateUpdate(it)
@@ -57,9 +65,34 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
         setupViews()
         setupListeners()
         observeViewModel()
+        setPickerDialog()
     }
 
+    private fun setPickerDialog() {
+        val items: ArrayList<ItemModel> = arrayListOf(
+            ItemModel(ItemModel.ITEM_CAMERA, itemIcon = R.drawable.ic_camera_svg),
+            ItemModel(ItemModel.ITEM_GALLERY, itemIcon = R.drawable.ic_gallery_svg),
+            ItemModel(ItemModel.ITEM_VIDEO, itemIcon = R.drawable.ic_camera_svg),
+            ItemModel(ItemModel.ITEM_VIDEO_GALLERY, itemIcon = R.drawable.ic_gallery_svg),
+            ItemModel(ItemModel.ITEM_FILES, itemIcon = R.drawable.ic_camera_svg)
+        )
+        pickerDialog = PickerDialog.Builder(activity as MainActivity).setTitle("Select Media")
+            .setTitleTextSize(25f)
+            .setTitleTextColor(R.color.colorDialogBg).setListType(TYPE_GRID, 3)
+            .setItems(items)
+            .create()
 
+        pickerDialog?.setPickerCloseListener { type, uri ->
+            CustomPickerDialog(requireContext()).showPreview(type, uri) { _, _ -> }
+            when (type) {
+                ItemModel.ITEM_CAMERA -> showToast("Type : $type----->>>   Uri : $uri")
+                ItemModel.ITEM_GALLERY -> showToast("Type : $type----->>>   Uri : $uri")
+                ItemModel.ITEM_VIDEO -> showToast("Type : $type----->>>   Uri : $uri")
+                ItemModel.ITEM_VIDEO_GALLERY -> showToast("Type : $type----->>>   Uri : $uri")
+                ItemModel.ITEM_FILES -> showToast("Type : $type----->>>   Uri : $uri")
+            }
+        }
+    }
 
 
     private fun setupViews() {
@@ -84,7 +117,14 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
                 binding.image.loadImageWithProgress(
                     POSTER_BASE_URL + item.poster_path, binding.imgPb, options
                 )
-                binding.root.setOnClickListener { item.id?.let { it1 -> navigateToMovieDetails(it1) } }
+                binding.image.setOnClickListener { item.id?.let { it1 -> navigateToMovieDetails(it1) } }
+
+                binding.ivBottomView.setOnClickListener {
+                    runWithPermissions(
+                        Manifest.permission.CAMERA,
+                        *PERMISSION_READ_STORAGE
+                    ) { pickerDialog?.show() }
+                }
             }) {}
 
         val footerAdapter = LoadMoreAdapter { moviesAdapter.retry() }
@@ -112,7 +152,10 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
         launchAndRepeatWithViewLifecycle {
             launch { movies.collect { moviesAdapter.submitData(it) } }
             launch { uiState.collect { handleFeedUiState(it) } }
-            launch { networkMonitor.networkState.collect { handleNetworkState(it) } }
+            launch {
+                networkMonitor.networkState.distinctUntilChanged()
+                    .collect { handleNetworkState(it) }
+            }
         }
     }
 

@@ -40,8 +40,10 @@
         tools:ignore="AllowBackup">
 
         <activity
-            android:name="com.manoj.clean.ui.Splash"
+            android:name="com.manoj.clean.ui.main.MainActivity"
             android:exported="true"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
+            android:screenOrientation="userPortrait"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -51,11 +53,11 @@
 
         <activity android:name="com.manoj.clean.ui.moviedetails.MovieDetailsActivity" />
         <activity android:name="com.manoj.clean.ui.geofence.GeofenceActivity" />
-        <activity
+        <!--<activity
             android:name="com.manoj.clean.ui.main.MainActivity"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
             android:screenOrientation="userPortrait" />
-
+-->
         <activity android:name="com.manoj.clean.ui.search.SearchActivity" />
         <activity
             android:name=".ui.common.drawer.DefaultDrawerActivity"

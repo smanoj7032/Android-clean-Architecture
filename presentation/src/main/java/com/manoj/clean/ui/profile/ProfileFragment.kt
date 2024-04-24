@@ -3,6 +3,7 @@ package com.manoj.clean.ui.profile
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.ActivityOptions
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
@@ -13,6 +14,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
 import androidx.fragment.app.viewModels
@@ -94,13 +96,22 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(), GoogleMap.OnMark
             val intent = GeofenceActivity.newIntent(
                 requireContext(), cameraPosition.target, cameraPosition.zoom
             )
-            addGeoFenceActivityLauncher.launch(intent)
+            addGeoFenceActivityLauncher.launch(
+                intent,
+                ActivityOptionsCompat.makeCustomAnimation(
+                    requireContext(),
+                    R.anim.slide_in_right,
+                    R.anim.slide_out_left
+                )
+            )
         }
     }
 
 
-    private fun setMap() = runWithPermissions(*getLocationPermissions(),
-        options = QuickPermissionsOptions(handleRationale = true)) {
+    private fun setMap() = runWithPermissions(
+        *getLocationPermissions(),
+        options = QuickPermissionsOptions(handleRationale = true)
+    ) {
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this@ProfileFragment)
         locationManager =

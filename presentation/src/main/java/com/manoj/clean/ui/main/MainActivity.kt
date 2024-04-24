@@ -1,16 +1,12 @@
 package com.manoj.clean.ui.main
 
-import android.Manifest
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
@@ -18,22 +14,16 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.gms.maps.model.LatLng
 import com.manoj.clean.R
 import com.manoj.clean.databinding.ActivityMainBinding
-import com.manoj.clean.picker.CustomPickerDialog
-import com.manoj.clean.picker.ItemModel
-import com.manoj.clean.picker.PickerDialog
 import com.manoj.clean.ui.common.base.BaseActivity
 import com.manoj.clean.ui.common.base.common.biometrics.BiometricPromptUtils
 import com.manoj.clean.ui.common.base.common.biometrics.CryptoUtils
 import com.manoj.clean.ui.common.base.common.biometrics.TAG
-import com.manoj.clean.ui.common.base.common.permissionutils.runWithPermissions
 import com.manoj.clean.ui.search.SearchActivity
-import com.manoj.clean.util.PERMISSION_READ_STORAGE
 import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
 class MainActivity : BaseActivity<ActivityMainBinding>() {
-    private lateinit var pickerDialog: PickerDialog
     private val navController by lazy { binding.container.getFragment<NavHostFragment>().navController }
     private val biometricPromptUtils =
         BiometricPromptUtils(this, object : BiometricPromptUtils.BiometricListener {
@@ -85,72 +75,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
     private fun initViews() {
         biometricPromptUtils.generateCryptoKey()
-        setPickerDialog()
-       /* binding.fabAdd.setOnClickListener {
-            runWithPermissions(
-                Manifest.permission.CAMERA,
-                *PERMISSION_READ_STORAGE
-            ) { pickerDialog.show() }
-        }*/
-    }
-
-    private fun setPickerDialog() {
-        val items: ArrayList<ItemModel> = arrayListOf(
-            ItemModel(ItemModel.ITEM_CAMERA, itemIcon = R.drawable.ic_camera_svg),
-            ItemModel(ItemModel.ITEM_GALLERY, itemIcon = R.drawable.ic_gallery_svg),
-            ItemModel(ItemModel.ITEM_VIDEO, itemIcon = R.drawable.ic_camera_svg),
-            ItemModel(ItemModel.ITEM_VIDEO_GALLERY, itemIcon = R.drawable.ic_gallery_svg),
-            ItemModel(ItemModel.ITEM_FILES, itemIcon = R.drawable.ic_camera_svg)
-        )
-        pickerDialog = PickerDialog.Builder(this).setTitle("Select Media")/*.setTitleTextSize(25f)
-            .setTitleTextColor(R.color.colorDialogBg)*/.setListType(PickerDialog.TYPE_GRID, 3)
-            .setItems(items)
-            .create()
-
-        pickerDialog.setPickerCloseListener { type, uri ->
-            CustomPickerDialog(this).showPreview(type, uri) { _, _ -> }
-            when (type) {
-                ItemModel.ITEM_CAMERA -> {
-                    Toast.makeText(
-                        this,
-                        "Type : $type----->>>   Uri : $uri",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-
-                ItemModel.ITEM_GALLERY -> {
-                    Toast.makeText(
-                        this,
-                        "Type : $type----->>>   Uri : $uri",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-
-                ItemModel.ITEM_VIDEO -> {
-                    Toast.makeText(
-                        this,
-                        "Type : $type----->>>   Uri : $uri",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-
-                ItemModel.ITEM_VIDEO_GALLERY -> {
-                    Toast.makeText(
-                        this,
-                        "Type : $type----->>>   Uri : $uri",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-
-                ItemModel.ITEM_FILES -> {
-                    Toast.makeText(
-                        this,
-                        "Type : $type----->>>   Uri : $uri",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            }
-        }
     }
 
     private fun setupActionBar() = NavigationUI.setupActionBarWithNavController(

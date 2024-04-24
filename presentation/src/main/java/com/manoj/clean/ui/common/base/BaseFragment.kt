@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -18,17 +19,28 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
 
     protected abstract fun inflateViewBinding(inflater: LayoutInflater): VB
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View = binding.root
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View = binding.root
 
-    protected fun <T> LiveData<T>.observe(observer: Observer<in T>) = observe(this@BaseFragment, observer)
+    protected fun <T> LiveData<T>.observe(observer: Observer<in T>) =
+        observe(this@BaseFragment, observer)
+
     fun onError(error: Throwable, showErrorView: Boolean) {
         parentActivity?.onError(error, showErrorView)
     }
+
     fun onLoading(show: Boolean) {
         val progressBar: View? = view?.findViewById(R.id.progress_bar)
         progressBar?.visibility = if (show) View.VISIBLE else View.GONE
         val errorView: ErrorView? = view?.findViewById(R.id.error_view)
         errorView?.visibility = if (show) View.GONE else View.VISIBLE
+    }
+
+    fun showToast(message: String) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
 }

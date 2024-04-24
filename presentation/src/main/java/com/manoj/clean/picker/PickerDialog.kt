@@ -32,7 +32,7 @@ import kotlinx.android.synthetic.main.dialog_picker.*
 import kotlinx.android.synthetic.main.item_picker_grid.view.*
 import java.io.IOException
 
-class PickerDialog(private val activity: AppCompatActivity) : BottomSheetDialogFragment() {
+class PickerDialog(private val activity: AppCompatActivity?) : BottomSheetDialogFragment() {
     var fragment: Fragment? = null
     private var uri: Uri? = null
     private var fileName = ""
@@ -50,8 +50,8 @@ class PickerDialog(private val activity: AppCompatActivity) : BottomSheetDialogF
 
 
     /** ACTIVITY RESULT LAUNCHER */
-    private val takePhoto: ActivityResultLauncher<Uri> =
-        activity.registerForActivityResult(ActivityResultContracts.TakePicture())
+    private val takePhoto: ActivityResultLauncher<Uri>? =
+        activity?.registerForActivityResult(ActivityResultContracts.TakePicture())
         { isSaved ->
             if (isSaved) {
                 onPickerCloseListener?.onPickerClosed(ItemModel.ITEM_CAMERA, uri)
@@ -105,7 +105,7 @@ class PickerDialog(private val activity: AppCompatActivity) : BottomSheetDialogF
             args.putInt(ARG_GRID_SPAN, dialogGridSpan)
             args.putParcelableArrayList(ARG_ITEMS, dialogItems)
 
-            val dialog = PickerDialog(activity!!)
+            val dialog = PickerDialog(activity)
             dialog.arguments = args
             dialog.fragment = fragment
 
@@ -366,7 +366,7 @@ class PickerDialog(private val activity: AppCompatActivity) : BottomSheetDialogF
         uri = MediaUtils.getUriFromFile(
             requireContext(), MediaUtils.getMakeFile(requireContext(), ".png")
         )
-        takePhoto.launch(uri)
+        takePhoto?.launch(uri)
     }
 
     private fun openGallery() {
@@ -455,7 +455,7 @@ class PickerDialog(private val activity: AppCompatActivity) : BottomSheetDialogF
     }
 
     fun show() {
-        show(activity.supportFragmentManager, "")
+        activity?.supportFragmentManager?.let { show(it, "") }
     }
 
     private fun setLauncher() {
